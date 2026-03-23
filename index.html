@@ -637,6 +637,106 @@
   }
   footer strong { color: var(--text-muted); }
 
+  /* ── COMPASS Pipeline Flow ── */
+  .pf { margin: 32px 0; }
+  .pf-stage-tag {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--accent); font-weight: 700; margin-bottom: 8px; opacity: 0.65;
+  }
+  .pf-row { display: flex; gap: 12px; }
+  .pf-row.pf-center { justify-content: center; }
+  .pf-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px; flex: 1;
+  }
+  .pf-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .pf-sub {
+    font-size: 10.5px; color: var(--text-dim); text-transform: uppercase;
+    letter-spacing: 0.8px; margin-bottom: 10px;
+  }
+  .pf-note { font-size: 12px; color: var(--text-muted); margin-top: 5px; line-height: 1.55; }
+  .pf-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .pf-list li { font-size: 12px; color: var(--text-muted); display: flex; gap: 6px; }
+  .pf-list li::before { content: '·'; flex-shrink: 0; }
+
+  /* Input stream colours */
+  .pf-wearables { border-color: rgba(34,197,94,0.35); }
+  .pf-wearables .pf-title { color: #86efac; }
+  .pf-wearables .pf-list li::before { color: var(--safe); }
+  .pf-thermography { border-color: rgba(249,115,22,0.35); }
+  .pf-thermography .pf-title { color: #fdba74; }
+  .pf-thermography .pf-list li::before { color: var(--deceptive); }
+
+  /* Computed score blocks */
+  .pf-systemic,
+  .pf-thermal { display: flex; align-items: center; gap: 16px; }
+  .pf-systemic { border-color: rgba(34,197,94,0.25); }
+  .pf-thermal  { border-color: rgba(249,115,22,0.25); }
+  .pf-score-num { font-size: 24px; font-weight: 800; line-height: 1; min-width: 68px; text-align: center; }
+  .pf-systemic .pf-score-num { color: var(--safe); }
+  .pf-thermal  .pf-score-num { color: var(--deceptive); }
+
+  /* Fusion */
+  .pf-fusion {
+    border-color: rgba(124,58,237,0.45); background: rgba(124,58,237,0.07);
+    text-align: center; padding: 20px 28px; max-width: 500px; width: 100%; flex: none;
+  }
+  .pf-fusion .pf-title { font-size: 15px; color: #a78bfa; }
+  .pf-fusion-score {
+    font-size: 30px; font-weight: 800; margin: 8px 0 4px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* Zone row */
+  .pf-zones { gap: 8px; }
+  .pf-zone { flex: 1; border-radius: var(--radius); border: 1px solid; padding: 14px 10px; }
+  .pf-zone-range { font-size: 17px; font-weight: 800; line-height: 1; margin-bottom: 3px; }
+  .pf-zone-name { font-size: 11.5px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .pf-zone-sig { font-size: 10.5px; color: var(--text-dim); margin-bottom: 8px; line-height: 1.6; }
+  .pf-zone-pills { display: flex; flex-direction: column; gap: 3px; }
+  .pf-zone-pill {
+    font-size: 10px; padding: 2px 5px; border-radius: 3px; text-align: center;
+    background: rgba(255,255,255,0.04); color: var(--text-muted);
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .pf-zone.safe      { background: var(--safe-bg);      border-color: rgba(34,197,94,0.3);  }
+  .pf-zone.recovery  { background: var(--recovery-bg);  border-color: rgba(245,158,11,0.3); }
+  .pf-zone.deceptive { background: var(--deceptive-bg); border-color: rgba(249,115,22,0.3); }
+  .pf-zone.danger    { background: var(--danger-bg);    border-color: rgba(239,68,68,0.3);  }
+  .pf-zone.safe      .pf-zone-range, .pf-zone.safe      .pf-zone-name { color: var(--safe);       }
+  .pf-zone.recovery  .pf-zone-range, .pf-zone.recovery  .pf-zone-name { color: var(--recovery);   }
+  .pf-zone.deceptive .pf-zone-range, .pf-zone.deceptive .pf-zone-name { color: var(--deceptive);  }
+  .pf-zone.danger    .pf-zone-range, .pf-zone.danger    .pf-zone-name { color: var(--danger);     }
+
+  /* Reasoning engine */
+  .pf-engine {
+    border-color: rgba(0,200,255,0.35); background: rgba(0,200,255,0.06);
+    text-align: center; padding: 20px 28px; max-width: 560px; width: 100%; flex: none;
+  }
+  .pf-engine .pf-title { font-size: 15px; color: var(--accent); }
+  .pf-engine-badge {
+    display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px;
+    font-weight: 700; color: var(--accent); background: rgba(0,200,255,0.1);
+    border: 1px solid rgba(0,200,255,0.2); border-radius: 4px; padding: 2px 7px; margin-bottom: 8px;
+  }
+
+  /* Output blocks */
+  .pf-output { border-color: rgba(34,197,94,0.18); text-align: center; }
+  .pf-output .pf-title { font-size: 13px; }
+
+  /* Stage separators */
+  .pf-sep { display: flex; justify-content: center; height: 32px; position: relative; margin: 2px 0; }
+  .pf-sep::before {
+    content: ''; display: block; width: 1.5px; height: 100%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(0,200,255,0.28));
+  }
+  .pf-sep::after {
+    content: ''; position: absolute; bottom: 1px; left: calc(50% - 4px);
+    border-left: 4px solid transparent; border-right: 4px solid transparent;
+    border-top: 5px solid rgba(0,200,255,0.3);
+  }
+
   /* ── Responsive ── */
   @media (max-width: 900px) {
     nav { display: none; }
@@ -648,6 +748,139 @@
     .signal-compare { grid-template-columns: 1fr; }
     .signal-vs { display: none; }
     footer { padding: 28px; }
+  }
+
+  /* ── Camera benchmark badges ── */
+  .cam-badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px; white-space: nowrap; margin-bottom: 4px;
+  }
+  .cam-badge.met     { background: rgba(34,197,94,0.15);  color: var(--safe);      }
+  .cam-badge.partial { background: rgba(245,158,11,0.15); color: var(--recovery);  }
+  .cam-badge.fail    { background: rgba(239,68,68,0.15);  color: var(--danger);    }
+  .cam-badge.na      { background: rgba(139,148,158,0.1); color: var(--text-dim);  }
+  .cam-detail { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+
+  /* ── Score Calculation Pipeline (sc-) ── */
+  .sc-pipeline {
+    max-width: 820px; margin: 32px auto 0; display: flex;
+    flex-direction: column; align-items: center; gap: 0;
+  }
+  .sc-stage { width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .sc-stage-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 8px;
+  }
+  .sc-row { display: flex; gap: 12px; width: 100%; justify-content: center; }
+  .sc-block {
+    flex: 1; max-width: 360px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .sc-block-title {
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .sc-block-body { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .sc-block-body code {
+    background: rgba(139,148,158,.12); padding: 1px 5px; border-radius: 4px;
+    font-family: var(--font-mono, monospace); font-size: 12px; color: var(--text);
+  }
+  .sc-wearable { border-color: rgba(34,197,94,.35); }
+  .sc-wearable .sc-block-title { color: var(--safe); }
+  .sc-thermal  { border-color: rgba(245,158,11,.35); }
+  .sc-thermal  .sc-block-title { color: var(--recovery); }
+  .sc-fusion   {
+    width: 100%; max-width: 500px; background: var(--card);
+    border: 1px solid rgba(139,92,246,.4); border-radius: 10px; padding: 14px 18px;
+  }
+  .sc-fusion .sc-block-title { color: #a78bfa; }
+  .sc-arrow {
+    display: flex; flex-direction: column; align-items: center;
+    color: var(--text-dim); margin: 6px 0; font-size: 18px; line-height: 1;
+  }
+  .sc-arrow::before { content: '│'; font-size: 14px; opacity: .5; }
+  .sc-arrow::after  { content: '▾'; }
+  .sc-zone-row { display: flex; gap: 8px; width: 100%; justify-content: center; flex-wrap: wrap; }
+  .sc-zone {
+    flex: 1; min-width: 140px; max-width: 180px; border-radius: 8px;
+    padding: 10px 12px; text-align: center;
+  }
+  .sc-zone-name  { font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+  .sc-zone-range { font-size: 12px; margin-top: 3px; opacity: .8; }
+  .sc-zone.safe  { background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.3); color: var(--safe); }
+  .sc-zone.rec   { background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.3); color: var(--recovery); }
+  .sc-zone.dec   { background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.3); color: var(--deceptive); }
+  .sc-zone.dan   { background: rgba(239,68,68,.12);  border: 1px solid rgba(239,68,68,.3);  color: var(--danger); }
+  /* 2×2 matrix inside Stage C */
+  .sc-matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; max-width: 420px; }
+  .sc-matrix-cell {
+    border-radius: 7px; padding: 8px 10px; text-align: center;
+    font-size: 11px; font-weight: 600;
+  }
+  .sc-matrix-cell.safe { background: rgba(34,197,94,.15); color: var(--safe); }
+  .sc-matrix-cell.rec  { background: rgba(245,158,11,.15); color: var(--recovery); }
+  .sc-matrix-cell.dec  { background: rgba(249,115,22,.15); color: var(--deceptive); }
+  .sc-matrix-cell.dan  { background: rgba(239,68,68,.15);  color: var(--danger); }
+  .sc-matrix-sub { font-size: 10px; font-weight: 400; margin-top: 2px; opacity: .75; }
+  /* Step walkthrough */
+  .sc-steps { margin: 32px 0 0; display: flex; flex-direction: column; gap: 0; }
+  .sc-step  { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--border); }
+  .sc-step:last-child { border-bottom: none; }
+  .sc-step-num {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #fff;
+  }
+  .sc-step-body h4 { font-size: 14px; font-weight: 700; margin: 0 0 6px; color: var(--text); }
+  .sc-step-body p  { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 0; }
+  .sc-step-body code {
+    background: rgba(139,148,158,.12); padding: 1px 6px; border-radius: 4px;
+    font-family: var(--font-mono, monospace); font-size: 12px; color: var(--text);
+  }
+  .sig-tag {
+    display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px;
+    border-radius: 10px; margin: 1px 2px;
+  }
+  .sig-tag.w { background: rgba(34,197,94,.15);  color: var(--safe);      }
+  .sig-tag.t { background: rgba(245,158,11,.15); color: var(--recovery);  }
+  .sig-tag.d { background: rgba(239,68,68,.15);  color: var(--danger);    }
+  /* Worked example */
+  .we-wrap {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; margin-top: 32px;
+  }
+  .we-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--accent); margin-bottom: 18px;
+  }
+  .we-chain { display: flex; flex-direction: column; gap: 10px; }
+  .we-row {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 14px; border-radius: 8px; background: rgba(139,148,158,.05);
+  }
+  .we-label {
+    flex-shrink: 0; width: 90px; font-size: 11px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--text-dim); padding-top: 1px;
+  }
+  .we-val { font-size: 13px; color: var(--text); line-height: 1.55; }
+  .we-val code {
+    background: rgba(139,148,158,.12); padding: 1px 6px; border-radius: 4px;
+    font-family: var(--font-mono, monospace); font-size: 12px;
+  }
+  .we-result {
+    margin-top: 14px; padding: 14px 18px; border-radius: 9px;
+    background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.35);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .we-result-score { font-size: 36px; font-weight: 800; color: var(--danger); line-height: 1; }
+  .we-result-detail { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .we-result-detail strong { color: var(--danger); }
+  @media (max-width: 900px) {
+    .sc-row { flex-direction: column; align-items: center; }
+    .sc-block { max-width: 100%; }
+    .sc-zone-row { flex-direction: column; align-items: center; }
+    .sc-zone { max-width: 100%; }
   }
 </style>
 </head>
@@ -663,16 +896,19 @@
   <a href="#philosophy"><span class="nav-num">01</span> Core Philosophy</a>
   <a href="#zones"><span class="nav-num">02</span> Zone Framework</a>
   <a href="#zone-meanings"><span class="nav-num">03</span> Zone Meanings</a>
+  <a href="#score-pipeline" style="padding-left:36px; font-size:12.5px;"><span class="nav-num" style="font-size:10px;">3.1</span> Score Pipeline</a>
   <a href="#personalisation"><span class="nav-num">04</span> Personalisation</a>
-  <a href="#asymmetry-pop"><span class="nav-num">05A</span> Population Asymmetry</a>
-  <a href="#asymmetry-sd"><span class="nav-num">05B</span> SD-Based Asymmetry</a>
+  <a href="#asymmetry-pop"><span class="nav-num">04A</span> Population Asymmetry</a>
+  <a href="#asymmetry-sd"><span class="nav-num">04B</span> SD-Based Asymmetry</a>
   <div class="nav-section">Operations</div>
-  <a href="#temporal"><span class="nav-num">06</span> Temporal Fusion</a>
-  <a href="#temporal" style="padding-left:36px; font-size:12.5px;"><span class="nav-num" style="font-size:10px;">6.4</span> Signal Availability Matrix</a>
-  <a href="#cdss"><span class="nav-num">07</span> Clinical Decision Support</a>
-  <a href="#trajectory"><span class="nav-num">08</span> Zone Trajectory</a>
-  <a href="#practice"><span class="nav-num">09</span> Clinical Practice</a>
-  <a href="#implementation"><span class="nav-num">10</span> Implementation</a>
+  <a href="#temporal"><span class="nav-num">05</span> Temporal Fusion</a>
+  <a href="#temporal" style="padding-left:36px; font-size:12.5px;"><span class="nav-num" style="font-size:10px;">5.4</span> Signal Availability Matrix</a>
+  <a href="#cdss"><span class="nav-num">06</span> Clinical Decision Support</a>
+  <a href="#trajectory" style="padding-left:36px;font-size:12.5px;"><span class="nav-num" style="font-size:10px;">6.2</span> Zone Trajectory</a>
+
+  <div class="nav-section">Protocol</div>
+  <a href="#scan-protocol"><span class="nav-num">07A</span> Scan Protocol</a>
+  <a href="#tech-camera"><span class="nav-num">07B</span> Technical</a>
   <div class="nav-section">Evidence</div>
   <a href="#evidence"><span class="nav-num">A</span> Evidence Appendix</a>
 </nav>
@@ -907,11 +1143,228 @@
     </div>
   </div>
 
+  <!-- ── 3.1 Score Pipeline ── -->
+  <div id="score-pipeline">
+    <h3 style="margin-top:40px;">3.1 How the COMPASS Score Is Calculated</h3>
+    <p style="color:var(--text-muted);font-size:14px;line-height:1.6;margin-bottom:24px;">The following diagram traces the full pipeline from raw sensor inputs to a final COMPASS score and zone assignment. Each stage is described in detail in the step-by-step walkthrough below.</p>
+
+    <!-- Visual Pipeline -->
+    <div class="sc-pipeline">
+
+      <!-- Stage A -->
+      <div class="sc-stage">
+        <div class="sc-stage-label">Stage A — Raw Signal Inputs</div>
+        <div class="sc-row">
+          <div class="sc-block sc-wearable">
+            <div class="sc-block-title">Wearable Device</div>
+            <div class="sc-block-body">HRV, resting HR, sleep quality, ACWR — processed by upstream wearable API (e.g. SpikeAPI) into a single pre-normalised readiness score.</div>
+          </div>
+          <div class="sc-block sc-thermal">
+            <div class="sc-block-title">Thermography Camera</div>
+            <div class="sc-block-body">IR scan of contralateral body regions. TAI = <code>max(region deltas)</code> — the largest left/right temperature difference observed across all scanned zones.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-arrow"></div>
+
+      <!-- Stage B -->
+      <div class="sc-stage">
+        <div class="sc-stage-label">Stage B — Upstream Processing</div>
+        <div class="sc-row">
+          <div class="sc-block sc-wearable">
+            <div class="sc-block-title">R Score (0–100)</div>
+            <div class="sc-block-body">Received directly from wearable API. Reflects HRV trend, sleep debt, resting HR deviation, and training load ratio — all normalised to the individual's own baseline by the provider.</div>
+          </div>
+          <div class="sc-block sc-thermal">
+            <div class="sc-block-title">T Score (0–100)</div>
+            <div class="sc-block-body">
+              Population method: <code>T = min(100, TAI / 1.0 × 100)</code><br>
+              SD baseline method: <code>T = min(100, TAI_SD / 3.0 × 100)</code><br>
+              Higher T = more thermal asymmetry = greater tissue stress.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-arrow"></div>
+
+      <!-- Stage C -->
+      <div class="sc-stage">
+        <div class="sc-stage-label">Stage C — Zone Classification (2 × 2 Matrix)</div>
+        <div class="sc-matrix">
+          <div class="sc-matrix-cell safe">
+            Safe<div class="sc-matrix-sub">R ≥ 50, T &lt; 50</div>
+          </div>
+          <div class="sc-matrix-cell rec">
+            Recovery<div class="sc-matrix-sub">R &lt; 50, T &lt; 50</div>
+          </div>
+          <div class="sc-matrix-cell dec">
+            Deceptive<div class="sc-matrix-sub">R ≥ 50, T ≥ 50</div>
+          </div>
+          <div class="sc-matrix-cell dan">
+            Danger<div class="sc-matrix-sub">R &lt; 50, T ≥ 50</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-arrow"></div>
+
+      <!-- Stage D -->
+      <div class="sc-stage">
+        <div class="sc-stage-label">Stage D — COMPASS Scoring Engine</div>
+        <div class="sc-fusion">
+          <div class="sc-block-title">Fusion Formula</div>
+          <div class="sc-block-body">
+            <strong>Safe / Recovery zones (equal weight):</strong><br>
+            <code>Score = floor + 24 × (0.5 × R_dist + 0.5 × T_dist)</code><br><br>
+            <strong>Deceptive / Danger zones (thermal-weighted):</strong><br>
+            <code>Score = floor + 24 × (0.3 × R_dist + 0.7 × T_dist)</code><br><br>
+            Where <code>R_dist</code> and <code>T_dist</code> are normalised distances from the zone boundary (0–1). Zone floor values: Safe 76, Recovery 51, Deceptive 26, Danger 1.
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-arrow"></div>
+
+      <!-- Stage E -->
+      <div class="sc-stage">
+        <div class="sc-stage-label">Stage E — Output Zones</div>
+        <div class="sc-zone-row">
+          <div class="sc-zone safe">
+            <div class="sc-zone-name">Safe</div>
+            <div class="sc-zone-range">76 – 100</div>
+          </div>
+          <div class="sc-zone rec">
+            <div class="sc-zone-name">Recovery</div>
+            <div class="sc-zone-range">51 – 75</div>
+          </div>
+          <div class="sc-zone dec">
+            <div class="sc-zone-name">Deceptive</div>
+            <div class="sc-zone-range">26 – 50</div>
+          </div>
+          <div class="sc-zone dan">
+            <div class="sc-zone-name">Danger</div>
+            <div class="sc-zone-range">0 – 25</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /sc-pipeline -->
+
+    <!-- Step-by-Step Walkthrough -->
+    <h3 style="margin-top:40px;">Step-by-Step Walkthrough</h3>
+    <div class="sc-steps">
+
+      <div class="sc-step">
+        <div class="sc-step-num">1</div>
+        <div class="sc-step-body">
+          <h4>Collect raw signals</h4>
+          <p>The wearable device streams <span class="sig-tag w">HRV</span> <span class="sig-tag w">resting HR</span> <span class="sig-tag w">sleep quality</span> <span class="sig-tag w">ACWR</span> to the upstream API. The thermography camera captures a bilateral IR scan and returns <span class="sig-tag t">TAI</span> — the maximum contralateral delta across all scanned regions.</p>
+        </div>
+      </div>
+
+      <div class="sc-step">
+        <div class="sc-step-num">2</div>
+        <div class="sc-step-body">
+          <h4>Compute R and T scores</h4>
+          <p>The wearable API delivers a pre-normalised <span class="sig-tag w">R score (0–100)</span> — COMPASS does not perform any readiness modelling itself. The platform converts TAI to a <span class="sig-tag t">T score (0–100)</span> using either the population threshold method or the individual SD baseline method (preferred).</p>
+        </div>
+      </div>
+
+      <div class="sc-step">
+        <div class="sc-step-num">3</div>
+        <div class="sc-step-body">
+          <h4>Classify zone via 2 × 2 matrix</h4>
+          <p>R and T are each thresholded at 50. The combination of above/below determines which of the four zones applies: <code>R ≥ 50, T &lt; 50</code> → Safe; <code>R &lt; 50, T &lt; 50</code> → Recovery; <code>R ≥ 50, T ≥ 50</code> → <span class="sig-tag d">Deceptive</span>; <code>R &lt; 50, T ≥ 50</code> → <span class="sig-tag d">Danger</span>.</p>
+        </div>
+      </div>
+
+      <div class="sc-step">
+        <div class="sc-step-num">4</div>
+        <div class="sc-step-body">
+          <h4>Apply zone-specific weighting</h4>
+          <p>In Safe and Recovery zones the R and T contributions are equal (50/50). In Deceptive and Danger zones the thermal signal carries 70% of the within-zone score — reflecting the clinical reality that tissue stress is a more reliable injury predictor than perceived readiness when both signals conflict.</p>
+        </div>
+      </div>
+
+      <div class="sc-step">
+        <div class="sc-step-num">5</div>
+        <div class="sc-step-body">
+          <h4>Calculate final COMPASS score</h4>
+          <p>Each zone spans 25 points (floor to floor + 24). The weighted distances of R and T from their respective zone boundaries determine where within that 25-point band the athlete sits. The result is a single integer from 0–100 that encodes both zone identity and within-zone severity.</p>
+        </div>
+      </div>
+
+    </div><!-- /sc-steps -->
+
+    <!-- Worked Example -->
+    <div class="we-wrap">
+      <div class="we-title">Worked Example — Danger Zone</div>
+      <div class="we-chain">
+
+        <div class="we-row">
+          <div class="we-label">Raw inputs</div>
+          <div class="we-val">HRV −16% from baseline · Sleep 74% · Resting HR +5 bpm · ACWR 1.28</div>
+        </div>
+
+        <div class="we-row">
+          <div class="we-label">R Score</div>
+          <div class="we-val">Wearable API returns <code>R = 45</code> (below 50 → systemic fatigue confirmed)</div>
+        </div>
+
+        <div class="we-row">
+          <div class="we-label">Thermal scan</div>
+          <div class="we-val">Hamstring delta <code>0.70 °C</code> · Athlete's personal SD = <code>0.27 °C</code> · TAI_SD = <code>0.70 / 0.27 = 2.59 SD</code></div>
+        </div>
+
+        <div class="we-row">
+          <div class="we-label">T Score</div>
+          <div class="we-val"><code>T = min(100, 2.59 / 3.0 × 100) = min(100, 86.3) = <strong>86</strong></code> (above 50 → significant thermal asymmetry)</div>
+        </div>
+
+        <div class="we-row">
+          <div class="we-label">Zone</div>
+          <div class="we-val"><code>R = 45 &lt; 50</code> AND <code>T = 86 ≥ 50</code> → <strong>Danger Zone</strong> · Floor = 1 · Band width = 24</div>
+        </div>
+
+        <div class="we-row">
+          <div class="we-label">Distances</div>
+          <div class="we-val">
+            R distance from boundary: <code>(50 − 45) / 50 = 0.10</code><br>
+            T distance from boundary: <code>(86 − 50) / 50 = 0.72</code>
+          </div>
+        </div>
+
+        <div class="we-row">
+          <div class="we-label">Formula</div>
+          <div class="we-val">
+            <code>Score = 1 + 24 × (0.3 × 0.10 + 0.7 × 0.72)</code><br>
+            <code>= 1 + 24 × (0.030 + 0.504)</code><br>
+            <code>= 1 + 24 × 0.534</code><br>
+            <code>= 1 + 12.82 ≈ <strong>13</strong></code>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="we-result">
+        <div class="we-result-score">13</div>
+        <div class="we-result-detail">
+          <strong>Danger Zone</strong> — Score 13 / 100<br>
+          Systemic fatigue confirmed by wearable (R = 45). Hamstring asymmetry at 2.59 SD above personal baseline pulls the score deep into the Danger band. <strong>Mandatory clinical intervention required.</strong>
+        </div>
+      </div>
+
+    </div><!-- /we-wrap -->
+
+  </div><!-- /score-pipeline -->
+
 </section>
 
-<!-- ══ 5. Personalisation ══ -->
+<!-- ══ 4. Personalisation ══ -->
 <section id="personalisation">
-  <div class="section-label">Section 05</div>
+  <div class="section-label">Section 04</div>
   <h2>The Role of Personalisation</h2>
   <p class="section-intro">The readiness axis requires no baseline work from COMPASS — that is handled entirely by the wearable API provider. Personalisation within COMPASS is therefore focused exclusively on the thermal axis: establishing each athlete's individual thermal baseline so that asymmetry thresholds reflect what is elevated <em>for them</em>, not for the population.</p>
 
@@ -924,7 +1377,7 @@
   </div>
 
   <h3>Thermal Baseline Establishment</h3>
-  <p>Thermography baselines must be built within COMPASS because they are institution- and equipment-specific. A meaningful personal thermal baseline requires a minimum series of scans captured under consistent conditions.</p>
+  <p>Thermography baselines must be built within COMPASS because they are institution- and equipment-specific. A meaningful personal thermal baseline requires a minimum series of scans captured under consistent conditions — see <a href="#scan-protocol">Section 07A (Standardised Scan Protocol)</a> for the full specification.</p>
 
   <div class="stat-row">
     <div class="stat-box">
@@ -958,7 +1411,7 @@
 
 <!-- ══ 5A. Population-Based Asymmetry Framework ══ -->
 <section id="asymmetry-pop">
-  <div class="section-label">Section 05A</div>
+  <div class="section-label">Section 04A</div>
   <h2>Population-Based Asymmetry Classification</h2>
   <p class="section-intro">Applied when no individual thermal baseline has been established (fewer than 6 thermal scans). Thresholds are anchored to normative datasets of healthy athletes, using absolute temperature differences (°C) between contralateral body regions.</p>
 
@@ -966,7 +1419,7 @@
     <div class="alert-icon">👥</div>
     <div>
       <strong>When This Framework Applies</strong>
-      <p>Use population thresholds during the athlete onboarding window — before 6 thermal scans have been completed. All outputs are flagged as <em>"Population baseline active."</em> Once 6 scans are accumulated, the system transitions automatically to the SD-based individual model (Section 05B).</p>
+      <p>Use population thresholds during the athlete onboarding window — before 6 thermal scans have been completed. All outputs are flagged as <em>"Population baseline active."</em> Once 6 scans are accumulated, the system transitions automatically to the SD-based individual model (Section 04B).</p>
     </div>
   </div>
 
@@ -1080,9 +1533,9 @@
 
 <!-- ══ 5B. SD-Based Asymmetry Framework ══ -->
 <section id="asymmetry-sd">
-  <div class="section-label">Section 05B</div>
+  <div class="section-label">Section 04B</div>
   <h2>Individual Baseline SD Classification</h2>
-  <p class="section-intro">Applied once an athlete's personal thermal baseline is established (6 or more scans under standardised conditions). Each body region acquires a personal mean and SD from scan history. Subsequent readings are classified relative to this individual norm — a materially more sensitive and specific reference frame than population thresholds alone.</p>
+  <p class="section-intro">Applied once an athlete's personal thermal baseline is established (6 or more scans under <a href="#scan-protocol">standardised conditions (Section 07A)</a>). Each body region acquires a personal mean and SD from scan history. Subsequent readings are classified relative to this individual norm — a materially more sensitive and specific reference frame than population thresholds alone.</p>
 
   <div class="alert blue">
     <div class="alert-icon">🎯</div>
@@ -1251,15 +1704,61 @@
   <div class="insight">
     <p><strong>The Key Calibration Insight:</strong> The COMPASS 1.5 SD alert threshold corresponds to approximately 0.4°C in population terms — precisely the threshold at which Arnaiz-Lastras et al. (2019) triggered prevention protocols that reduced muscle injuries by 64%. This is not coincidental: both frameworks draw the prevention boundary at the same underlying physiological signal.</p>
   </div>
+
+  <h3>04B.1 — Thermal Risk Score (T Score) Calculation</h3>
+  <p>The Thermal Asymmetry Index (TAI) is converted to a normalised T Score (0–100) before entering the COMPASS fusion formula. This score represents the thermal risk axis of the two-axis matrix.</p>
+
+  <div class="alert blue" style="margin-bottom:20px;">
+    <div class="alert-icon">📐</div>
+    <div>
+      <strong>TAI Definition</strong>
+      <p>The Thermal Asymmetry Index is the <em>maximum contralateral left-right temperature delta</em> across all scanned body regions — i.e., the single worst-performing region drives the score. No averaging is applied; the highest asymmetry value is used as the input.</p>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Phase</th>
+        <th>Condition</th>
+        <th>Formula</th>
+        <th>Zone Crossing at T = 50</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Population Baseline</strong></td>
+        <td>&lt; 6 scans completed</td>
+        <td><code>T = min(100, (TAI°C / 1.0) × 100)</code></td>
+        <td>0.5°C → T 50 · 1.0°C → T 100</td>
+      </tr>
+      <tr>
+        <td><strong>Individual SD Baseline</strong></td>
+        <td>≥ 6 scans completed</td>
+        <td><code>T = min(100, (TAI<sub>SD</sub> / 3.0) × 100)</code></td>
+        <td>1.5 SD → T 50 · 3.0 SD → T 100</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Both formulas produce T = 50 at the Framework Alignment table's zone-crossing point (0.5°C / 1.5 SD). The transition at scan 6 is seamless: there is no step-change in classification because both scales are calibrated to the same physiological boundary. From scan 6 onward, the individual SD baseline takes precedence; the population formula is retired for that athlete.</p>
+
+  <div class="alert blue">
+    <div class="alert-icon">🔄</div>
+    <div>
+      <strong>Transition Behaviour at Scan 6</strong>
+      <p>At exactly scan 6, both methods are computed in parallel and the individual SD result takes precedence. For athletes whose personal SD closely matches the population average (~0.27°C), the switch produces no perceptible change in zone assignment. For athletes with atypically high or low thermal variability, the individual baseline will produce a more accurate — and typically lower — T Score.</p>
+    </div>
+  </div>
 </section>
 
-<!-- ══ 6. Temporal Fusion ══ -->
+<!-- ══ 5. Temporal Fusion ══ -->
 <section id="temporal">
-  <div class="section-label">Section 06</div>
+  <div class="section-label">Section 05</div>
   <h2>Temporal Fusion Strategy</h2>
   <p class="section-intro">The two data streams operate on fundamentally different timescales. The framework explicitly models this asymmetry rather than engineering around it.</p>
 
-  <h3>6.1 Thermal Prior Decay</h3>
+  <h3>5.1 Thermal Prior Decay</h3>
   <p>The most recent thermography assessment acts as a persistent <em>contextual prior</em> that modifies the wearable-based readiness signal on a day-by-day basis. The weight applied to this prior decays as time since the last scan increases. A single uniform half-life of 7 days applies regardless of zone — this keeps the model simple, auditable, and easy to explain to clinical staff.</p>
 
   <div class="alert blue" style="margin-bottom: 20px;">
@@ -1292,7 +1791,7 @@
     <canvas id="decayChart"></canvas>
   </div>
 
-  <h3>6.2 Scan Frequency Recommendations</h3>
+  <h3>5.2 Scan Frequency Recommendations</h3>
   <p>The zone in which an athlete is currently classified directly determines how soon the next thermography assessment is scheduled.</p>
 
   <table class="data-table">
@@ -1340,7 +1839,7 @@
     </div>
   </div>
 
-  <h3>6.3 Handling Wearable Data Gaps</h3>
+  <h3>5.3 Handling Wearable Data Gaps</h3>
   <p>Unlike thermography (which decays gracefully), wearable data gaps require suspension — not downweighting. HRV from several days ago carries no reliable predictive weight for today's readiness.</p>
 
   <div class="alert green">
@@ -1359,7 +1858,7 @@
     </div>
   </div>
 
-  <h3>6.4 Signal Availability Matrix</h3>
+  <h3>5.4 Signal Availability Matrix</h3>
   <p>The four possible combinations of data availability each produce a different system behaviour. This matrix defines explicitly what COMPASS does — and what it does not claim — in each state, ensuring no zone classification is ever issued with more confidence than the data warrants.</p>
 
   <!-- Signal Availability Matrix -->
@@ -1478,77 +1977,235 @@
 
 </section>
 
-<!-- ══ 7. CDSS ══ -->
+<!-- ══ 6. CDSS ══ -->
 <section id="cdss">
-  <div class="section-label">Section 07</div>
+  <div class="section-label">Section 06</div>
   <h2>Clinical Decision Support System</h2>
-  <p class="section-intro">The CDSS translates zone classifications into outputs practitioners can act on, across three distinct time horizons.</p>
+  <p class="section-intro">The CDSS translates COMPASS zone classifications into practitioner-ready outputs across three time horizons, and powers the <strong>Multimodal Reasoning Engine</strong> — an AI assistant that generates auditable explanations and tailored intervention plans for every assessment.</p>
 
-  <h3>7.1 Daily Output — Traffic Light System</h3>
-  <p>Each morning, the system generates a traffic-light classification incorporating overnight wearable data and the current weighted thermal prior.</p>
-
-  <div class="traffic-grid">
-    <div class="traffic-card">
-      <div class="traffic-light green">🟢</div>
-      <h4>Green — Safe Zone</h4>
-      <p>Both signals confirm readiness. Full training load appropriate. No clinical intervention indicated.</p>
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val">2</div>
+      <div class="stat-label">AI Outputs<br><span style="font-size:11px;color:var(--text-dim);">Explanation + Plan</span></div>
     </div>
-    <div class="traffic-card">
-      <div class="traffic-light amber">🟡</div>
-      <h4>Amber — Recovery Zone</h4>
-      <p>HRV suppressed, no thermal alert. Reduce volume or intensity. General recovery protocol.</p>
+    <div class="stat-box">
+      <div class="stat-val">9+</div>
+      <div class="stat-label">Context Inputs<br><span style="font-size:11px;color:var(--text-dim);">Signals &amp; metadata</span></div>
     </div>
-    <div class="traffic-card">
-      <div class="traffic-light amber-hot">🟠</div>
-      <h4>Amber — Deceptive Readiness</h4>
-      <p>Readiness normal, thermal alert active. Modified loading; region-specific soft tissue assessment. Do NOT increase intensity.</p>
+    <div class="stat-box">
+      <div class="stat-val">4</div>
+      <div class="stat-label">Reasoning Paths<br><span style="font-size:11px;color:var(--text-dim);">One per COMPASS zone</span></div>
     </div>
-    <div class="traffic-card">
-      <div class="traffic-light red">🔴</div>
-      <h4>Red — Danger Zone</h4>
-      <p>Both signals alarming. Rest or mandatory clinical review. Not overridable — requires documented practitioner response.</p>
-    </div>
-  </div>
-
-  <div class="insight">
-    <p><strong>Why Amber Is Not a Single State:</strong> Conventional monitoring systems collapse Recovery Zone and Deceptive Readiness Zone into one amber. This destroys the most important clinical distinction the framework makes. An athlete in Recovery Zone amber needs rest. An athlete in Deceptive Readiness Zone amber needs region-specific soft tissue assessment — the systemic readiness signal is actively misleading.</p>
-  </div>
-
-  <h3>7.2 Rule-Based Physiotherapy Triggers</h3>
-
-  <div class="alert orange">
-    <div class="alert-icon">⚡</div>
-    <div>
-      <strong>Trigger: Soft Tissue Assessment</strong>
-      <p>Thermal asymmetry index for any single region exceeds 1.5 SD above personal thermal baseline AND ACWR is above 1.3 → generate a soft tissue assessment recommendation for that specific region.</p>
-    </div>
-  </div>
-
-  <div class="alert red">
-    <div class="alert-icon">🏥</div>
-    <div>
-      <strong>Trigger: Medical Review</strong>
-      <p>Athlete has been in Danger Zone for more than 5 consecutive days without improvement in either sub-score → generate mandatory medical review recommendation.</p>
+    <div class="stat-box">
+      <div class="stat-val">100%</div>
+      <div class="stat-label">Auditable<br><span style="font-size:11px;color:var(--text-dim);">Named-signal traceability</span></div>
     </div>
   </div>
 
   <div class="alert blue">
-    <div class="alert-icon">📅</div>
+    <div class="alert-icon">🤖</div>
     <div>
-      <strong>Trigger: Scan Overdue</strong>
-      <p>Thermal prior decay falls below minimum meaningful threshold and athlete is not in Safe Zone → escalating scan overdue alert. Classifications after this threshold flagged as "wearable signal only — thermal context unavailable."</p>
+      <strong>Reasoning Engine Position in Pipeline</strong>
+      <p>The Multimodal Reasoning Engine receives the fully computed <code>compass_assessment</code> object as a read-only input. It cannot alter COMPASS scores, zone assignments, or thresholds. All zone-classification logic remains deterministic and governed by Sections 02–04B. The engine's sole function is to <em>explain</em> and <em>recommend</em> based on that output.</p>
     </div>
   </div>
 
-  <h3>7.3 Design Principle: Transparency & Explainability</h3>
-  <p>Every output generated by the system must include an explanation of which signals drove it and why. Machine learning models that generate black-box predictions are not appropriate for the recommendation layer — even if they demonstrate strong predictive accuracy in isolation.</p>
+  <div class="pf">
 
-</section>
+    <!-- Stage 01: Data Inputs -->
+    <div class="pf-stage-tag">Stage 01 — Data Inputs</div>
+    <div class="pf-row">
+      <div class="pf-block pf-wearables">
+        <div class="pf-title">Wearables</div>
+        <div class="pf-sub">Biometric stream</div>
+        <ul class="pf-list">
+          <li>HRV — heart rate variability</li>
+          <li>Sleep quality &amp; duration</li>
+          <li>Resting heart rate</li>
+          <li>ACWR — acute:chronic workload ratio</li>
+        </ul>
+      </div>
+      <div class="pf-block pf-thermography">
+        <div class="pf-title">Thermography</div>
+        <div class="pf-sub">IR camera scan</div>
+        <ul class="pf-list">
+          <li>Bilateral surface temperature scan</li>
+          <li>Contralateral temperature delta (%)</li>
+          <li>Region-specific asymmetry flags</li>
+          <li>Population threshold or individual SD baseline</li>
+        </ul>
+      </div>
+    </div>
 
-<!-- ══ 8. Trajectory ══ -->
-<section id="trajectory">
-  <div class="section-label">Section 08</div>
-  <h2>Zone Trajectory: Movement Matters</h2>
+    <div class="pf-sep"></div>
+
+    <!-- Stage 02: Signal Computation -->
+    <div class="pf-stage-tag">Stage 02 — Signal Computation</div>
+    <div class="pf-row">
+      <div class="pf-block pf-systemic">
+        <div class="pf-score-num">0–100</div>
+        <div>
+          <div class="pf-title">Systemic Readiness Score</div>
+          <div class="pf-note">Full-body fatigue / recovery state derived from wearable signals</div>
+        </div>
+      </div>
+      <div class="pf-block pf-thermal">
+        <div class="pf-score-num">L/R&nbsp;Δ%</div>
+        <div>
+          <div class="pf-title">Thermal Asymmetry Index</div>
+          <div class="pf-note">Contralateral tissue inflammation or local stress indicator</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf-sep"></div>
+
+    <!-- Stage 03: COMPASS Fusion -->
+    <div class="pf-stage-tag">Stage 03 — COMPASS Fusion</div>
+    <div class="pf-row pf-center">
+      <div class="pf-block pf-fusion">
+        <div class="pf-title">COMPASS Scoring Engine</div>
+        <div class="pf-fusion-score">0 – 100</div>
+        <div class="pf-note">Two-axis matrix &nbsp;·&nbsp; Deterministic classification &nbsp;·&nbsp; Zone assignment output</div>
+      </div>
+    </div>
+
+    <div class="pf-sep"></div>
+
+    <!-- Stage 04: Zone Classification -->
+    <div class="pf-stage-tag">Stage 04 — Zone Classification</div>
+    <div class="pf-row pf-zones">
+      <div class="pf-zone safe">
+        <div class="pf-zone-range">76–100</div>
+        <div class="pf-zone-name">Safe</div>
+        <div class="pf-zone-sig">Systemic ready<br>Thermal clear</div>
+        <div class="pf-zone-pills">
+          <div class="pf-zone-pill">Load: Unrestricted</div>
+          <div class="pf-zone-pill">Scan: 7–10 days</div>
+          <div class="pf-zone-pill">Physio: Elective</div>
+        </div>
+      </div>
+      <div class="pf-zone recovery">
+        <div class="pf-zone-range">51–75</div>
+        <div class="pf-zone-name">Recovery</div>
+        <div class="pf-zone-sig">Systemic fatigued<br>Thermal clear</div>
+        <div class="pf-zone-pills">
+          <div class="pf-zone-pill">Load: Reduced</div>
+          <div class="pf-zone-pill">Scan: 5–7 days</div>
+          <div class="pf-zone-pill">Physio: Optional</div>
+        </div>
+      </div>
+      <div class="pf-zone deceptive">
+        <div class="pf-zone-range">26–50</div>
+        <div class="pf-zone-name">Deceptive</div>
+        <div class="pf-zone-sig">Systemic ready<br>Thermal inflamed</div>
+        <div class="pf-zone-pills">
+          <div class="pf-zone-pill">Load: Conservative</div>
+          <div class="pf-zone-pill">Scan: 3–5 days</div>
+          <div class="pf-zone-pill">Physio: Mandatory</div>
+        </div>
+      </div>
+      <div class="pf-zone danger">
+        <div class="pf-zone-range">0–25</div>
+        <div class="pf-zone-name">Danger</div>
+        <div class="pf-zone-sig">Systemic fatigued<br>Thermal inflamed</div>
+        <div class="pf-zone-pills">
+          <div class="pf-zone-pill">Load: Mandatory Stop</div>
+          <div class="pf-zone-pill">Scan: 2–3 days</div>
+          <div class="pf-zone-pill">Physio: Urgent</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf-sep"></div>
+
+    <!-- Stage 05: Reasoning Engine -->
+    <div class="pf-stage-tag">Stage 05 — AI Reasoning</div>
+    <div class="pf-row pf-center">
+      <div class="pf-block pf-engine">
+        <div class="pf-engine-badge">AI Layer · Read-only</div>
+        <div class="pf-title">Multimodal Reasoning Engine</div>
+        <div class="pf-note">Receives <code>compass_assessment</code> as read-only input &nbsp;·&nbsp; Cannot modify zones, scores, or thresholds &nbsp;·&nbsp; Sole function: explain and recommend</div>
+      </div>
+    </div>
+
+    <div class="pf-sep"></div>
+
+    <!-- Stage 06: Outputs -->
+    <div class="pf-stage-tag">Stage 06 — Practitioner Outputs</div>
+    <div class="pf-row">
+      <div class="pf-block pf-output">
+        <div class="pf-title">Verbose Explanation</div>
+        <div class="pf-note">Auditable reasoning chain for every assessment</div>
+      </div>
+      <div class="pf-block pf-output">
+        <div class="pf-title">Intervention Plan</div>
+        <div class="pf-note">Phase 1 Acute &nbsp;·&nbsp; Phase 2 Progressive &nbsp;·&nbsp; Threshold-gated progression</div>
+      </div>
+      <div class="pf-block pf-output">
+        <div class="pf-title">Reassessment Triggers</div>
+        <div class="pf-note">Named signal thresholds &nbsp;·&nbsp; Rule-based escalation</div>
+      </div>
+    </div>
+
+  </div>
+
+  <h3>6.1 — Zone Action Guide</h3>
+  <p>Each morning the system issues a zone classification and an AI-generated action plan. Each zone has a fixed traffic-light signal, a characteristic signal profile, and a corresponding intervention type.</p>
+
+  <div class="zone-grid">
+    <div class="zone-card safe">
+      <div class="zone-badge">Safe · 76–100</div>
+      <h4>🟢 Safe Zone</h4>
+      <p style="font-size:13px;color:var(--text-dim);margin:0 0 10px;"><strong style="color:var(--text);">Signals:</strong> Systemic readiness clear · Thermal asymmetry clear</p>
+      <p style="font-size:13.5px;margin:0 0 12px;"><strong>Plan:</strong> Maintenance + Monitoring. Full training load permitted. Engine reinforces behaviours sustaining Safe status and sets next scan cadence.</p>
+      <div class="zone-signals">
+        <span>Scan: 7–10 days</span>
+        <span>Load: Unrestricted</span>
+        <span>Physio: Elective</span>
+      </div>
+    </div>
+    <div class="zone-card recovery">
+      <div class="zone-badge">Recovery · 51–75</div>
+      <h4>🟡 Recovery Zone</h4>
+      <p style="font-size:13px;color:var(--text-dim);margin:0 0 10px;"><strong style="color:var(--text);">Signals:</strong> Systemic fatigued (HRV suppressed) · Thermal clear</p>
+      <p style="font-size:13.5px;margin:0 0 12px;"><strong>Plan:</strong> Workout Modification. Engine produces a volume-reduced training plan with ACWR targets, active recovery modalities, and sleep/HRV optimisation guidance.</p>
+      <div class="zone-signals">
+        <span>Scan: 5–7 days</span>
+        <span>Load: Reduced</span>
+        <span>Physio: Optional</span>
+      </div>
+    </div>
+    <div class="zone-card deceptive">
+      <div class="zone-badge">Deceptive · 26–50</div>
+      <h4>🟠 Deceptive Readiness</h4>
+      <p style="font-size:13px;color:var(--text-dim);margin:0 0 10px;"><strong style="color:var(--text);">Signals:</strong> Systemic ready · Thermal inflamed — athlete feels ready, tissue is stressed</p>
+      <p style="font-size:13.5px;margin:0 0 12px;"><strong>Plan:</strong> Physio (Primary) + Load Modification. Physiotherapy assessment is mandatory before any intensity increase. Engine targets flagged regions with a conservative load plan.</p>
+      <div class="zone-signals">
+        <span>Scan: 3–5 days</span>
+        <span>Load: Conservative</span>
+        <span>Physio: Mandatory</span>
+      </div>
+    </div>
+    <div class="zone-card danger">
+      <div class="zone-badge">Danger · 0–25</div>
+      <h4>🔴 Danger Zone</h4>
+      <p style="font-size:13px;color:var(--text-dim);margin:0 0 10px;"><strong style="color:var(--text);">Signals:</strong> Systemic fatigued · Thermal inflamed — both axes critical</p>
+      <p style="font-size:13.5px;margin:0 0 12px;"><strong>Plan:</strong> Combined Plan + Mandatory Clinical Review. Engine generates a full physio + systemic recovery plan and raises a clinical review flag. No load plan is issued until a clinician clears the trigger.</p>
+      <div class="zone-signals">
+        <span>Scan: 2–3 days</span>
+        <span>Load: Mandatory Stop</span>
+        <span>Physio: Urgent</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <p><strong>Why 🟠 and 🟡 Amber Are Not the Same:</strong> Conventional systems collapse Recovery and Deceptive Readiness into a single amber. Recovery needs rest — Deceptive Readiness needs urgent region-specific physio. The systemic readiness signal is actively misleading in the Deceptive zone; acting on it without thermal context is the primary injury-risk scenario this framework is designed to prevent.</p>
+  </div>
+
+  <div class="section-label" style="margin-top:48px;">Section 6.2</div>
+  <h3 id="trajectory">Zone Trajectory: Movement Matters</h3>
   <p class="section-intro">A single zone reading is a snapshot. What drives clinical urgency is movement: the rate and direction of change on each axis is as important as the current position.</p>
 
   <div class="chart-wrap">
@@ -1559,47 +2216,419 @@
   <div class="insight">
     <p><strong>The Clinical Question Is Not "Where Are They?" But "Where Are They Going?"</strong> Zone position tells you what to do today. Zone trajectory tells you how urgently to do it, and whether the current clinical strategy is working. Both views are essential for effective athlete management.</p>
   </div>
+
 </section>
 
-<!-- ══ 9. Clinical Practice ══ -->
-<section id="practice">
-  <div class="section-label">Section 09</div>
-  <h2>How This Guides Clinical Practice</h2>
-  <p class="section-intro">The zone framework translates directly into clinical action. Each zone carries a clear training decision, a physiotherapy response, and a monitoring protocol.</p>
+<!-- ══ 7A. Standardised Scan Protocol ══ -->
+<section id="scan-protocol">
+  <div class="section-label">Section 07A</div>
+  <h2>Standardised Scan Protocol</h2>
+  <p class="section-intro">The asymmetry thresholds defined in Sections 04A and 04B are only valid when scans are acquired under controlled, reproducible conditions. This section defines the mandatory environmental, preparation, timing, and technical parameters for every COMPASS thermography session.</p>
 
-  <table class="data-table">
+  <div class="alert blue">
+    <div class="alert-icon">🌡️</div>
+    <div>
+      <strong>Why Standardised Conditions Are Non-Negotiable</strong>
+      <p>Skin surface temperature is exquisitely sensitive to environmental and physiological perturbation. A single unconditioned variable — a draughty room, a scan taken 30 minutes post-exercise, residual massage oil on the skin — can shift regional skin temperature by 0.5–1.5°C. At the 1.5 SD alert threshold (≈ 0.4°C), such artefacts would produce false positives indistinguishable from genuine tissue stress, or suppress a genuine signal entirely. Consistent protocol is not administrative hygiene — it is the validity condition on which all downstream COMPASS classifications depend.</p>
+    </div>
+  </div>
+
+  <h3>Environmental Conditions</h3>
+  <p>The scan room must meet all of the following environmental criteria before any athlete enters. Log actual room temperature and humidity at the start of each session. Parameters follow IACT Guidelines and TISEM Delphi Expert Consensus (2017).</p>
+
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val">20–24°C</div>
+      <div class="stat-label">Room Temperature<br>±1°C stability during session</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">40–60%</div>
+      <div class="stat-label">Relative Humidity<br>RH — stable during session</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">0</div>
+      <div class="stat-label">Fans / Air Vents<br>directed at subject</div>
+    </div>
+  </div>
+
+  <table class="data-table" style="margin-top:12px;">
     <thead>
       <tr>
-        <th>Zone</th>
-        <th>Training Decision</th>
-        <th>Physiotherapy Action</th>
-        <th>Monitoring</th>
+        <th>Environmental Factor</th>
+        <th>Requirement</th>
+        <th>Rationale</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--safe)"></span><strong>Safe Zone</strong></span></td>
-        <td>Full training. No intervention.</td>
-        <td>None.</td>
-        <td>Confirm at next scheduled scan.</td>
+        <td>Room temperature</td>
+        <td>20–24°C, stable within ±1°C</td>
+        <td>Outside this range, peripheral vasoconstriction or vasodilation masks genuine asymmetries. The body's thermoregulatory response to cold or heat dominates the thermal signal.</td>
       </tr>
       <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--recovery)"></span><strong>Recovery Zone</strong></span></td>
-        <td>Reduce load volume or intensity.</td>
-        <td>General recovery: sleep, nutrition, rest.</td>
-        <td>Continue wearable monitoring daily.</td>
+        <td>Relative humidity</td>
+        <td>40–60% RH</td>
+        <td>Humidity affects evaporative cooling from the skin surface, creating artefactual spatial temperature gradients if outside range.</td>
       </tr>
       <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--deceptive)"></span><strong>Deceptive Readiness</strong></span></td>
-        <td>Pull back from full load despite readiness signal.</td>
-        <td>Region-specific soft tissue assessment for flagged area.</td>
-        <td>Increase scan frequency. Monitor asymmetry trend closely.</td>
+        <td>Air movement</td>
+        <td>No fans, air conditioning vents, or open windows directed at the subject</td>
+        <td>Forced convection causes localised evaporative cooling, producing false cold asymmetries in exposed skin. Room AC is acceptable if not directed at the athlete.</td>
       </tr>
       <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--danger)"></span><strong>Danger Zone</strong></span></td>
-        <td>Mandatory load reduction. Clinical review.</td>
-        <td>Targeted physiotherapy + medical assessment of flagged region.</td>
-        <td>Daily wearable review. Re-scan within 3–4 days.</td>
+        <td>Radiant heat sources</td>
+        <td>No direct sunlight, heaters, or radiant panels on subject</td>
+        <td>Radiant sources create spatial heating artefacts that cannot be distinguished from physiological thermal emission.</td>
+      </tr>
+      <tr>
+        <td>Room equilibration</td>
+        <td>Room conditions stable for ≥ 30 min before first scan</td>
+        <td>Prevents thermal gradients from recent environmental changes (e.g., door left open, HVAC cycling) from affecting early scans.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Athlete Acclimatisation</h3>
+  <p>Acclimatisation requirements depend on the scan view. For <strong>anterior scans</strong>, research shows no significant thermal asymmetry differences across any lower-limb region regardless of acclimatisation time — athletes may be scanned immediately. For <strong>posterior scans</strong>, the athlete must stand for <strong>5–10 minutes</strong> before imaging: seated rest compresses the posterior thigh against the chair, suppressing hamstring perfusion and creating a positional thermal artefact that resolves only in the standing position. <em>(Fernández-Cuevas et al., ThermoHuman, J. Thermal Analysis &amp; Calorimetry 149:9343, 2024; TISEM Delphi 2017; Marins et al., 2014)</em></p>
+
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val">None</div>
+      <div class="stat-label">Anterior Scans<br>(no acclimatisation required)</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">5–10 min standing</div>
+      <div class="stat-label">Posterior Scans<br>(resolves seated compression artefact)</div>
+    </div>
+  </div>
+
+  <div class="alert orange" style="margin-top:16px;">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <strong>Posterior Thigh Note</strong>
+      <p>Seated rest causes vascular compression of the posterior thigh against the chair, suppressing hamstring perfusion and producing thermal asymmetry artefacts. Hamstrings are the <strong>only lower-limb region</strong> where acclimatisation significantly affects asymmetry readings; all other posterior regions (calves, Achilles, popliteal) show no significant differences across timepoints <em>(Fernández-Cuevas et al., 2024)</em>. For all posterior scans, the athlete must <strong>stand</strong> (or lie prone) for 5–10 minutes before imaging. This fully resolves the compression artefact; longer standing periods offer no additional benefit.</p>
+    </div>
+  </div>
+
+  <h3>Athlete Preparation</h3>
+  <p>Preparation requirements apply from the morning of the scan day unless a specific time restriction is stated.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Preparation Factor</th>
+        <th>Requirement</th>
+        <th>Rationale</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Clothing</td>
+        <td>Lycra shorts or minimal underwear; all target regions fully uncovered</td>
+        <td>Clothing causes compression artefacts and traps heat. Avoid loose fabric that may move and create pattern artefacts during scanning.</td>
+      </tr>
+      <tr>
+        <td>Lotions and creams</td>
+        <td>None on scan day — no moisturisers, massage oils, liniments, analgesic gels, or sunscreen</td>
+        <td>Topical products alter local emissivity and modify evaporative cooling, producing regions of false asymmetry.</td>
+      </tr>
+      <tr>
+        <td>Deodorant / antiperspirant</td>
+        <td>None on scan day if axilla or upper arm is a region of interest</td>
+        <td>Aluminium-based antiperspirants block sweat glands, suppressing evaporative cooling and elevating local skin temperature artificially.</td>
+      </tr>
+      <tr>
+        <td>Kinesiology tape / strapping</td>
+        <td>Remove ≥ 30 minutes before scan; allow skin impression to resolve</td>
+        <td>Tape application compresses the skin microcirculation. Skin indentation from adhesive continues to influence local temperature for 15–30 minutes after removal.</td>
+      </tr>
+      <tr>
+        <td>Sunburn</td>
+        <td>Reschedule if active sunburn present on any region of interest</td>
+        <td>Sunburn produces severe localised hyperthermia that invalidates asymmetry readings for the affected region. Scanning over sunburned skin is non-diagnostic.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Pre-Scan Restrictions</h3>
+  <p>Athletes must observe the following restrictions prior to each scan session. Document compliance as part of the session record.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Factor</th>
+        <th>Minimum Restriction Window</th>
+        <th>Rationale</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Vigorous exercise (training, match play)</td>
+        <td><strong>≥ 24 hours</strong></td>
+        <td>Exercise-induced skin temperature changes persist for hours. Reliable asymmetry readings require full thermoregulatory recovery. See Timing section below.</td>
+      </tr>
+      <tr>
+        <td>Light activity (walking, gentle stretching)</td>
+        <td><strong>≥ 2 hours</strong></td>
+        <td>Even low-intensity movement elevates peripheral temperature and alters regional distribution. Acclimatisation cannot compensate for recent activity.</td>
+      </tr>
+      <tr>
+        <td>Caffeine, nicotine</td>
+        <td><strong>≥ 4 hours</strong></td>
+        <td>Both are vasoconstrictors that reduce peripheral skin temperature and suppress regional thermal gradients, potentially masking genuine asymmetries.</td>
+      </tr>
+      <tr>
+        <td>Alcohol</td>
+        <td><strong>≥ 4 hours</strong> (24 hours preferred)</td>
+        <td>Alcohol is a potent peripheral vasodilator. Even moderate intake produces global skin temperature elevation that compresses asymmetry values toward zero.</td>
+      </tr>
+      <tr>
+        <td>Hot or cold beverages</td>
+        <td><strong>≥ 1–2 hours</strong></td>
+        <td>Core temperature changes from beverages are reflected in skin temperature within 30–60 minutes. Anterior trunk readings are most sensitive to this effect.</td>
+      </tr>
+      <tr>
+        <td>Large meal</td>
+        <td><strong>≥ 2 hours</strong></td>
+        <td>Postprandial thermic effect and visceral blood flow shift can alter trunk and abdominal skin temperatures. Light snacks are acceptable.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Scan Timing Relative to Exercise</h3>
+  <p><strong>The preferred scan window is before that day's training session.</strong> Pre-training scanning eliminates exercise-induced thermal artefacts entirely, produces the most stable baseline readings, and ensures scans are not lost to scheduling conflicts after a session. Always aim to scan at the same time of day relative to training.</p>
+
+  <div class="alert blue" style="margin-bottom:16px;">
+    <div class="alert-icon">📋</div>
+    <div>
+      <strong>Post-Exercise Thermal Response</strong>
+      <p>Skin temperature does not simply remain elevated after exercise. It follows a biphasic pattern: an initial drop in the first 0–15 minutes (vasoconstriction during cool-down), followed by a prolonged rebound rise that can persist for several hours as inflammatory and perfusion responses evolve. This dynamic, non-monotonic response means there is no reliable post-exercise window for valid asymmetry assessment below 24 hours. Post-exercise scans should be avoided for diagnostic purposes. <em>(Masur et al., Frontiers systematic review, 2024)</em></p>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Timing Scenario</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Before training — preferred window</td>
+        <td><span style="color:var(--safe); font-weight:700;">✅ Preferred</span></td>
+        <td>Lowest artefact risk. Consistently captures the athlete's resting thermal state. Recommended as the standard protocol window.</td>
+      </tr>
+      <tr>
+        <td>≥ 24 hours after vigorous exercise</td>
+        <td><span style="color:var(--safe); font-weight:700;">✅ Acceptable</span></td>
+        <td>Full thermoregulatory recovery. Diagnostic-quality scan achievable. Document time since last vigorous exercise in session record.</td>
+      </tr>
+      <tr>
+        <td>2–23 hours after vigorous exercise</td>
+        <td><span style="color:var(--recovery); font-weight:700;">⚠️ Compromised</span></td>
+        <td>Residual post-exercise thermal signal present. Scan will reflect a mixture of exercise response and underlying tissue state. Avoid for diagnostic purposes; use only for trend monitoring with explicit flag in report.</td>
+      </tr>
+      <tr>
+        <td>0–2 hours after vigorous exercise</td>
+        <td><span style="color:var(--danger); font-weight:700;">❌ Invalid</span></td>
+        <td>Acute exercise response dominates thermal image. Asymmetry readings non-diagnostic. Do not use for COMPASS classification.</td>
+      </tr>
+      <tr>
+        <td>≥ 2 hours after light activity only</td>
+        <td><span style="color:var(--safe); font-weight:700;">✅ Acceptable</span></td>
+        <td>Sufficient recovery for light-activity athletes. Confirm no vigorous activity in prior 24 hours.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Scan Timing Relative to Physiotherapy &amp; Recovery Treatments</h3>
+  <p>All hands-on treatments and recovery modalities must be separated from thermography by a minimum of 24 hours. There are no exceptions — any treatment that directly manipulates skin temperature, circulation, or soft tissue is incompatible with same-day scanning.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Treatment / Modality</th>
+        <th>Minimum Wait</th>
+        <th>Rationale</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Massage, soft tissue therapy, manual therapy</td>
+        <td><strong>24 hours</strong></td>
+        <td>Mechanical stimulation increases local perfusion and skin temperature. Effects persist for many hours post-treatment.</td>
+      </tr>
+      <tr>
+        <td>Therapeutic ultrasound</td>
+        <td><strong>24 hours</strong></td>
+        <td>Deep tissue heating from ultrasound is reflected in surface temperature for several hours.</td>
+      </tr>
+      <tr>
+        <td>TENS / EMS (electrostimulation)</td>
+        <td><strong>24 hours</strong></td>
+        <td>Electrical stimulation produces localised muscle activation and skin electrode contact artefacts.</td>
+      </tr>
+      <tr>
+        <td>Dry needling / acupuncture</td>
+        <td><strong>24 hours</strong></td>
+        <td>Needle insertion provokes a local inflammatory and vasodilatory response that persists well beyond the session.</td>
+      </tr>
+      <tr>
+        <td>Heat packs, infrared, diathermy</td>
+        <td><strong>24 hours</strong></td>
+        <td>Direct thermal input invalidates surface temperature readings for the treated region.</td>
+      </tr>
+      <tr>
+        <td>Ice packs, cryotherapy, cold spray</td>
+        <td><strong>24 hours</strong></td>
+        <td>Prolonged vasoconstriction and rebound hyperaemia following cold application persist for hours.</td>
+      </tr>
+      <tr>
+        <td>Ice bath / cold water immersion (CWI)</td>
+        <td><strong>24 hours</strong></td>
+        <td>Whole-body cold exposure causes systemic thermoregulatory responses that persist for many hours.</td>
+      </tr>
+      <tr>
+        <td>Hydrotherapy (warm/contrast pools)</td>
+        <td><strong>24 hours</strong></td>
+        <td>Water temperature and hydrostatic pressure alter regional skin perfusion patterns bilaterally.</td>
+      </tr>
+      <tr>
+        <td>Sauna / steam room</td>
+        <td><strong>24 hours</strong></td>
+        <td>Systemic vasodilation from heat exposure masks asymmetry patterns across all body regions.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Time of Day</h3>
+  <p>Skin temperature follows a circadian rhythm, rising through the morning and plateauing in the afternoon. The difference between peak and trough is approximately 1°C — more than twice the COMPASS alert threshold. Intra-athlete comparisons must always be made between scans taken at the same time of day. <em>(ScienceDirect, 2015)</em></p>
+
+  <div class="alert blue">
+    <div class="alert-icon">🕐</div>
+    <div>
+      <strong>Preferred Scan Window: 14:00–18:00</strong>
+      <p>The afternoon window provides the lowest circadian noise — skin temperature is on its plateau phase, making values less sensitive to minor scheduling variation. Morning scans are acceptable if consistent, but never compare a morning scan to an afternoon scan for the same athlete. Document scan time in every session record. If your programme's schedule requires morning scanning, establish the athlete's baseline entirely within morning sessions.</p>
+    </div>
+  </div>
+
+  <table class="data-table" style="margin-top:16px;">
+    <thead>
+      <tr>
+        <th>Time Window</th>
+        <th>Circadian Phase</th>
+        <th>Recommendation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>06:00–10:00</td>
+        <td>Rising phase — skin temp at daily minimum (~07:00), ascending</td>
+        <td>Acceptable if consistent. Highest sensitivity to minor scheduling variation. Establish entire baseline in this window if used.</td>
+      </tr>
+      <tr>
+        <td>10:00–14:00</td>
+        <td>Mid-rise — temperature increasing</td>
+        <td>Acceptable if consistent. Avoid mixing with afternoon scans.</td>
+      </tr>
+      <tr>
+        <td>14:00–18:00</td>
+        <td>Plateau phase — lowest circadian noise</td>
+        <td><strong>Preferred window.</strong> Temperature stable; least sensitive to minor scheduling variation of ±30 minutes.</td>
+      </tr>
+      <tr>
+        <td>After 18:00</td>
+        <td>Descending phase</td>
+        <td>Acceptable if consistent. Document late-session timing. Avoid for initial baseline establishment.</td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+<!-- ══ 7B. Technical Camera Protocol ══ -->
+<section id="tech-camera">
+  <div class="section-label">Section 07B</div>
+  <h2>Technical</h2>
+  <p class="section-intro">Camera setup parameters must be documented for every session. Changes to distance, emissivity settings, or temperature scale invalidate direct comparisons with prior sessions. Specifications follow IACT standards, ThermoHuman clinical guidance, and PMC (2022) standardisation recommendations.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Specification</th>
+        <th>Rationale</th>
+        <th>TOPDON TC001 MAX</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Camera-to-subject distance</td>
+        <td><strong>1.0 m fixed</strong>; document per session; never compare sessions at different distances</td>
+        <td>Distance affects pixel density per body region and influences apparent temperature via atmosphere and sensor optics. Inconsistent distance introduces a systematic measurement offset.</td>
+        <td><span class="cam-badge na">N/A — Setup protocol</span><br><span class="cam-detail">User-positioned; no hardware constraint</span></td>
+      </tr>
+      <tr>
+        <td>Camera angle</td>
+        <td><strong>90° perpendicular</strong> to target surface in both vertical and horizontal planes</td>
+        <td>Non-perpendicular angles reduce the effective emitted energy reaching the sensor (cosine emission law), producing artificially lower temperature readings at the scan periphery and corrupting bilateral comparisons.</td>
+        <td><span class="cam-badge na">N/A — Setup protocol</span><br><span class="cam-detail">User-positioned; no hardware constraint</span></td>
+      </tr>
+      <tr>
+        <td>Emissivity setting</td>
+        <td><strong>0.98</strong> (human skin standard)</td>
+        <td>Human skin emissivity is 0.98 across the LWIR spectrum regardless of skin tone. Setting emissivity incorrectly introduces a fixed temperature offset proportional to the error.</td>
+        <td><span class="cam-badge met">Met</span><br><span class="cam-detail">0.98 settable via custom input in TopInfrared app</span></td>
+      </tr>
+      <tr>
+        <td>Spectral range</td>
+        <td><strong>LWIR 8–12 µm</strong></td>
+        <td>Long-wave infrared is the appropriate band for measuring human skin surface temperature. MWIR cameras are not suitable for this application.</td>
+        <td><span class="cam-badge met">Met</span><br><span class="cam-detail">8–14 µm LWIR; fully encompasses the required 8–12 µm range</span></td>
+      </tr>
+      <tr>
+        <td>Thermal sensitivity (NETD)</td>
+        <td><strong>&lt; 50 mK</strong> minimum; <strong>&lt; 30 mK</strong> preferred</td>
+        <td>The COMPASS 1.5 SD alert threshold corresponds to ≈ 0.4°C. A sensor with NETD > 50 mK cannot reliably resolve this signal above noise. Sub-30 mK sensors provide comfortable margin above threshold.</td>
+        <td><span class="cam-badge partial">Partial</span><br><span class="cam-detail">≤ 40 mK · minimum requirement met (&lt; 50 mK) · preferred threshold (&lt; 30 mK) not met</span></td>
+      </tr>
+      <tr>
+        <td>Camera warm-up</td>
+        <td>Per manufacturer specification before first acquisition</td>
+        <td>Uncooled microbolometer sensors require thermal equilibration before detector offset calibration is stable. Acquiring images before warm-up completes introduces measurement drift.</td>
+        <td><span class="cam-badge partial">Unspecified</span><br><span class="cam-detail">Thermal equilibration noted in documentation; no warm-up duration published by manufacturer</span></td>
+      </tr>
+      <tr>
+        <td>Temperature scale</td>
+        <td><strong>Fixed min/max range</strong> across sessions; do not use auto-scale</td>
+        <td>Auto-scale compresses or expands the colour palette to fit each image's range, making images visually incomparable. A fixed scale is required for longitudinal colour-pattern comparison.</td>
+        <td><span class="cam-badge met">Met</span><br><span class="cam-detail">Manual min/max scale configurable; auto-scale can be disabled in TopInfrared app</span></td>
+      </tr>
+      <tr>
+        <td>Minimum image set</td>
+        <td>Anterior full body + posterior full body + targeted close-ups of all bilateral regions of interest</td>
+        <td>Full-body views enable global pattern assessment. Close-up ROI images maximise pixel density for quantitative asymmetry measurement. Both are required for COMPASS scoring.</td>
+        <td><span class="cam-badge na">N/A — Workflow protocol</span><br><span class="cam-detail">No hardware limitation on capture count</span></td>
+      </tr>
+      <tr>
+        <td>Thermal resolution</td>
+        <td><strong>≥ 320 × 240</strong> native sensor (ATA clinical minimum)</td>
+        <td>Higher pixel density increases the number of pixels per region of interest, improving quantitative asymmetry measurement precision. Software-interpolated resolution does not add thermal data.</td>
+        <td><span class="cam-badge fail">Fail</span><br><span class="cam-detail"><strong>256 × 192 native</strong> (512 × 384 output is TISR software interpolation, not a true resolution increase); falls below ATA 320 × 240 clinical minimum</span></td>
+      </tr>
+      <tr>
+        <td>Temperature accuracy</td>
+        <td><strong>≤ ±0.5°C</strong> at skin temperature range (clinical recommendation)</td>
+        <td>COMPASS asymmetry flags operate at deltas of ≈ 0.4–1.0°C. A camera with accuracy coarser than ±0.5°C cannot reliably resolve the minimum clinically significant asymmetry.</td>
+        <td><span class="cam-badge fail">Fail</span><br><span class="cam-detail"><strong>±2°C or ±2%</strong> (whichever greater); exceeds acceptable clinical error margin by ~4×</span></td>
+      </tr>
+      <tr>
+        <td>Medical device certification</td>
+        <td>IEC 80601-2-59 or equivalent medical thermography certification recommended for clinical use</td>
+        <td>Medical device standards govern measurement traceability, calibration procedures, and safety. Use of uncertified devices in clinical decision workflows carries regulatory and liability risk.</td>
+        <td><span class="cam-badge fail">Fail</span><br><span class="cam-detail"><strong>CE, FCC, RoHS, UKCA only</strong> · No FDA clearance · No ISO 13485 · No IEC 80601-2-59 · Marketed as industrial inspection tool</span></td>
       </tr>
     </tbody>
   </table>
@@ -1711,7 +2740,7 @@
   </div>
 
   <h3>1.6 — Thermography Scan Frequency &amp; Monitoring Protocols</h3>
-  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">The literature supports increasing scan frequency when thermal asymmetry is detected, but does not prescribe specific day-interval values. The intervals used in Section 6.2 are framework design decisions directionally supported by the studies below.</p>
+  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">The literature supports increasing scan frequency when thermal asymmetry is detected, but does not prescribe specific day-interval values. The intervals used in Section 5.2 are framework design decisions directionally supported by the studies below.</p>
   <div class="evidence-grid">
     <div class="evidence-card">
       <span class="ev-strength strong">Strong</span>
@@ -1734,7 +2763,7 @@
   </div>
 
   <h3>1.7 — Thermographic Population Normative Values</h3>
-  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">Foundational studies establishing what constitutes a "normal" contralateral thermal asymmetry in healthy athletes. These normative values anchor the population-based classification framework used in Section 05A and define the population fallback thresholds active during athlete onboarding.</p>
+  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">Foundational studies establishing what constitutes a "normal" contralateral thermal asymmetry in healthy athletes. These normative values anchor the population-based classification framework used in Section 04A and define the population fallback thresholds active during athlete onboarding.</p>
   <div class="evidence-grid">
     <div class="evidence-card">
       <span class="ev-strength strong">Strong</span>
@@ -1752,24 +2781,24 @@
       <span class="ev-strength strong">Strong</span>
       <h4>Uematsu et al. (1988) — Part 2: Clinical Application</h4>
       <div class="ev-journal">Journal of Neurosurgery, 69(4):556–561</div>
-      <div class="ev-finding">Applied the normative values from Part 1 to 144 patients with low-back pain and sciatica. When asymmetry exceeded 1 SD above the normal mean of homologous regions: PPV = 94.7%, specificity = 87.5% for detecting pathological nerve root impingement. <strong>Establishes that 1 SD above the mean is a clinically meaningful threshold with strong diagnostic performance — the theoretical basis for the SD-based tier classification in Section 05B. A 2.0 SD personal threshold (Severe tier) would represent an even higher-confidence signal.</strong></div>
+      <div class="ev-finding">Applied the normative values from Part 1 to 144 patients with low-back pain and sciatica. When asymmetry exceeded 1 SD above the normal mean of homologous regions: PPV = 94.7%, specificity = 87.5% for detecting pathological nerve root impingement. <strong>Establishes that 1 SD above the mean is a clinically meaningful threshold with strong diagnostic performance — the theoretical basis for the SD-based tier classification in Section 04B. A 2.0 SD personal threshold (Severe tier) would represent an even higher-confidence signal.</strong></div>
     </div>
   </div>
 
   <h3>1.8 — SD Classification Framework in Sports Monitoring</h3>
-  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">Evidence supporting the use of standard deviation tiers — rather than fixed absolute values — as the authoritative classification system once an individual baseline is established. These studies underpin the COMPASS 1.5 SD alert threshold and the broader SD tier framework in Section 05B.</p>
+  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">Evidence supporting the use of standard deviation tiers — rather than fixed absolute values — as the authoritative classification system once an individual baseline is established. These studies underpin the COMPASS 1.5 SD alert threshold and the broader SD tier framework in Section 04B.</p>
   <div class="evidence-grid">
     <div class="evidence-card">
       <span class="ev-strength strong">Strong</span>
       <h4>Plews, D.J. et al. (2013) — SD Tier Consensus</h4>
       <div class="ev-journal">International Journal of Sports Physiology and Performance, 8(5):461–470</div>
-      <div class="ev-finding">Establishes the widely-adopted SD tier framework for individual monitoring in sport: &lt;0.5 SD = within normal variation; 1.0 SD = meaningful departure (training modification flag); 1.5 SD = clinically important; ≥2.0 SD = extreme deviation requiring clinical review. Applied here to thermography because the same intra-individual departure logic applies: the question is not "how far from population average?" but "how far from this athlete's personal norm?" <strong>Directly supports the 1.0 / 1.5 / 2.0 SD tier boundaries used in Section 05B.</strong></div>
+      <div class="ev-finding">Establishes the widely-adopted SD tier framework for individual monitoring in sport: &lt;0.5 SD = within normal variation; 1.0 SD = meaningful departure (training modification flag); 1.5 SD = clinically important; ≥2.0 SD = extreme deviation requiring clinical review. Applied here to thermography because the same intra-individual departure logic applies: the question is not "how far from population average?" but "how far from this athlete's personal norm?" <strong>Directly supports the 1.0 / 1.5 / 2.0 SD tier boundaries used in Section 04B.</strong></div>
     </div>
     <div class="evidence-card">
       <span class="ev-strength strong">Strong</span>
       <h4>Saw, A.E., Main, L.C., &amp; Gastin, P.B. (2016) — Individual vs. Population Reference</h4>
       <div class="ev-journal">British Journal of Sports Medicine, 50(3):192–200</div>
-      <div class="ev-finding">Intra-individual variability in HRV, sleep, and wellness scores is more sensitive to training load and fatigue than absolute values. Individual-referenced thresholds outperform population-referenced thresholds across all wellness biomarkers. Below 1 SD from personal baseline = normal fluctuation; above 1.5 SD = clinically important departure. <strong>Directly validates the principle that individual SD thresholds supersede population °C thresholds — the foundational logic of the Section 05B framework.</strong></div>
+      <div class="ev-finding">Intra-individual variability in HRV, sleep, and wellness scores is more sensitive to training load and fatigue than absolute values. Individual-referenced thresholds outperform population-referenced thresholds across all wellness biomarkers. Below 1 SD from personal baseline = normal fluctuation; above 1.5 SD = clinically important departure. <strong>Directly validates the principle that individual SD thresholds supersede population °C thresholds — the foundational logic of the Section 04B framework.</strong></div>
     </div>
     <div class="evidence-card">
       <span class="ev-strength emerging">Emerging</span>
@@ -2281,6 +3310,7 @@ Chart.defaults.font.size = 12;
     }
   });
 })();
+
 
 // ── Nav active state ──
 (function() {

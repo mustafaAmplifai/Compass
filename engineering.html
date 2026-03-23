@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COMPASS — Engineering Reference · NUR Platform by Amplifai Health</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1e2630;
+    --surface3: #252d38;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --accent: #00c8ff;
+    --accent2: #7c3aed;
+    --safe: #22c55e;
+    --recovery: #f59e0b;
+    --deceptive: #f97316;
+    --danger: #ef4444;
+    --safe-bg: rgba(34,197,94,0.12);
+    --recovery-bg: rgba(245,158,11,0.12);
+    --deceptive-bg: rgba(249,115,22,0.12);
+    --danger-bg: rgba(239,68,68,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ── */
+  nav {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    padding: 28px 0 40px;
+    z-index: 100;
+  }
+  .nav-logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .nav-logo .logo-mark {
+    font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-logo .logo-sub {
+    font-size: 11px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;
+  }
+  nav a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 24px; color: var(--text-muted);
+    text-decoration: none; font-size: 13.5px;
+    transition: all 0.15s; border-left: 3px solid transparent;
+  }
+  nav a:hover, nav a.active {
+    color: var(--text); background: var(--surface2);
+    border-left-color: var(--accent);
+  }
+  nav .nav-section {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text-dim); padding: 16px 24px 6px; font-weight: 600;
+  }
+  nav a .nav-num { font-size: 11px; color: var(--text-dim); min-width: 18px; }
+
+  /* ── Main ── */
+  main { margin-left: 260px; flex: 1; min-width: 0; }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #0a1929 0%, #0d1117 50%, #0d1a10 100%);
+    padding: 80px 60px 70px;
+    position: relative; overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,200,255,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -60px; left: 30%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(0,200,255,0.1); border: 1px solid rgba(0,200,255,0.25);
+    border-radius: 20px; padding: 5px 14px; font-size: 12px;
+    color: var(--accent); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 22px;
+  }
+  .hero h1 {
+    font-size: 42px; font-weight: 800; line-height: 1.15;
+    letter-spacing: -1px; margin-bottom: 14px;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--safe));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 18px; color: var(--text-muted); max-width: 600px;
+    line-height: 1.6; margin-bottom: 32px;
+  }
+  .hero-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+  .hero-meta-item {
+    font-size: 13px; color: var(--text-dim);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .hero-meta-item strong { color: var(--text-muted); }
+
+  /* ── Section layout ── */
+  section { padding: 64px 60px; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+  .section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--accent); font-weight: 700; margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 30px; font-weight: 700; letter-spacing: -0.5px;
+    margin-bottom: 8px; line-height: 1.25;
+  }
+  h3 { font-size: 19px; font-weight: 600; margin: 32px 0 12px; color: var(--text); }
+  h4 { font-size: 15px; font-weight: 600; margin: 20px 0 8px; color: var(--text); }
+  p {
+    color: var(--text-muted); margin-bottom: 14px;
+    font-size: 15px; max-width: 760px;
+  }
+  .section-intro {
+    font-size: 17px; color: var(--text-muted); max-width: 720px;
+    margin-bottom: 40px; line-height: 1.7;
+  }
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 1px 6px; color: var(--accent);
+  }
+  pre {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    overflow-x: auto; font-size: 13px; line-height: 1.7;
+    margin: 20px 0;
+  }
+  pre code { background: none; border: none; padding: 0; font-size: inherit; }
+
+  /* ── Alert ── */
+  .alert {
+    border-radius: var(--radius-sm); padding: 14px 18px; margin: 12px 0;
+    font-size: 14px; display: flex; gap: 12px;
+    align-items: flex-start; max-width: 760px;
+  }
+  .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .alert p { margin: 0; max-width: none; color: var(--text-muted); font-size: 13.5px; }
+  .alert strong { color: var(--text); display: block; margin-bottom: 3px; font-size: 14px; }
+  .alert.blue  { background: rgba(0,200,255,0.08);   border-left: 3px solid var(--accent); }
+  .alert.orange{ background: rgba(249,115,22,0.08);  border-left: 3px solid var(--deceptive); }
+  .alert.red   { background: rgba(239,68,68,0.08);   border-left: 3px solid var(--danger); }
+  .alert.green { background: rgba(34,197,94,0.08);   border-left: 3px solid var(--safe); }
+  .alert.yellow{ background: rgba(245,158,11,0.08);  border-left: 3px solid var(--recovery); }
+
+  /* ── Data table ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 24px 0; }
+  .data-table th {
+    text-align: left; padding: 11px 16px; background: var(--surface2);
+    color: var(--text-muted); font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 13px 16px; border-bottom: 1px solid var(--border);
+    color: var(--text-muted); vertical-align: top;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--surface2); }
+
+  /* ── Stat row ── */
+  .stat-row { display: flex; flex-wrap: wrap; gap: 20px; margin: 28px 0; }
+  .stat-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 28px;
+    flex: 1; min-width: 160px; text-align: center;
+  }
+  .stat-box .stat-val {
+    font-size: 34px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1.1;
+  }
+  .stat-box .stat-label {
+    font-size: 12px; color: var(--text-dim); margin-top: 6px;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+
+  /* ── Step list ── */
+  .step-list { list-style: none; margin: 24px 0; }
+  .step-list li {
+    display: flex; gap: 18px; padding: 18px 0;
+    border-bottom: 1px solid var(--border); align-items: flex-start;
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #fff;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .step-list li p { margin: 0; max-width: none; font-size: 14.5px; }
+
+  /* ── Insight ── */
+  .insight {
+    background: linear-gradient(135deg, rgba(0,200,255,0.07), rgba(124,58,237,0.07));
+    border: 1px solid rgba(0,200,255,0.2); border-radius: var(--radius);
+    padding: 22px 26px; margin: 24px 0; max-width: 760px; position: relative;
+  }
+  .insight::before {
+    content: '💡'; position: absolute; top: -12px; left: 20px;
+    font-size: 20px; background: var(--bg); padding: 0 6px;
+  }
+  .insight p { color: var(--text); font-size: 14.5px; margin: 0; max-width: none; font-style: italic; }
+  .insight strong { color: var(--accent); font-style: normal; }
+
+  /* ── Card grid ── */
+  .card-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px; margin: 28px 0;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #444d56; }
+  .card .card-icon { font-size: 28px; margin-bottom: 14px; }
+  .card h4 { margin-top: 0; font-size: 16px; }
+  .card p { font-size: 14px; max-width: none; margin-bottom: 0; color: var(--text-muted); }
+
+  /* ── Formula block ── */
+  .formula-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 32px; margin: 24px 0;
+    max-width: 760px; font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .formula-block .formula-line {
+    font-size: 15px; color: var(--text); margin-bottom: 10px; line-height: 1.8;
+  }
+  .formula-block .formula-line:last-child { margin-bottom: 0; }
+  .formula-block .formula-comment {
+    font-size: 12px; color: var(--text-dim); font-style: italic;
+    font-family: -apple-system, system-ui, sans-serif; margin-top: 8px;
+  }
+  .f-var  { color: var(--accent); }
+  .f-op   { color: var(--text-muted); }
+  .f-val  { color: var(--recovery); }
+  .f-zone { font-weight: 700; }
+  .f-safe { color: var(--safe); }
+  .f-recovery { color: var(--recovery); }
+  .f-deceptive { color: var(--deceptive); }
+  .f-danger { color: var(--danger); }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { margin-left: 0; }
+    section { padding: 48px 28px; }
+    .hero { padding: 56px 28px 48px; }
+    .hero h1 { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ Sidebar ══ -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-mark">COMPASS</div>
+    <div class="logo-sub">Engineering Reference</div>
+  </div>
+  <div class="nav-section">System</div>
+  <a href="#architecture"><span class="nav-num">E1</span> System Architecture</a>
+  <a href="#scoring"><span class="nav-num">E2</span> Scoring Engine</a>
+  <div class="nav-section">Reasoning Engine</div>
+  <a href="#re-inputs"><span class="nav-num">E3</span> Context Input Model</a>
+  <a href="#re-explain"><span class="nav-num">E4</span> Explanation Engine</a>
+  <a href="#re-api"><span class="nav-num">E5</span> API Contract</a>
+  <div class="nav-section">Integration</div>
+  <a href="#data-sources"><span class="nav-num">E6</span> Data Sources</a>
+  <a href="#errors"><span class="nav-num">E7</span> Error Handling</a>
+</nav>
+
+<!-- ══ Main ══ -->
+<main>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">⚙️ NUR Platform · Engineering Reference · Amplifai Health</div>
+  <h1>COMPASS<br><span>Engineering Reference</span></h1>
+  <p class="hero-sub">Technical specification for engineers building on or integrating with the COMPASS Clinical Risk Framework. Covers the scoring pipeline, Reasoning Engine API contract, data source integration, and error handling.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">🏗️ <strong>Architecture</strong></div>
+    <div class="hero-meta-item">📐 <strong>Scoring Formula</strong></div>
+    <div class="hero-meta-item">🤖 <strong>Reasoning Engine API</strong></div>
+    <div class="hero-meta-item">🔌 <strong>Integration Guide</strong></div>
+  </div>
+</div>
+
+<!-- ══ E1: System Architecture ══ -->
+<section id="architecture">
+  <div class="section-label">Section E1</div>
+  <h2>System Architecture</h2>
+  <p class="section-intro">COMPASS is a two-stage pipeline. Stage 1 is fully deterministic — it produces a COMPASS Score and Zone from raw sensor inputs with no ML involvement. Stage 2 is the Reasoning Engine — a GenAI layer that consumes the Stage 1 output as a read-only object and generates natural-language explanations and intervention plans.</p>
+
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val">2</div>
+      <div class="stat-label">Pipeline Stages<br><span style="font-size:11px;color:var(--text-dim);">Deterministic + GenAI</span></div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">0</div>
+      <div class="stat-label">ML in Stage 1<br><span style="font-size:11px;color:var(--text-dim);">Rule-based only</span></div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">4</div>
+      <div class="stat-label">Zone Outputs<br><span style="font-size:11px;color:var(--text-dim);">Safe / Recovery / Deceptive / Danger</span></div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">0–100</div>
+      <div class="stat-label">Score Range<br><span style="font-size:11px;color:var(--text-dim);">Integer, deterministic</span></div>
+    </div>
+  </div>
+
+  <div class="alert blue">
+    <div class="alert-icon">🔒</div>
+    <div>
+      <strong>Stage Isolation Requirement</strong>
+      <p>The Reasoning Engine (Stage 2) must receive the <code>compass_assessment</code> object as a <strong>read-only</strong> payload. It must not have write access to the scoring pipeline, zone thresholds, or any input signals. Implementations that allow the GenAI layer to influence Stage 1 outputs violate the framework's clinical accountability model.</p>
+    </div>
+  </div>
+
+  <h3>Component Overview</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">⌚</div>
+      <h4>Wearable Ingestion Service</h4>
+      <p>Receives HRV, sleep quality, resting HR, and ACWR from connected wearables. Computes the Systemic Readiness Score (0–100) and writes to the athlete state store. Expected cadence: nightly batch or on-device sync.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌡️</div>
+      <h4>Thermography Analysis Service</h4>
+      <p>Processes thermography scans. Outputs the Thermal Asymmetry Index (°C delta between contralateral regions) and an array of flagged anatomical regions. Writes result + scan timestamp to athlete state store.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧮</div>
+      <h4>Scoring Engine</h4>
+      <p>Deterministic. Reads the latest Readiness Score and Thermal Asymmetry Index from the athlete state store, applies the COMPASS formula (Section E2), and writes the resulting score and zone classification. See Section E2 for full algorithm.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🤖</div>
+      <h4>Reasoning Engine</h4>
+      <p>GenAI layer. Subscribes to new <code>compass_assessment</code> events, assembles the context bundle (Section E3), calls the LLM, and writes the structured explanation + intervention plan to the output store. See Sections E3–E4.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <h4>Clinician Dashboard API</h4>
+      <p>Read API. Surfaces the latest <code>compass_assessment</code> + Reasoning Engine output per athlete. Accepts clinician annotation writes which are injected into the next Reasoning Engine invocation as <code>clinician_annotations</code>.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🗄️</div>
+      <h4>Athlete State Store</h4>
+      <p>Single source of truth for all per-athlete signals and outputs. Stores 30-day rolling COMPASS history, scan history, clinician annotations, and the current active intervention plan. Time-series indexed by <code>athlete_id</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ E2: Scoring Engine ══ -->
+<section id="scoring">
+  <div class="section-label">Section E2</div>
+  <h2>Scoring Engine</h2>
+  <p class="section-intro">The scoring engine takes two normalised input axes and maps them to a 0–100 COMPASS Score and a Zone enum. The mapping is fully deterministic — no randomness, no model inference, no external calls.</p>
+
+  <h3>Input Axes</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>Axis</th><th>Symbol</th><th>Range</th><th>Direction</th><th>Composed From</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Systemic Readiness</strong></td>
+        <td><code>R</code></td>
+        <td>0–100</td>
+        <td>Higher = more ready</td>
+        <td>HRV (weighted 40%), Sleep quality (30%), Resting HR (20%), ACWR inverse (10%)</td>
+      </tr>
+      <tr>
+        <td><strong>Thermal Asymmetry Risk</strong></td>
+        <td><code>T</code></td>
+        <td>0–100</td>
+        <td>Higher = more inflamed</td>
+        <td>TAI (°C) normalised against population or individual SD baseline (Section 05B in clinical doc)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Zone Classification Logic</h3>
+  <p>Zone is assigned first, then score is computed within the zone's range. The zone boundary is determined by the two-axis quadrant.</p>
+
+  <div class="formula-block">
+    <div class="formula-line"><span class="f-var">Zone</span> <span class="f-op">=</span></div>
+    <div class="formula-line">&nbsp;&nbsp;<span class="f-safe f-zone">SAFE</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="f-op">if</span> <span class="f-var">R</span> <span class="f-op">≥ 50</span> <span class="f-op">AND</span> <span class="f-var">T</span> <span class="f-op">&lt; 50</span></div>
+    <div class="formula-line">&nbsp;&nbsp;<span class="f-recovery f-zone">RECOVERY</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="f-op">if</span> <span class="f-var">R</span> <span class="f-op">&lt; 50</span> <span class="f-op">AND</span> <span class="f-var">T</span> <span class="f-op">&lt; 50</span></div>
+    <div class="formula-line">&nbsp;&nbsp;<span class="f-deceptive f-zone">DECEPTIVE</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="f-op">if</span> <span class="f-var">R</span> <span class="f-op">≥ 50</span> <span class="f-op">AND</span> <span class="f-var">T</span> <span class="f-op">≥ 50</span></div>
+    <div class="formula-line">&nbsp;&nbsp;<span class="f-danger f-zone">DANGER</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="f-op">if</span> <span class="f-var">R</span> <span class="f-op">&lt; 50</span> <span class="f-op">AND</span> <span class="f-var">T</span> <span class="f-op">≥ 50</span></div>
+  </div>
+
+  <h3>Score Formula by Zone</h3>
+  <p>Score is computed within the zone's numeric band. Note that in Deceptive zone, thermal risk is weighted 70% to reflect that local tissue stress is the primary clinical concern.</p>
+
+  <div class="formula-block">
+    <div class="formula-line"><span class="f-safe">SAFE</span> <span class="f-op">(76–100):</span>&nbsp;&nbsp;<span class="f-var">score</span> <span class="f-op">= round(</span><span class="f-val">76</span> <span class="f-op">+</span> <span class="f-val">24</span> <span class="f-op">× mean((</span><span class="f-var">R</span><span class="f-op">−50)/50,</span> <span class="f-op">(50−</span><span class="f-var">T</span><span class="f-op">)/50))</span></div>
+    <div class="formula-line"><span class="f-recovery">RECOVERY</span> <span class="f-op">(51–75):</span>&nbsp;<span class="f-var">score</span> <span class="f-op">= round(</span><span class="f-val">51</span> <span class="f-op">+</span> <span class="f-val">24</span> <span class="f-op">× mean(</span><span class="f-var">R</span><span class="f-op">/50,</span> <span class="f-op">(50−</span><span class="f-var">T</span><span class="f-op">)/50))</span></div>
+    <div class="formula-line"><span class="f-deceptive">DECEPTIVE</span> <span class="f-op">(26–50):</span>&nbsp;<span class="f-var">score</span> <span class="f-op">= round(</span><span class="f-val">26</span> <span class="f-op">+</span> <span class="f-val">24</span> <span class="f-op">× (0.3×(</span><span class="f-var">R</span><span class="f-op">−50)/50</span> <span class="f-op">+</span> <span class="f-op">0.7×(100−</span><span class="f-var">T</span><span class="f-op">)/50))</span></div>
+    <div class="formula-line"><span class="f-danger">DANGER</span> <span class="f-op">(0–25):</span>&nbsp;&nbsp;&nbsp;<span class="f-var">score</span> <span class="f-op">= round(</span><span class="f-val">25</span> <span class="f-op">× (0.3×</span><span class="f-var">R</span><span class="f-op">/50</span> <span class="f-op">+</span> <span class="f-op">0.7×(100−</span><span class="f-var">T</span><span class="f-op">)/50))</span></div>
+    <div class="formula-comment">All inputs clamped to [0, 100] before computation. Output clamped to zone band after rounding.</div>
+  </div>
+
+  <div class="alert yellow">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <strong>Temporal Fusion — Stale Thermal Prior</strong>
+      <p>When no thermography scan is available within the athlete's zone-appropriate recency window, the engine applies a decay function to the last known TAI value before normalising. See the clinical reference document (Section 06) for full decay half-life parameters per zone. Scores generated with a decayed prior must include <code>"thermal_prior_decayed": true</code> in the output.</p>
+    </div>
+  </div>
+
+  <h3>Output Object</h3>
+  <pre><code>{
+  "athlete_id":          "string",
+  "assessment_ts":       "ISO-8601 timestamp",
+  "score":               0–100,          // integer
+  "zone":                "Safe" | "Recovery" | "Deceptive Readiness" | "Danger",
+  "readiness_score":     0–100,          // float
+  "thermal_asymmetry":   0.0–∞,          // float, °C
+  "flagged_regions":     ["string"],     // anatomical region identifiers
+  "thermal_prior_decayed": boolean,
+  "thermal_prior_age_days": integer | null
+}</code></pre>
+</section>
+
+<!-- ══ E3: Context Input Model ══ -->
+<section id="re-inputs">
+  <div class="section-label">Section E3</div>
+  <h2>Reasoning Engine — Context Input Model</h2>
+  <p class="section-intro">Before generating any output, the Reasoning Engine assembles a structured context bundle from the athlete state store. Inputs are tiered by impact on reasoning quality. The engine must always proceed even when lower-priority inputs are missing, but must surface every gap explicitly in the <code>context_gaps</code> array of its output.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Type</th>
+        <th>Source</th>
+        <th>Role in Reasoning</th>
+        <th>Priority</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>score</code></td>
+        <td><code>integer</code></td>
+        <td>Scoring Engine output</td>
+        <td>Anchors explanation to current risk level</td>
+        <td><span style="color:var(--safe);font-weight:700;">Required</span></td>
+      </tr>
+      <tr>
+        <td><code>zone</code></td>
+        <td><code>enum</code></td>
+        <td>Scoring Engine output</td>
+        <td>Selects reasoning path and plan type</td>
+        <td><span style="color:var(--safe);font-weight:700;">Required</span></td>
+      </tr>
+      <tr>
+        <td><code>readiness_score</code></td>
+        <td><code>float</code></td>
+        <td>Wearable Ingestion Service</td>
+        <td>Systemic fatigue decomposition — drives sub-signal narrative</td>
+        <td><span style="color:var(--safe);font-weight:700;">Required</span></td>
+      </tr>
+      <tr>
+        <td><code>thermal_asymmetry</code></td>
+        <td><code>float</code> (°C)</td>
+        <td>Thermography Analysis Service</td>
+        <td>Local tissue stress signal — drives inflammation narrative</td>
+        <td><span style="color:var(--safe);font-weight:700;">Required</span></td>
+      </tr>
+      <tr>
+        <td><code>flagged_regions</code></td>
+        <td><code>string[]</code></td>
+        <td>Thermography Analysis Service</td>
+        <td>Anatomical specificity — enables targeted physio plan generation</td>
+        <td><span style="color:var(--recovery);font-weight:700;">High Priority</span></td>
+      </tr>
+      <tr>
+        <td><code>pain_injury_history</code></td>
+        <td><code>object</code></td>
+        <td>Clinician / Athlete Profile</td>
+        <td>Contextual modifier — amplifies Deceptive / Danger narrative weight</td>
+        <td><span style="color:var(--recovery);font-weight:700;">High Priority</span></td>
+      </tr>
+      <tr>
+        <td><code>demographics</code></td>
+        <td><code>object</code></td>
+        <td>Athlete Profile</td>
+        <td>Population-norm adjustments in narrative (age, sex, sport, position)</td>
+        <td><span style="color:var(--deceptive);font-weight:700;">Recommended</span></td>
+      </tr>
+      <tr>
+        <td><code>acwr</code></td>
+        <td><code>float</code></td>
+        <td>Training Load System</td>
+        <td>Workload context — gates progression criteria and spike warnings</td>
+        <td><span style="color:var(--deceptive);font-weight:700;">Recommended</span></td>
+      </tr>
+      <tr>
+        <td><code>days_to_competition</code></td>
+        <td><code>integer | null</code></td>
+        <td>Training Calendar</td>
+        <td>Urgency modifier — affects tone and progression timeline</td>
+        <td><span style="color:var(--deceptive);font-weight:700;">Recommended</span></td>
+      </tr>
+      <tr>
+        <td><code>compass_history_30d</code></td>
+        <td><code>integer[]</code></td>
+        <td>Athlete State Store</td>
+        <td>Trajectory classification — declining / stable / improving / spike</td>
+        <td><span style="color:var(--deceptive);font-weight:700;">Recommended</span></td>
+      </tr>
+      <tr>
+        <td><code>thermal_baseline_status</code></td>
+        <td><code>"established" | "partial" | "none"</code></td>
+        <td>Thermography Baseline Engine</td>
+        <td>Drives uncertainty annotation — individual SD vs. population threshold</td>
+        <td><span style="color:var(--text-dim);font-weight:700;">Optional</span></td>
+      </tr>
+      <tr>
+        <td><code>clinician_annotations</code></td>
+        <td><code>string | null</code></td>
+        <td>Dashboard API write</td>
+        <td>Prepended to context bundle before reasoning begins — highest precedence</td>
+        <td><span style="color:var(--text-dim);font-weight:700;">Optional</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert blue">
+    <div class="alert-icon">🔀</div>
+    <div>
+      <strong>Graceful Degradation</strong>
+      <p>When Recommended or Optional fields are absent, the engine proceeds but lowers its <code>confidence</code> value and adds an entry to <code>context_gaps</code> for each missing field. Each gap entry must include: <code>field</code> (the missing key), <code>impact</code> (plain-language effect on reasoning quality), and <code>note</code> (data-collection action to close the gap). The engine must never silently omit a limitation.</p>
+    </div>
+  </div>
+
+  <h3>Context Bundle Assembly — Pseudo-code</h3>
+  <pre><code>function assembleContextBundle(athleteId: string): ContextBundle {
+  const store   = athleteStateStore.get(athleteId);
+  const scoring = scoringEngine.getLatest(athleteId);  // Required fields
+
+  const bundle: ContextBundle = {
+    // Required — abort if missing
+    score:              scoring.score,
+    zone:               scoring.zone,
+    readiness_score:    scoring.readiness_score,
+    thermal_asymmetry:  scoring.thermal_asymmetry,
+
+    // High Priority — include if available
+    flagged_regions:       store.latestScan?.flagged_regions       ?? null,
+    pain_injury_history:   store.athleteProfile?.injury_history    ?? null,
+
+    // Recommended — include if available
+    demographics:          store.athleteProfile?.demographics      ?? null,
+    acwr:                  store.trainingLoad?.acwr                ?? null,
+    days_to_competition:   store.calendar?.daysToNextCompetition() ?? null,
+    compass_history_30d:   store.getScoreHistory(30)               ?? null,
+
+    // Optional
+    thermal_baseline_status: store.thermalBaseline?.status         ?? null,
+    clinician_annotations:   store.latestClinicianNote             ?? null,
+
+    context_gaps: []  // populated by validateBundle()
+  };
+
+  return validateBundle(bundle);
+}</code></pre>
+
+  <div class="insight">
+    <p><strong>Clinician annotations always win.</strong> If <code>clinician_annotations</code> is non-null, it is injected as the first element of the LLM prompt context, before all signal data. This ensures practitioner judgement overrides any automated interpretation — it is not a hint, it is the lead.</p>
+  </div>
+</section>
+
+<!-- ══ E4: Explanation Engine ══ -->
+<section id="re-explain">
+  <div class="section-label">Section E4</div>
+  <h2>Reasoning Engine — Explanation Engine</h2>
+  <p class="section-intro">For each assessment the engine constructs a structured, multi-step reasoning chain that maps directly to named signals in the context bundle. Every claim in the output explanation is traceable to a specific input field — no inference step may introduce a signal not present in the bundle.</p>
+
+  <ol class="step-list">
+    <li>
+      <div class="step-num">1</div>
+      <div>
+        <strong>Zone Anchor Statement</strong>
+        <p>Opens with a plain-language zone declaration derived from <code>score</code> and <code>zone</code>: <em>"Athlete is currently in the Deceptive Readiness zone (COMPASS 38/100)…"</em> Always generated regardless of context completeness — these are Required fields and must always be present.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">2</div>
+      <div>
+        <strong>Signal Decomposition</strong>
+        <p>The engine maps <code>readiness_score</code> and <code>thermal_asymmetry</code> back to their contributing sub-signals (HRV, sleep quality, resting HR, ACWR, flagged regions). Each sub-signal is labelled <code>"contributing"</code>, <code>"neutral"</code>, or <code>"protective"</code> relative to the zone outcome and written into <code>explanation.signal_decomposition[]</code>.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">3</div>
+      <div>
+        <strong>Contextual Modifier Layer</strong>
+        <p>If High Priority or Recommended fields are present (<code>pain_injury_history</code>, <code>days_to_competition</code>, <code>acwr</code>), the engine applies a modifier narrative amplifying or contextualising the zone reading. Absent modifiers are listed in <code>context_gaps</code> — the engine must not fabricate context it was not given.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">4</div>
+      <div>
+        <strong>Trajectory Integration</strong>
+        <p>When <code>compass_history_30d</code> is present, the engine classifies the trajectory as <code>"declining"</code>, <code>"stable"</code>, <code>"improving"</code>, or <code>"spike"</code> and writes it to <code>explanation.trajectory_note</code>. A single Danger reading is handled differently to three consecutive Danger days — urgency tone must reflect this. If the field is absent, <code>trajectory_note</code> is <code>null</code>.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">5</div>
+      <div>
+        <strong>Clinical Narrative Synthesis</strong>
+        <p>Steps 1–4 are synthesised into a coherent paragraph written to <code>explanation.narrative</code>. Tone adapts by zone: factual and reassuring for Safe, instructive for Recovery, urgent for Deceptive and Danger. In <code>clinician_mode: true</code> requests, clinical terminology is preferred over plain language.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">6</div>
+      <div>
+        <strong>Uncertainty &amp; Caveat Annotation</strong>
+        <p>The explanation closes with a calibrated <code>confidence</code> value (<code>"high"</code> / <code>"medium"</code> / <code>"low"</code>) and explicit caveats. If <code>thermal_baseline_status</code> is <code>"partial"</code> or <code>"none"</code>, the engine must note that the asymmetry reading uses a population threshold rather than individual SD. Confidence must be <code>"low"</code> whenever any Required field was derived from a stale or decayed prior.</p>
+      </div>
+    </li>
+  </ol>
+
+  <div class="insight">
+    <p><strong>Clinician annotations are injected before step 1.</strong> If <code>clinician_annotations</code> is non-null, it is the first element of the LLM context and sets the interpretive frame for all subsequent steps. The engine must not contradict or silently override it. The annotation is echoed back in <code>explanation.clinician_annotation_field</code> for audit log traceability.</p>
+  </div>
+</section>
+
+<!-- ══ E5: API Contract ══ -->
+<section id="re-api">
+  <div class="section-label">Section E5</div>
+  <h2>Reasoning Engine — API Contract</h2>
+  <p class="section-intro">The Reasoning Engine exposes a single synchronous endpoint. Callers pass the pre-assembled context bundle and receive a structured response. The engine is stateless — all context must be provided in the request body.</p>
+
+  <h3>Request</h3>
+  <pre><code>POST /v1/reasoning-engine/assess
+
+Content-Type: application/json
+
+{
+  "athlete_id":            "string",          // required
+  "assessment_ts":         "ISO-8601",        // required — timestamp of scoring event
+  "context":               ContextBundle,     // required — see Section E3
+  "output_format":         "full" | "brief",  // optional, default "full"
+  "language":              "en",              // optional, default "en"
+  "clinician_mode":        boolean            // optional — enables more technical language
+}</code></pre>
+
+  <h3>Response</h3>
+  <pre><code>{
+  "athlete_id":   "string",
+  "generated_at": "ISO-8601",
+
+  "explanation": {
+    "zone_anchor":          "string",   // plain-language zone statement
+    "signal_decomposition": [           // one entry per sub-signal
+      {
+        "signal":  "hrv" | "sleep_quality" | "acwr" | "thermal_tai" | ...,
+        "status":  "contributing" | "neutral" | "protective",
+        "note":    "string"
+      }
+    ],
+    "trajectory_note":          "string | null",  // null if compass_history_30d absent
+    "narrative":                "string",          // paragraph-form clinical summary
+    "confidence":               "high" | "medium" | "low",
+    "clinician_annotation_field": "string | null"  // echoed back for audit log
+  },
+
+  "recommendation": {
+    "plan_type": "maintenance" | "workout_modification"
+                | "physio_primary_load_modification" | "combined_clinical",
+    "phase_1": {
+      "duration_days":   integer,
+      "load_restriction":"string",
+      "physio_protocol": "string | null",
+      "rescan_trigger":  "string"
+    },
+    "phase_2": {
+      "duration_days":    integer,
+      "load_target_acwr": "string | null",
+      "physio_frequency": "string | null",
+      "kpi_targets":      ["string"]
+    },
+    "progression_criteria":  ["string"],
+    "reassessment_triggers": ["string"],
+    "next_scan_due":         "string",
+    "clinician_annotation_field": "string | null"
+  },
+
+  "context_gaps": [       // empty array if all Recommended fields were present
+    {
+      "field":  "string",
+      "impact": "string",
+      "note":   "string"
+    }
+  ]
+}</code></pre>
+
+  <div class="alert red">
+    <div class="alert-icon">🚨</div>
+    <div>
+      <strong>Error: Missing Required Fields</strong>
+      <p>If any of <code>score</code>, <code>zone</code>, <code>readiness_score</code>, or <code>thermal_asymmetry</code> is absent from the context bundle, the engine must return <code>HTTP 422</code> with <code>error: "MISSING_REQUIRED_CONTEXT"</code> and a <code>missing_fields</code> array. It must not attempt partial generation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ E5: Data Sources ══ -->
+<section id="data-sources">
+  <div class="section-label">Section E6</div>
+  <h2>Data Sources &amp; Integration</h2>
+  <p class="section-intro">Each input signal has a defined owner service, update cadence, and staleness policy. Engineers integrating new data sources must register them in the athlete state store schema and map them to the corresponding context bundle field.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Signal</th><th>Owner Service</th><th>Update Cadence</th><th>Staleness Threshold</th><th>Fallback</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>HRV / Resting HR / Sleep</strong></td>
+        <td>Wearable Ingestion</td>
+        <td>Nightly (device sync)</td>
+        <td>36 h</td>
+        <td>Mark <code>readiness_score</code> as stale; proceed with last known</td>
+      </tr>
+      <tr>
+        <td><strong>ACWR</strong></td>
+        <td>Training Load System</td>
+        <td>Daily (post-session)</td>
+        <td>48 h</td>
+        <td>Omit from context bundle; add to <code>context_gaps</code></td>
+      </tr>
+      <tr>
+        <td><strong>Thermal Asymmetry Index</strong></td>
+        <td>Thermography Analysis</td>
+        <td>Per scan (athlete-initiated)</td>
+        <td>Zone-dependent decay (see Section E2)</td>
+        <td>Apply decay function; set <code>thermal_prior_decayed: true</code></td>
+      </tr>
+      <tr>
+        <td><strong>Competition Calendar</strong></td>
+        <td>Training Calendar</td>
+        <td>On update</td>
+        <td>N/A (static until edited)</td>
+        <td>Set <code>days_to_competition: null</code></td>
+      </tr>
+      <tr>
+        <td><strong>Injury / Pain History</strong></td>
+        <td>Clinician Dashboard API</td>
+        <td>On clinician write</td>
+        <td>90 days (prompt re-review)</td>
+        <td>Omit; add to <code>context_gaps</code></td>
+      </tr>
+      <tr>
+        <td><strong>Clinician Annotations</strong></td>
+        <td>Clinician Dashboard API</td>
+        <td>On clinician write</td>
+        <td>72 h (auto-expire unless pinned)</td>
+        <td>Set <code>clinician_annotations: null</code></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ══ E6: Error Handling ══ -->
+<section id="errors">
+  <div class="section-label">Section E7</div>
+  <h2>Error Handling</h2>
+  <p class="section-intro">COMPASS is a clinical system. Silent failures or partial outputs are not acceptable. Every error condition must produce an explicit, structured error object — never a degraded but unmarked result.</p>
+
+  <ol class="step-list">
+    <li>
+      <div class="step-num">1</div>
+      <div>
+        <strong>Missing Required Scoring Inputs</strong>
+        <p>If either <code>readiness_score</code> or <code>thermal_asymmetry</code> cannot be computed (no wearable sync + no valid scan), the Scoring Engine must <strong>not</strong> produce a score. Return <code>{"status": "INSUFFICIENT_DATA", "missing": ["readiness_score" | "thermal_asymmetry"]}</code>. The Reasoning Engine must not be invoked.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">2</div>
+      <div>
+        <strong>Stale Thermal Prior — Decayed Below Minimum</strong>
+        <p>When the thermal prior decays below the minimum meaningful threshold (configurable per zone), the scoring engine must still compute a score using the fully-decayed value, but must set <code>thermal_prior_decayed: true</code> and <code>thermal_prior_age_days</code>. The Reasoning Engine must surface this in the explanation's uncertainty annotation and set <code>confidence: "low"</code>.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">3</div>
+      <div>
+        <strong>Reasoning Engine LLM Failure</strong>
+        <p>If the LLM call fails (timeout, API error, content policy rejection), the Reasoning Engine must return <code>HTTP 503</code> with <code>error: "REASONING_ENGINE_UNAVAILABLE"</code>. The <code>compass_assessment</code> object from Stage 1 remains valid and should still be surfaced to the clinician dashboard — the AI layer failure must not suppress the deterministic score.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">4</div>
+      <div>
+        <strong>Context Bundle Validation Failure</strong>
+        <p>Any field that fails type validation (e.g., <code>score</code> outside 0–100, <code>zone</code> not in the enum) must cause the context bundle assembly to throw before the LLM is called. Return <code>HTTP 422</code> with field-level validation errors. Do not attempt to coerce or default invalid values silently.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">5</div>
+      <div>
+        <strong>Clinician Annotation Injection Failure</strong>
+        <p>If the clinician annotation is present but exceeds the maximum token budget reserved for the annotation slot, truncate to the budget limit and set <code>"clinician_annotation_truncated": true</code> in the response. Never silently drop annotation content — truncation must be visible to both the engine and the dashboard consumer.</p>
+      </div>
+    </li>
+  </ol>
+
+  <div class="alert blue">
+    <div class="alert-icon">📋</div>
+    <div>
+      <strong>Audit Logging Requirement</strong>
+      <p>Every Scoring Engine and Reasoning Engine invocation must write an immutable audit log entry containing: <code>athlete_id</code>, <code>assessment_ts</code>, all input values used, the output produced, and — for the Reasoning Engine — the <code>context_gaps</code> array. Log entries must not be deletable by application-layer code.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer style="background:var(--surface);border-top:1px solid var(--border);padding:36px 60px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim);flex-wrap:wrap;gap:12px;margin-left:260px;">
+  <span><strong style="color:var(--text-muted);">COMPASS Engineering Reference</strong> · NUR Platform · Amplifai Health</span>
+  <span>Proprietary &amp; Confidential · Internal Engineering Use Only</span>
+</footer>
+
+<script>
+// ── Nav active state ──
+(function() {
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('nav a[href^="#"]');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) cur = s.id;
+    });
+    links.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+    });
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>
