@@ -894,21 +894,26 @@
   </div>
   <div class="nav-section">Framework</div>
   <a href="#philosophy"><span class="nav-num">01</span> Core Philosophy</a>
-  <a href="#zones"><span class="nav-num">02</span> Zone Framework</a>
-  <a href="#zone-meanings"><span class="nav-num">03</span> Zone Meanings</a>
-  <a href="#score-pipeline" style="padding-left:36px; font-size:12.5px;"><span class="nav-num" style="font-size:10px;">3.1</span> Score Pipeline</a>
+  <a href="#zones"><span class="nav-num">02</span> COMPASS Framework</a>
+  <a href="#framework-pipeline"><span class="nav-num">03</span> Framework Pipeline</a>
+  <a href="#scoring-equations" style="padding-left:36px; font-size:12.5px;"><span class="nav-num" style="font-size:10px;">3.1</span> Scoring Equations</a>
   <a href="#personalisation"><span class="nav-num">04</span> Personalisation</a>
-  <a href="#asymmetry-pop"><span class="nav-num">04A</span> Population Asymmetry</a>
-  <a href="#asymmetry-sd"><span class="nav-num">04B</span> SD-Based Asymmetry</a>
+  <a href="#asymmetry-pop"><span class="nav-num">05A</span> Population Asymmetry</a>
+  <a href="#asymmetry-sd"><span class="nav-num">05B</span> SD-Based Asymmetry</a>
   <div class="nav-section">Operations</div>
-  <a href="#temporal"><span class="nav-num">05</span> Temporal Fusion</a>
-  <a href="#temporal" style="padding-left:36px; font-size:12.5px;"><span class="nav-num" style="font-size:10px;">5.4</span> Signal Availability Matrix</a>
-  <a href="#cdss"><span class="nav-num">06</span> Clinical Decision Support</a>
-  <a href="#trajectory" style="padding-left:36px;font-size:12.5px;"><span class="nav-num" style="font-size:10px;">6.2</span> Zone Trajectory</a>
+  <a href="#temporal"><span class="nav-num">06</span> Temporal Fusion</a>
+  <a href="#thermal-decay" style="padding-left:36px; font-size:12.5px;"><span class="nav-num" style="font-size:10px;">6.1</span> Thermal Data Gaps</a>
+  <a href="#data-gaps" style="padding-left:36px; font-size:12.5px;"><span class="nav-num" style="font-size:10px;">6.2</span> Wearable Data Gaps</a>
+  <a href="#signal-matrix" style="padding-left:36px; font-size:12.5px;"><span class="nav-num" style="font-size:10px;">6.3</span> Signal Availability Matrix</a>
+  <a href="#cdss"><span class="nav-num">07</span> Clinical Decision Support</a>
+  <a href="#zone-guide" style="padding-left:36px;font-size:12.5px;"><span class="nav-num" style="font-size:10px;">7.1</span> Zone Action Guide</a>
+  <a href="#trajectory" style="padding-left:36px;font-size:12.5px;"><span class="nav-num" style="font-size:10px;">7.2</span> Zone Trajectory</a>
+  <a href="#scan-frequency" style="padding-left:36px;font-size:12.5px;"><span class="nav-num" style="font-size:10px;">7.3</span> Scan Frequency</a>
+  <a href="#rtp-protocol" style="padding-left:36px;font-size:12.5px;"><span class="nav-num" style="font-size:10px;">7.4</span> Return to Play</a>
 
   <div class="nav-section">Protocol</div>
-  <a href="#scan-protocol"><span class="nav-num">07A</span> Scan Protocol</a>
-  <a href="#tech-camera"><span class="nav-num">07B</span> Technical</a>
+  <a href="#scan-protocol"><span class="nav-num">08</span> Scan Protocol</a>
+  <a href="#tech-camera"><span class="nav-num">09</span> Technical</a>
   <div class="nav-section">Evidence</div>
   <a href="#evidence"><span class="nav-num">A</span> Evidence Appendix</a>
 </nav>
@@ -933,24 +938,24 @@
 <section id="philosophy">
   <div class="section-label">Section 01</div>
   <h2>The Core Philosophy</h2>
-  <p class="section-intro">The COMPASS framework integrates two fundamentally different kinds of athlete health data — each answering a different clinical question that the other cannot.</p>
+  <p class="section-intro">The COMPASS framework integrates two fundamentally different kinds of athlete health data — each answering a different clinical question that the other cannot. Its architecture is grounded in the theoretical argument by Kalkhoven, Watsford & Impellizzeri (2021) that systemic training load metrics cannot, by themselves, provide a quantitative indication of tissue-level injury risk.</p>
 
   <div class="signal-compare">
     <div class="signal-box">
-      <h4>⌚ Readiness Score <span style="font-size:10px; font-weight:600; background:rgba(0,200,255,0.12); color:var(--accent); border:1px solid rgba(0,200,255,0.25); border-radius:10px; padding:2px 8px; margin-left:6px; letter-spacing:0.5px; text-transform:uppercase;">via API</span></h4>
+      <h4>⌚ Readiness Score <span style="font-size:10px; font-weight:600; background:rgba(0,200,255,0.12); color:var(--accent); border:1px solid rgba(0,200,255,0.25); border-radius:10px; padding:2px 8px; margin-left:6px; letter-spacing:0.5px; text-transform:uppercase;">via Spike · Daily</span></h4>
       <ul>
-        <li>Pre-computed by wearable API provider</li>
-        <li>Integrates HRV, resting HR, sleep, ACWR</li>
-        <li>Baseline-adjusted by the provider</li>
-        <li>Delivered as a 0–100 readiness score</li>
+        <li>Collected daily from Spike wearable</li>
+        <li>Daily averages: avg HRV, resting HR, sleep quality, ACWR</li>
+        <li>Baseline-adjusted by Spike before delivery</li>
+        <li>Delivered as a single 0–100 readiness score</li>
       </ul>
       <br>
       <p style="font-size:13px;max-width:none;color:var(--text-muted);">Answers: <em>"Is this athlete's body ready to perform?"</em></p>
-      <p style="font-size:12px;max-width:none;color:var(--text-dim); margin-top:6px;">Baseline establishment and longitudinal normalisation are handled entirely by the wearable API provider (e.g. SpikeAPI). COMPASS consumes the output score — no internal wearable baseline is required.</p>
+      <p style="font-size:12px;max-width:none;color:var(--text-dim); margin-top:6px;">Spike collects raw sensor data continuously and publishes one daily summary per athlete — end-of-day averages for HRV, resting HR, sleep score, and ACWR. These daily statistics are what flow into the readiness score delivered to COMPASS. Baseline establishment and longitudinal normalisation are handled entirely by Spike. COMPASS consumes the output score — no internal wearable baseline is required.</p>
     </div>
     <div class="signal-vs">VS</div>
     <div class="signal-box">
-      <h4>🌡️ Thermography <span style="font-size:10px; font-weight:600; background:rgba(249,115,22,0.12); color:#f97316; border:1px solid rgba(249,115,22,0.25); border-radius:10px; padding:2px 8px; margin-left:6px; letter-spacing:0.5px; text-transform:uppercase;">COMPASS Baseline</span></h4>
+      <h4>🌡️ Thermography <span style="font-size:10px; font-weight:600; background:rgba(249,115,22,0.12); color:#f97316; border:1px solid rgba(249,115,22,0.25); border-radius:10px; padding:2px 8px; margin-left:6px; letter-spacing:0.5px; text-transform:uppercase;">via NUR sensor</span></h4>
       <ul>
         <li>Contralateral asymmetry index</li>
         <li>Asymmetry trend over time</li>
@@ -966,67 +971,25 @@
   <div class="insight">
     <p><strong>The Founding Insight:</strong> These two questions are not the same question. A wearable cannot tell you that the right hamstring is inflamed. A thermogram cannot tell you whether the athlete slept well. The power of combining them is not that they overlap — it is that they do not.</p>
   </div>
+
+  <div style="background:rgba(0,200,255,0.06); border:1px solid rgba(0,200,255,0.2); border-radius:10px; padding:16px 20px; margin-top:20px;">
+    <div style="font-size:10px; color:var(--accent); font-weight:800; letter-spacing:0.06em; margin-bottom:10px; text-transform:uppercase;">Theoretical Foundation</div>
+    <p style="font-size:13.5px; color:var(--text); line-height:1.6; margin:0 0 10px;">Kalkhoven, Watsford & Impellizzeri (2021) demonstrated that training load measures cannot provide a quantitative indication of whether particular load progressions will increase or decrease injury risk at the tissue level — making the case for a mechanistic, tissue-specific layer above and beyond systemic load monitoring. COMPASS operationalises that argument directly: the Systemic Readiness Score captures the internal load domain (HRV, sleep, ACWR), while the Thermal Asymmetry Index adds the tissue-specific spatial resolution that no systemic metric can reach.</p>
+    <p style="font-size:11.5px; color:var(--text-dim); margin:0;">Kalkhoven JT, Watsford ML, Impellizzeri FM. <em>A critique of the use and misuse of training load in team sports: towards a fuller understanding of the relationship between external and internal load.</em> Sports Med. 2021;51(3):469–479. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7534945/" style="color:var(--accent); text-decoration:none;" target="_blank">PMC7534945 ↗</a></p>
+  </div>
 </section>
 
-<!-- ══ 2. Zone Framework ══ -->
+<!-- ══ 2. COMPASS Framework ══ -->
 <section id="zones">
   <div class="section-label">Section 02</div>
-  <h2>The Two-Axis Zone Framework</h2>
-  <p class="section-intro">Plotting Systemic Readiness on one axis and Maximum Thermal Asymmetry on the other creates a two-dimensional space in which every athlete occupies a position in one of four clinically distinct zones.</p>
+  <h2>The COMPASS Framework</h2>
+  <p class="section-intro">Plotting Systemic Readiness against Maximum Thermal Asymmetry creates a two-dimensional space in which every athlete occupies one of four clinically distinct zones — each carrying a genuinely different meaning and requiring a genuinely different clinical response.</p>
 
-  <!-- Zone Matrix -->
-  <div style="margin: 36px 0 60px; max-width: 680px;">
-    <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:6px; padding-left:60px;">
-      <span>← High Systemic Readiness</span>
-      <span>Low Systemic Readiness →</span>
-    </div>
-    <div style="display:flex; align-items:stretch; gap:0;">
-      <div style="display:flex; flex-direction:column; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-right:10px; text-align:right; min-width:52px; padding:0 0 0 0;">
-        <span>⬆ High Thermal Asymmetry</span>
-        <span>⬇ Low Thermal</span>
-      </div>
-      <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; gap:3px; border-radius:12px; overflow:hidden; border:2px solid var(--border);">
-        <div class="qcell deceptive-q">
-          <div class="q-emoji">⚠️</div>
-          <div class="q-name">Deceptive Readiness Zone</div>
-          <div class="q-desc">Feels ready. Tissue is not. The most clinically important and most missed scenario.</div>
-          <div style="margin-top:10px; display:inline-block; background:rgba(249,115,22,0.18); color:#f97316; border:1px solid rgba(249,115,22,0.4); border-radius:12px; padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:0.5px;">Score 26–50</div>
-        </div>
-        <div class="qcell danger-q">
-          <div class="q-emoji">🛑</div>
-          <div class="q-name">Danger Zone</div>
-          <div class="q-desc">Both signals alarming. Highest injury risk. Mandatory clinical review required.</div>
-          <div style="margin-top:10px; display:inline-block; background:rgba(239,68,68,0.18); color:#ef4444; border:1px solid rgba(239,68,68,0.4); border-radius:12px; padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:0.5px;">Score 0–25</div>
-        </div>
-        <div class="qcell safe-q">
-          <div class="q-emoji">✅</div>
-          <div class="q-name">Safe Zone</div>
-          <div class="q-desc">Optimal training state. Both signals confirm readiness. Full load appropriate.</div>
-          <div style="margin-top:10px; display:inline-block; background:rgba(34,197,94,0.18); color:#22c55e; border:1px solid rgba(34,197,94,0.4); border-radius:12px; padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:0.5px;">Score 76–100</div>
-        </div>
-        <div class="qcell recovery-q">
-          <div class="q-emoji">⏸️</div>
-          <div class="q-name">Recovery Zone</div>
-          <div class="q-desc">Systemically fatigued but no local tissue risk. Load management focus.</div>
-          <div style="margin-top:10px; display:inline-block; background:rgba(245,158,11,0.18); color:#f59e0b; border:1px solid rgba(245,158,11,0.4); border-radius:12px; padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:0.5px;">Score 51–75</div>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:center; font-size:11px; color:var(--text-dim); margin-top:10px;">↑ X-Axis: Systemic Readiness (Wearable) &nbsp;|&nbsp; Y-Axis: Thermal Asymmetry (Thermography) ↑</div>
+  <div style="background:rgba(124,58,237,0.07); border:1px solid rgba(124,58,237,0.25); border-left:3px solid var(--accent2); border-radius:10px; padding:16px 20px; margin-bottom:28px;">
+    <div style="font-size:10px; color:var(--accent2); font-weight:800; letter-spacing:0.06em; margin-bottom:10px; text-transform:uppercase;">IOC Load Consensus — Capacity Gap Model</div>
+    <p style="font-size:13.5px; color:var(--text); line-height:1.6; margin:0 0 10px;">The IOC Consensus on load management (Soligard et al. 2016, <em>BJSM</em>) defines injury risk as a function of the gap between an athlete's <strong>load</strong> and their <strong>capacity</strong>: when accumulated load exceeds the athlete's capacity to absorb it, injury risk rises. COMPASS zones map directly onto this load-capacity relationship — combining systemic capacity (Readiness Score) with local tissue capacity (Thermal Asymmetry Index) to characterise the precise nature of any capacity gap present.</p>
+    <p style="font-size:11.5px; color:var(--text-dim); margin:0;">Soligard T, et al. <em>How much is too much? International Olympic Committee consensus statement on load in sport and risk of injury.</em> Br J Sports Med. 2016;50(17):1030–1041.</p>
   </div>
-
-  <!-- Zone Scatter Chart -->
-  <div class="chart-wrap">
-    <h4>Zone Framework — Interactive Quadrant Visualisation</h4>
-    <canvas id="zoneChart"></canvas>
-  </div>
-</section>
-
-<!-- ══ 3. Zone Meanings ══ -->
-<section id="zone-meanings">
-  <div class="section-label">Section 03</div>
-  <h2>What Each Zone Means</h2>
-  <p class="section-intro">Each zone carries a genuinely different clinical meaning — not just a different number on a scale — and requires a genuinely different clinical response.</p>
 
   <div class="zone-grid">
     <div class="zone-card safe">
@@ -1036,6 +999,7 @@
       </div>
       <h4>Both Signals Are Clear</h4>
       <p>The athlete's wearable data shows good recovery, and thermography shows no significant regional asymmetry. This is the optimal training state. Full training load is appropriate; no clinical intervention is indicated.</p>
+      <p style="font-size:12px; color:var(--text-dim); margin-top:8px; line-height:1.5;"><strong style="color:var(--safe);">Capacity gap:</strong> Load ≤ capacity on both systemic and tissue axes. No gap — the athlete is absorbing training demand without residual stress accumulation.</p>
       <div class="zone-signals">
         <span class="signal-tag">HRV ↑ Normal</span>
         <span class="signal-tag">Sleep ✓ Good</span>
@@ -1051,6 +1015,7 @@
       </div>
       <h4>Tired Body, Fine Tissue</h4>
       <p>Wearable readiness is suppressed — HRV is down, sleep quality was poor, or load has been accumulating — but thermography shows no localised tissue stress. Clinical response: load management. No region-specific physiotherapy concern.</p>
+      <p style="font-size:12px; color:var(--text-dim); margin-top:8px; line-height:1.5;"><strong style="color:var(--recovery);">Capacity gap:</strong> Systemic capacity is diminished. Load has eroded the whole-body margin — reduce volume to restore the gap before tissue stress compounds it.</p>
       <div class="zone-signals">
         <span class="signal-tag">HRV ↓ Low</span>
         <span class="signal-tag">Sleep ✗ Poor</span>
@@ -1066,6 +1031,7 @@
       </div>
       <h4>The Most Important Zone</h4>
       <p>Systemic readiness is good — the athlete feels excellent and is motivated to train hard. But thermography flags elevated asymmetry in a specific region, indicating that local tissue stress is building. No wearable-only system can detect this.</p>
+      <p style="font-size:12px; color:var(--text-dim); margin-top:8px; line-height:1.5;"><strong style="color:var(--deceptive);">Capacity gap:</strong> Systemic capacity appears intact, but local tissue capacity is exceeded at the regional level. The gap is hidden — invisible to any systemic metric, detectable only by thermography.</p>
       <div class="zone-signals">
         <span class="signal-tag">HRV ↑ Good</span>
         <span class="signal-tag">Sleep ✓ Good</span>
@@ -1081,6 +1047,7 @@
       </div>
       <h4>Both Signals Alarming</h4>
       <p>Systemic readiness is low and thermal asymmetry is elevated simultaneously. The body is both globally fatigued and locally stressed. Mandatory clinical intervention: load reduction is non-negotiable; physiotherapy assessment required.</p>
+      <p style="font-size:12px; color:var(--text-dim); margin-top:8px; line-height:1.5;"><strong style="color:var(--danger);">Capacity gap:</strong> Load exceeds both systemic and local tissue capacity simultaneously. A critical dual-axis gap — continued training at this state makes injury statistically near-certain.</p>
       <div class="zone-signals">
         <span class="signal-tag">HRV ↓↓ Critical</span>
         <span class="signal-tag">ACWR ↑↑ High</span>
@@ -1094,59 +1061,57 @@
     <p><strong>Why the Deceptive Readiness Zone matters most:</strong> Injuries rarely happen to athletes who feel terrible. They happen most often to athletes who feel great, train hard, and cross a threshold that their tissue had been approaching invisibly for days or weeks. This zone is where thermography's early-warning capability saves careers.</p>
   </div>
 
-  <h3>How the COMPASS Score Is Calculated</h3>
-  <p>The zone an athlete falls into is determined first — that is non-negotiable. The score is then computed within that zone based on how far from the threshold boundary both signals sit. This two-step approach preserves the clinical meaning of each zone while adding continuous resolution within it.</p>
+  <div class="insight">
+    <p style="margin-bottom:16px;"><strong>The COMPASS score: a continuous variable, not just a zone label.</strong> Every athlete receives a score from 0–100. Zone boundaries are clinical thresholds within that scale — where an athlete sits <em>inside</em> their zone carries independent meaning, and score trends within a zone signal risk before any zone transition occurs.</p>
 
-  <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px 32px; margin:24px 0; max-width:760px;">
-    <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--accent); font-weight:700; margin-bottom:16px;">Score Formula</div>
-
-    <!-- Step 1: Determine Zone -->
-    <div style="margin-bottom:20px;">
-      <div style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px;">Step 1 — Determine Zone (R = Readiness, T = Thermal Risk, both 0–100)</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-        <div style="background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); border-radius:8px; padding:10px 14px; font-size:12.5px; color:var(--text-muted);">R ≥ 50 <strong style="color:var(--text);">and</strong> T &lt; 50 → <strong style="color:#22c55e;">Safe Zone</strong></div>
-        <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); border-radius:8px; padding:10px 14px; font-size:12.5px; color:var(--text-muted);">R &lt; 50 <strong style="color:var(--text);">and</strong> T &lt; 50 → <strong style="color:#f59e0b;">Recovery Zone</strong></div>
-        <div style="background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); border-radius:8px; padding:10px 14px; font-size:12.5px; color:var(--text-muted);">R ≥ 50 <strong style="color:var(--text);">and</strong> T ≥ 50 → <strong style="color:#f97316;">Deceptive Readiness</strong></div>
-        <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:8px; padding:10px 14px; font-size:12.5px; color:var(--text-muted);">R &lt; 50 <strong style="color:var(--text);">and</strong> T ≥ 50 → <strong style="color:#ef4444;">Danger Zone</strong></div>
+    <div style="margin:0 0 6px;">
+      <div style="display:flex; height:36px; border-radius:8px; overflow:hidden;">
+        <div style="width:25%; background:rgba(239,68,68,0.22); border:1px solid rgba(239,68,68,0.45); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;">
+          <span style="font-size:10px; font-weight:800; color:#ef4444; letter-spacing:0.03em;">DANGER</span>
+          <span style="font-size:10px; color:rgba(239,68,68,0.75);">0–25</span>
+        </div>
+        <div style="width:25%; background:rgba(249,115,22,0.18); border:1px solid rgba(249,115,22,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;">
+          <span style="font-size:10px; font-weight:800; color:#f97316; letter-spacing:0.03em;">DECEPTIVE</span>
+          <span style="font-size:10px; color:rgba(249,115,22,0.75);">26–50</span>
+        </div>
+        <div style="width:25%; background:rgba(245,158,11,0.18); border:1px solid rgba(245,158,11,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;">
+          <span style="font-size:10px; font-weight:800; color:#f59e0b; letter-spacing:0.03em;">RECOVERY</span>
+          <span style="font-size:10px; color:rgba(245,158,11,0.75);">51–75</span>
+        </div>
+        <div style="width:25%; background:rgba(34,197,94,0.18); border:1px solid rgba(34,197,94,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;">
+          <span style="font-size:10px; font-weight:800; color:#22c55e; letter-spacing:0.03em;">SAFE</span>
+          <span style="font-size:10px; color:rgba(34,197,94,0.75);">76–100</span>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:10px; color:rgba(255,255,255,0.35); margin-top:5px; padding:0 1px;">
+        <span>0</span><span>26</span><span>51</span><span>76</span><span>100</span>
       </div>
     </div>
 
-    <!-- Step 2: Score within zone -->
-    <div>
-      <div style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px;">Step 2 — Compute Score within Zone</div>
-      <div style="display:flex; flex-direction:column; gap:8px;">
-        <div style="display:flex; align-items:baseline; gap:12px; font-size:13px; color:var(--text-muted); border-bottom:1px solid var(--border); padding-bottom:8px;">
-          <span style="min-width:140px; color:#22c55e; font-weight:600;">Safe (76–100)</span>
-          <span>76 + 24 × avg( (R−50)/50 , (50−T)/50 )</span>
-        </div>
-        <div style="display:flex; align-items:baseline; gap:12px; font-size:13px; color:var(--text-muted); border-bottom:1px solid var(--border); padding-bottom:8px;">
-          <span style="min-width:140px; color:#f59e0b; font-weight:600;">Recovery (51–75)</span>
-          <span>51 + 24 × avg( R/50 , (50−T)/50 )</span>
-        </div>
-        <div style="display:flex; align-items:baseline; gap:12px; font-size:13px; color:var(--text-muted); border-bottom:1px solid var(--border); padding-bottom:8px;">
-          <span style="min-width:140px; color:#f97316; font-weight:600;">Deceptive (26–50)</span>
-          <span>26 + 24 × ( 0.3×(R−50)/50 + <strong style="color:var(--text);">0.7</strong>×(100−T)/50 )</span>
-        </div>
-        <div style="display:flex; align-items:baseline; gap:12px; font-size:13px; color:var(--text-muted);">
-          <span style="min-width:140px; color:#ef4444; font-weight:600;">Danger (0–25)</span>
-          <span>25 × ( 0.3×R/50 + <strong style="color:var(--text);">0.7</strong>×(100−T)/50 )</span>
-        </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px;">
+      <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:11px 13px;">
+        <div style="font-size:10px; color:var(--accent); font-weight:800; letter-spacing:0.06em; margin-bottom:6px;">POSITION WITHIN ZONE</div>
+        <div style="font-size:13px; color:var(--text); line-height:1.5;">Score 72 (Recovery ceiling) is near-safe. Score 52 (Recovery floor) borders Danger. Same zone label — very different clinical risk.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:11px 13px;">
+        <div style="font-size:10px; color:var(--accent); font-weight:800; letter-spacing:0.06em; margin-bottom:6px;">TREND DETECTION</div>
+        <div style="font-size:13px; color:var(--text); line-height:1.5;">A score drifting 45 → 30 within the Deceptive zone signals accelerating risk before any zone transition occurs.</div>
       </div>
     </div>
   </div>
 
-  <div class="alert blue">
-    <div class="alert-icon">⚖️</div>
-    <div>
-      <strong>Why Thermal Is Weighted 70% in Risk Zones</strong>
-      <p>In the Deceptive and Danger zones, the thermal signal carries 70% of the within-zone score, versus 30% for readiness. This reflects the clinical asymmetry at the heart of the framework: when tissue stress is elevated, how the athlete <em>feels</em> is an unreliable guide. The score is deliberately pulled down by thermal risk even when readiness is high — ensuring an athlete who feels great but has significant asymmetry cannot score in the upper half of the Deceptive band.</p>
-    </div>
+  <!-- Zone Scatter Chart -->
+  <div class="chart-wrap">
+    <h4>COMPASS Framework — Interactive Quadrant Visualisation</h4>
+    <canvas id="zoneChart"></canvas>
   </div>
+</section>
 
-  <!-- ── 3.1 Score Pipeline ── -->
-  <div id="score-pipeline">
-    <h3 style="margin-top:40px;">3.1 How the COMPASS Score Is Calculated</h3>
-    <p style="color:var(--text-muted);font-size:14px;line-height:1.6;margin-bottom:24px;">The following diagram traces the full pipeline from raw sensor inputs to a final COMPASS score and zone assignment. Each stage is described in detail in the step-by-step walkthrough below.</p>
+<!-- ══ 3. Framework Pipeline ══ -->
+<section id="framework-pipeline">
+  <div class="section-label">Section 03</div>
+  <h2>The Framework Pipeline</h2>
+  <p class="section-intro">A high-level view of the full COMPASS pipeline — from raw sensor inputs to practitioner outputs. All scoring equations are collected in <a href="#scoring-equations" style="color:var(--accent);">§ 3.1</a> immediately after the diagram.</p>
 
     <!-- Visual Pipeline -->
     <div class="sc-pipeline">
@@ -1156,12 +1121,12 @@
         <div class="sc-stage-label">Stage A — Raw Signal Inputs</div>
         <div class="sc-row">
           <div class="sc-block sc-wearable">
-            <div class="sc-block-title">Wearable Device</div>
-            <div class="sc-block-body">HRV, resting HR, sleep quality, ACWR — processed by upstream wearable API (e.g. SpikeAPI) into a single pre-normalised readiness score.</div>
+            <div class="sc-block-title">Spike Wearable — Daily Data</div>
+            <div class="sc-block-body">Each day, Spike publishes one daily summary per athlete: average HRV, resting HR, sleep quality score, and ACWR. These daily statistics are forwarded to the Spike API, which returns a single pre-normalised readiness score.</div>
           </div>
           <div class="sc-block sc-thermal">
             <div class="sc-block-title">Thermography Camera</div>
-            <div class="sc-block-body">IR scan of contralateral body regions. TAI = <code>max(region deltas)</code> — the largest left/right temperature difference observed across all scanned zones.</div>
+            <div class="sc-block-body">Bilateral IR scan of contralateral body regions. Returns left/right temperature deltas per scanned zone.</div>
           </div>
         </div>
       </div>
@@ -1170,19 +1135,15 @@
 
       <!-- Stage B -->
       <div class="sc-stage">
-        <div class="sc-stage-label">Stage B — Upstream Processing</div>
+        <div class="sc-stage-label">Stage B — Signal Normalisation</div>
         <div class="sc-row">
           <div class="sc-block sc-wearable">
-            <div class="sc-block-title">R Score (0–100)</div>
-            <div class="sc-block-body">Received directly from wearable API. Reflects HRV trend, sleep debt, resting HR deviation, and training load ratio — all normalised to the individual's own baseline by the provider.</div>
+            <div class="sc-block-title">R Score (0–100) — from Spike</div>
+            <div class="sc-block-body">Received directly from the Spike API once per day. Spike normalises the daily statistics (avg HRV, resting HR, sleep, ACWR) to the athlete's own baseline before returning this score. COMPASS performs no readiness modelling.</div>
           </div>
           <div class="sc-block sc-thermal">
             <div class="sc-block-title">T Score (0–100)</div>
-            <div class="sc-block-body">
-              Population method: <code>T = min(100, TAI / 1.0 × 100)</code><br>
-              SD baseline method: <code>T = min(100, TAI_SD / 3.0 × 100)</code><br>
-              Higher T = more thermal asymmetry = greater tissue stress.
-            </div>
+            <div class="sc-block-body">TAI converted to a normalised thermal risk score. Higher T = more asymmetry = greater tissue stress. Two conversion methods available — see <a href="#scoring-equations" style="color:var(--accent);">§ 3.1</a>.</div>
           </div>
         </div>
       </div>
@@ -1194,16 +1155,16 @@
         <div class="sc-stage-label">Stage C — Zone Classification (2 × 2 Matrix)</div>
         <div class="sc-matrix">
           <div class="sc-matrix-cell safe">
-            Safe<div class="sc-matrix-sub">R ≥ 50, T &lt; 50</div>
+            Safe<div class="sc-matrix-sub">Systemic ready · Thermal clear</div>
           </div>
           <div class="sc-matrix-cell rec">
-            Recovery<div class="sc-matrix-sub">R &lt; 50, T &lt; 50</div>
+            Recovery<div class="sc-matrix-sub">Systemic fatigued · Thermal clear</div>
           </div>
           <div class="sc-matrix-cell dec">
-            Deceptive<div class="sc-matrix-sub">R ≥ 50, T ≥ 50</div>
+            Deceptive<div class="sc-matrix-sub">Systemic ready · Thermal inflamed</div>
           </div>
           <div class="sc-matrix-cell dan">
-            Danger<div class="sc-matrix-sub">R &lt; 50, T ≥ 50</div>
+            Danger<div class="sc-matrix-sub">Systemic fatigued · Thermal inflamed</div>
           </div>
         </div>
       </div>
@@ -1214,14 +1175,8 @@
       <div class="sc-stage">
         <div class="sc-stage-label">Stage D — COMPASS Scoring Engine</div>
         <div class="sc-fusion">
-          <div class="sc-block-title">Fusion Formula</div>
-          <div class="sc-block-body">
-            <strong>Safe / Recovery zones (equal weight):</strong><br>
-            <code>Score = floor + 24 × (0.5 × R_dist + 0.5 × T_dist)</code><br><br>
-            <strong>Deceptive / Danger zones (thermal-weighted):</strong><br>
-            <code>Score = floor + 24 × (0.3 × R_dist + 0.7 × T_dist)</code><br><br>
-            Where <code>R_dist</code> and <code>T_dist</code> are normalised distances from the zone boundary (0–1). Zone floor values: Safe 76, Recovery 51, Deceptive 26, Danger 1.
-          </div>
+          <div class="sc-block-title">COMPASS Score (0–100)</div>
+          <div class="sc-block-body">R and T are each measured as a normalised distance from the zone boundary, then blended with zone-specific weights. Safe and Recovery zones weight both signals equally; Deceptive and Danger zones weight thermal at 70% — reflecting that tissue stress is the more reliable injury signal when the two conflict. Full equations in <a href="#scoring-equations" style="color:var(--accent);">§ 3.1</a>.</div>
         </div>
       </div>
 
@@ -1250,7 +1205,92 @@
         </div>
       </div>
 
+      <div class="sc-arrow"></div>
+
+      <!-- Stage F -->
+      <div class="sc-stage">
+        <div class="sc-stage-label">Stage F — AI Reasoning Engine</div>
+        <div class="sc-fusion">
+          <div class="sc-block-title">Multimodal Reasoning Engine <span style="font-size:11px;font-weight:400;opacity:0.65;">· AI Layer · Read-only</span></div>
+          <div class="sc-block-body">Receives the fully computed COMPASS assessment as a read-only input. Cannot alter scores, zone assignments, or thresholds. Sole function: explain and recommend based on the deterministic output from Stage E.</div>
+        </div>
+      </div>
+
+      <div class="sc-arrow"></div>
+
+      <!-- Stage G -->
+      <div class="sc-stage">
+        <div class="sc-stage-label">Stage G — Practitioner Outputs</div>
+        <div class="sc-row">
+          <div class="sc-block sc-wearable">
+            <div class="sc-block-title">Verbose Explanation</div>
+            <div class="sc-block-body">Auditable reasoning chain for every assessment — named signals, zone rationale, and severity context.</div>
+          </div>
+          <div class="sc-block sc-thermal">
+            <div class="sc-block-title">Intervention Plan</div>
+            <div class="sc-block-body">Phase 1 Acute · Phase 2 Progressive · Threshold-gated progression criteria.</div>
+          </div>
+          <div class="sc-block" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px;">
+            <div class="sc-block-title">Reassessment Triggers</div>
+            <div class="sc-block-body">Named signal thresholds · Rule-based escalation · Next scan cadence.</div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /sc-pipeline -->
+
+    <!-- ── 3.1.1 Scoring Equations ── -->
+    <div id="scoring-equations" style="margin-top:36px;">
+      <h4 style="font-size:15px;font-weight:700;margin-bottom:4px;">3.1 — Scoring Equations</h4>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px;">The three calculations that underpin the pipeline — T Score conversion, zone classification thresholds, and the COMPASS score formula.</p>
+
+      <!-- Eq 1: T Score -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:12px;">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:var(--accent);font-weight:700;margin-bottom:12px;">① T Score — TAI → Thermal Risk (0–100)</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text-muted);">
+          <div><span style="color:var(--text);font-weight:600;min-width:180px;display:inline-block;">Population method</span><code>T = min(100, TAI / 1.0 × 100)</code></div>
+          <div><span style="color:var(--text);font-weight:600;min-width:180px;display:inline-block;">SD baseline method</span><code>T = min(100, TAI_SD / 3.0 × 100)</code></div>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:var(--text-dim);">Where <code>TAI = max(region deltas)</code> — the largest left/right temperature difference across all scanned zones. <code>TAI_SD = TAI ÷ athlete's personal baseline SD</code>. The SD baseline method is preferred for longitudinal monitoring.</div>
+      </div>
+
+      <!-- Eq 2: Zone Classification -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:12px;">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:var(--accent);font-weight:700;margin-bottom:12px;">② Zone Classification — R &amp; T Thresholds</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px;">
+          <div style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.2);border-radius:7px;padding:9px 13px;color:var(--text-muted);">R ≥ 50 <strong style="color:var(--text);">and</strong> T &lt; 50 → <strong style="color:#22c55e;">Safe</strong></div>
+          <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:7px;padding:9px 13px;color:var(--text-muted);">R &lt; 50 <strong style="color:var(--text);">and</strong> T &lt; 50 → <strong style="color:#f59e0b;">Recovery</strong></div>
+          <div style="background:rgba(249,115,22,0.07);border:1px solid rgba(249,115,22,0.2);border-radius:7px;padding:9px 13px;color:var(--text-muted);">R ≥ 50 <strong style="color:var(--text);">and</strong> T ≥ 50 → <strong style="color:#f97316;">Deceptive</strong></div>
+          <div style="background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.2);border-radius:7px;padding:9px 13px;color:var(--text-muted);">R &lt; 50 <strong style="color:var(--text);">and</strong> T ≥ 50 → <strong style="color:#ef4444;">Danger</strong></div>
+        </div>
+      </div>
+
+      <!-- Eq 3: COMPASS Score -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:var(--accent);font-weight:700;margin-bottom:12px;">③ COMPASS Score Formula</div>
+        <div style="margin-bottom:14px;font-size:13px;color:var(--text-muted);">
+          <strong style="color:var(--text);">Abstract form</strong> — <code>R_dist</code> and <code>T_dist</code> are each signal's normalised distance from the zone boundary (0–1):<br>
+          <div style="margin-top:6px;"><code>Safe / Recovery: &nbsp;&nbsp;Score = floor + 24 × (0.5 × R_dist + 0.5 × T_dist)</code></div>
+          <div style="margin-top:4px;"><code>Deceptive / Danger: Score = floor + 24 × (0.3 × R_dist + 0.7 × T_dist)</code></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">Per-zone expanded form:</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-muted);">
+          <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border);padding-bottom:6px;"><span style="color:#22c55e;font-weight:600;min-width:152px;">Safe (76–100)</span><code>76 + 24 × avg( (R−50)/50 , (50−T)/50 )</code></div>
+          <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border);padding-bottom:6px;"><span style="color:#f59e0b;font-weight:600;min-width:152px;">Recovery (51–75)</span><code>51 + 24 × avg( R/50 , (50−T)/50 )</code></div>
+          <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border);padding-bottom:6px;"><span style="color:#f97316;font-weight:600;min-width:152px;">Deceptive (26–50)</span><code>26 + 24 × ( 0.3×(R−50)/50 + 0.7×(100−T)/50 )</code></div>
+          <div style="display:flex;align-items:baseline;gap:12px;"><span style="color:#ef4444;font-weight:600;min-width:152px;">Danger (0–25)</span><code>25 × ( 0.3×R/50 + 0.7×(100−T)/50 )</code></div>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--text-dim);border-top:1px solid rgba(255,255,255,0.08);padding-top:10px;">Zone floors: Safe 76 · Recovery 51 · Deceptive 26 · Danger 1. Each zone spans 25 points.</div>
+      </div>
+    </div><!-- /scoring-equations -->
+
+    <div class="alert blue" style="margin-top:24px;">
+      <div class="alert-icon">⚖️</div>
+      <div>
+        <strong>Why Thermal Is Weighted 70% in Risk Zones</strong>
+        <p>In the Deceptive and Danger zones, the thermal signal carries 70% of the within-zone score, versus 30% for readiness. This reflects the clinical asymmetry at the heart of the framework: when tissue stress is elevated, how the athlete <em>feels</em> is an unreliable guide. The score is deliberately pulled down by thermal risk even when readiness is high — ensuring an athlete who feels great but has significant asymmetry cannot score in the upper half of the Deceptive band.</p>
+      </div>
+    </div>
 
     <!-- Step-by-Step Walkthrough -->
     <h3 style="margin-top:40px;">Step-by-Step Walkthrough</h3>
@@ -1260,7 +1300,7 @@
         <div class="sc-step-num">1</div>
         <div class="sc-step-body">
           <h4>Collect raw signals</h4>
-          <p>The wearable device streams <span class="sig-tag w">HRV</span> <span class="sig-tag w">resting HR</span> <span class="sig-tag w">sleep quality</span> <span class="sig-tag w">ACWR</span> to the upstream API. The thermography camera captures a bilateral IR scan and returns <span class="sig-tag t">TAI</span> — the maximum contralateral delta across all scanned regions.</p>
+          <p>Spike collects continuous sensor data and publishes one daily summary per athlete. Each day's output includes <span class="sig-tag w">avg HRV</span> <span class="sig-tag w">resting HR</span> <span class="sig-tag w">sleep quality</span> <span class="sig-tag w">ACWR</span> — these daily statistics are forwarded to the Spike API to generate the readiness score. The thermography camera captures a bilateral IR scan and returns <span class="sig-tag t">TAI</span> — the maximum contralateral delta across all scanned regions.</p>
         </div>
       </div>
 
@@ -1295,6 +1335,8 @@
           <p>Each zone spans 25 points (floor to floor + 24). The weighted distances of R and T from their respective zone boundaries determine where within that 25-point band the athlete sits. The result is a single integer from 0–100 that encodes both zone identity and within-zone severity.</p>
         </div>
       </div>
+
+      <p style="color:var(--text-muted);font-size:13px;margin-top:16px;padding:12px 16px;background:rgba(255,255,255,0.03);border-left:3px solid rgba(255,255,255,0.15);border-radius:0 6px 6px 0;">Steps 1–5 produce the COMPASS score and zone assignment. The pipeline then continues through an AI reasoning layer (Stage F) to practitioner outputs (Stage G) — detailed in <a href="#cdss" style="color:var(--accent);">Section 07</a>. The full equations behind Steps 2–4 are in <a href="#scoring-equations" style="color:var(--accent);">§ 3.1</a>.</p>
 
     </div><!-- /sc-steps -->
 
@@ -1358,9 +1400,7 @@
 
     </div><!-- /we-wrap -->
 
-  </div><!-- /score-pipeline -->
-
-</section>
+</section><!-- /framework-pipeline -->
 
 <!-- ══ 4. Personalisation ══ -->
 <section id="personalisation">
@@ -1371,13 +1411,13 @@
   <div class="alert blue" style="margin-bottom:32px;">
     <div class="alert-icon">⌚</div>
     <div>
-      <strong>Wearable Readiness: Zero Baseline Burden</strong>
-      <p>COMPASS receives a pre-computed, baseline-adjusted readiness score (0–100) directly from the wearable API provider (e.g. SpikeAPI). Individual normalisation, HRV trend analysis, sleep scoring, and ACWR calculation are all performed upstream. COMPASS consumes the output — no wearable data storage, baseline accumulation, or longitudinal modelling is required on the platform side.</p>
+      <strong>Wearable Readiness: Zero Baseline Burden — Powered by Daily Spike Data</strong>
+      <p>COMPASS receives a pre-computed, baseline-adjusted readiness score (0–100) directly from the Spike API. Spike collects raw sensor data continuously and publishes one daily summary per athlete — end-of-day averages for HRV, resting HR, sleep quality, and ACWR. These daily statistics are processed entirely by Spike: individual normalisation, HRV trend analysis, sleep scoring, and ACWR calculation all happen upstream. COMPASS consumes the output — no wearable data storage, baseline accumulation, or longitudinal modelling is required on the platform side.</p>
     </div>
   </div>
 
   <h3>Thermal Baseline Establishment</h3>
-  <p>Thermography baselines must be built within COMPASS because they are institution- and equipment-specific. A meaningful personal thermal baseline requires a minimum series of scans captured under consistent conditions — see <a href="#scan-protocol">Section 07A (Standardised Scan Protocol)</a> for the full specification.</p>
+  <p>Thermography baselines must be built within COMPASS because they are institution- and equipment-specific. A meaningful personal thermal baseline requires a minimum series of scans captured under consistent conditions — see <a href="#scan-protocol">Section 08 (Standardised Scan Protocol)</a> for the full specification.</p>
 
   <div class="stat-row">
     <div class="stat-box">
@@ -1411,7 +1451,7 @@
 
 <!-- ══ 5A. Population-Based Asymmetry Framework ══ -->
 <section id="asymmetry-pop">
-  <div class="section-label">Section 04A</div>
+  <div class="section-label">Section 05A</div>
   <h2>Population-Based Asymmetry Classification</h2>
   <p class="section-intro">Applied when no individual thermal baseline has been established (fewer than 6 thermal scans). Thresholds are anchored to normative datasets of healthy athletes, using absolute temperature differences (°C) between contralateral body regions.</p>
 
@@ -1419,7 +1459,7 @@
     <div class="alert-icon">👥</div>
     <div>
       <strong>When This Framework Applies</strong>
-      <p>Use population thresholds during the athlete onboarding window — before 6 thermal scans have been completed. All outputs are flagged as <em>"Population baseline active."</em> Once 6 scans are accumulated, the system transitions automatically to the SD-based individual model (Section 04B).</p>
+      <p>Use population thresholds during the athlete onboarding window — before 6 thermal scans have been completed. All outputs are flagged as <em>"Population baseline active."</em> Once 6 scans are accumulated, the system transitions automatically to the SD-based individual model (Section 05B).</p>
     </div>
   </div>
 
@@ -1533,9 +1573,9 @@
 
 <!-- ══ 5B. SD-Based Asymmetry Framework ══ -->
 <section id="asymmetry-sd">
-  <div class="section-label">Section 04B</div>
+  <div class="section-label">Section 05B</div>
   <h2>Individual Baseline SD Classification</h2>
-  <p class="section-intro">Applied once an athlete's personal thermal baseline is established (6 or more scans under <a href="#scan-protocol">standardised conditions (Section 07A)</a>). Each body region acquires a personal mean and SD from scan history. Subsequent readings are classified relative to this individual norm — a materially more sensitive and specific reference frame than population thresholds alone.</p>
+  <p class="section-intro">Applied once an athlete's personal thermal baseline is established (6 or more scans under <a href="#scan-protocol">standardised conditions (Section 08)</a>). Each body region acquires a personal mean and SD from scan history. Subsequent readings are classified relative to this individual norm — a materially more sensitive and specific reference frame than population thresholds alone.</p>
 
   <div class="alert blue">
     <div class="alert-icon">🎯</div>
@@ -1754,24 +1794,24 @@
 
 <!-- ══ 5. Temporal Fusion ══ -->
 <section id="temporal">
-  <div class="section-label">Section 05</div>
+  <div class="section-label">Section 06</div>
   <h2>Temporal Fusion Strategy</h2>
   <p class="section-intro">The two data streams operate on fundamentally different timescales. The framework explicitly models this asymmetry rather than engineering around it.</p>
 
-  <h3>5.1 Thermal Prior Decay</h3>
-  <p>The most recent thermography assessment acts as a persistent <em>contextual prior</em> that modifies the wearable-based readiness signal on a day-by-day basis. The weight applied to this prior decays as time since the last scan increases. A single uniform half-life of 7 days applies regardless of zone — this keeps the model simple, auditable, and easy to explain to clinical staff.</p>
+  <h3 id="thermal-decay">6.1 Thermal Data Gaps</h3>
+  <p>Thermography is a periodic assessment — athletes are not scanned daily. Between scans, the system operates with a <em>stale thermal signal</em>: the most recent scan result persists as a contextual modifier, but its clinical weight diminishes the longer it goes unrefreshed. This section defines how COMPASS handles that gap: how long a thermal reading remains usable, how its influence is progressively reduced as the gap widens, and at what point the system treats the absence of fresh data as a risk condition in its own right.</p>
 
   <div class="alert blue" style="margin-bottom: 20px;">
     <div class="alert-icon">📐</div>
     <div>
       <strong>Modeling Assumption — Not Literature-Derived</strong>
-      <p>The 7-day half-life is a clinical approximation based on standard exponential decay, chosen for simplicity and auditability. No peer-reviewed study directly quantifies how long a thermographic asymmetry reading remains predictively valid after capture. This parameter should be treated as institution-adjustable: clinical leads are encouraged to revise it as longitudinal outcome data accumulates within their own cohort.</p>
+      <p>The 7-day gap tolerance is a clinical approximation based on standard exponential decay, chosen for simplicity and auditability. No peer-reviewed study directly quantifies how long a thermographic asymmetry reading remains predictively valid after capture. This parameter should be treated as institution-adjustable: clinical leads are encouraged to revise it as longitudinal outcome data accumulates within their own cohort.</p>
     </div>
   </div>
 
   <div class="decay-info">
     <div class="decay-item normal-d">
-      <div class="decay-zone">All Zones</div>
+      <div class="decay-zone">Gap Tolerance</div>
       <div class="decay-hl">7 days</div>
       <div class="decay-sub">Modeling assumption · Adjustable by clinical leads</div>
     </div>
@@ -1780,67 +1820,19 @@
   <div class="alert orange">
     <div class="alert-icon">⏰</div>
     <div>
-      <strong>Scan Overdue Threshold: 7 Days</strong>
-      <p>Once 7 days have elapsed since the last thermography scan, the thermal prior has decayed to 50% of its original weight — the minimum meaningful clinical threshold. The system suspends thermal risk scoring and flags an overdue scan, rather than issuing zone classifications on residual data with insufficient clinical weight.</p>
+      <strong>Gap Threshold: 7 Days — Scoring Suspended</strong>
+      <p>Once 7 days have elapsed since the last thermography scan, the thermal signal has degraded to 50% of its original clinical weight — below the minimum threshold for reliable zone classification. At this point the system does not attempt to extrapolate from stale data: thermal risk scoring is suspended and a scan-overdue flag is raised. Operating without a valid thermal input is itself treated as an elevated-risk state, since silent tissue stress accumulation cannot be excluded.</p>
     </div>
   </div>
 
   <!-- Decay Chart -->
   <div class="chart-wrap">
-    <h4>Thermal Prior Weight Decay Over Time (7-Day Uniform Half-Life) <span style="font-size:11px; font-weight:500; color:var(--text-dim); background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:2px 8px; margin-left:8px;">Modeling Assumption</span></h4>
+    <h4>Thermal Signal Weight Over Time — Gap Degradation Curve <span style="font-size:11px; font-weight:500; color:var(--text-dim); background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:2px 8px; margin-left:8px;">Modeling Assumption</span></h4>
     <canvas id="decayChart"></canvas>
   </div>
 
-  <h3>5.2 Scan Frequency Recommendations</h3>
-  <p>The zone in which an athlete is currently classified directly determines how soon the next thermography assessment is scheduled.</p>
-
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Clinical Context</th>
-        <th>Scan Interval</th>
-        <th>Rationale</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--safe)"></span>Safe Zone</span></td>
-        <td>Weekly</td>
-        <td>Baseline monitoring; no active risk signal <span style="font-size:10px; color:var(--text-dim);">[design assumption]</span></td>
-      </tr>
-      <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--recovery)"></span>Recovery Zone</span></td>
-        <td>Weekly</td>
-        <td>Systemic fatigue concern; maintains vigilance during vulnerable recovery window <span style="font-size:10px; color:var(--text-dim);">[design assumption]</span></td>
-      </tr>
-      <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--deceptive)"></span>Deceptive Readiness</span></td>
-        <td>Every 3–4 days</td>
-        <td>Elevated thermal risk with suppressed subjective awareness; high urgency to track trajectory <span style="font-size:10px; color:var(--accent);">[↗ Gómez-Carmona 2020 — daily protocol; Arnaiz-Lastras 2019 — twice weekly]</span></td>
-      </tr>
-      <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--danger)"></span>Danger Zone</span></td>
-        <td>Within 3 days, then every 2–3 days</td>
-        <td>Acute combined risk; thermal trajectory essential for clinical decision-making <span style="font-size:10px; color:var(--accent);">[↗ Gómez-Carmona 2020 — daily protocol supports high-frequency scanning at peak risk]</span></td>
-      </tr>
-      <tr>
-        <td>🏥 Return-to-Sport Rehab</td>
-        <td>Twice weekly</td>
-        <td>Enhanced sensitivity required for progressive load decisions during active rehabilitation <span style="font-size:10px; color:var(--accent);">[↗ Arnaiz-Lastras 2019 — twice weekly post-match; Frontiers 2024 systematic review]</span></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="alert blue" style="margin-top: 20px;">
-    <div class="alert-icon">📋</div>
-    <div>
-      <strong>Evidence Note — Scan Intervals</strong>
-      <p>The literature supports the <em>direction</em> of these recommendations — higher clinical risk warrants higher scan frequency — but does not prescribe specific day-interval values. Gómez-Carmona et al. (2020, <em>Journal of Sport Rehabilitation</em>) used daily scanning and achieved a 60% injury reduction; Arnaiz-Lastras et al. (2019) applied twice-weekly scanning and triggered prevention protocols at &gt;0.4°C asymmetry. The specific intervals in this table (3–4 days, 2–3 days) are framework design decisions interpolated from this evidence base. Clinical leads should treat them as adjustable defaults. See Appendix A, Section 1.6.</p>
-    </div>
-  </div>
-
-  <h3>5.3 Handling Wearable Data Gaps</h3>
-  <p>Unlike thermography (which decays gracefully), wearable data gaps require suspension — not downweighting. HRV from several days ago carries no reliable predictive weight for today's readiness.</p>
+  <h3 id="data-gaps">6.2 Handling Wearable Data Gaps</h3>
+  <p>Spike publishes one daily summary per athlete — if a day's data is missing (device not worn, sync failure), no readiness score is available for that day. Unlike thermography (which decays gracefully), wearable data gaps require suspension — not downweighting. Yesterday's daily HRV average carries no reliable predictive weight for today's readiness.</p>
 
   <div class="alert green">
     <div class="alert-icon">✅</div>
@@ -1858,80 +1850,8 @@
     </div>
   </div>
 
-  <h3>5.4 Signal Availability Matrix</h3>
+  <h3 id="signal-matrix">6.3 Signal Availability Matrix</h3>
   <p>The four possible combinations of data availability each produce a different system behaviour. This matrix defines explicitly what COMPASS does — and what it does not claim — in each state, ensuring no zone classification is ever issued with more confidence than the data warrants.</p>
-
-  <!-- Signal Availability Matrix -->
-  <div style="margin: 36px 0 48px; max-width: 740px;">
-
-    <!-- Axis labels -->
-    <div style="display:flex; padding-left: 160px; margin-bottom: 6px; gap: 3px;">
-      <div style="flex:1; text-align:center; font-size:11px; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:1px;">⌚ Wearable Data — Available</div>
-      <div style="flex:1; text-align:center; font-size:11px; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:1px;">⌚ Wearable Data — Unavailable</div>
-    </div>
-
-    <div style="display:flex; gap:0; align-items:stretch;">
-
-      <!-- Y-axis labels -->
-      <div style="display:flex; flex-direction:column; justify-content:space-around; min-width:160px; gap:3px; padding-right:10px;">
-        <div style="flex:1; display:flex; align-items:center; justify-content:flex-end; font-size:11px; color:var(--text-dim); font-weight:600; text-align:right; text-transform:uppercase; letter-spacing:1px; line-height:1.4;">🌡️ Thermography — Available</div>
-        <div style="flex:1; display:flex; align-items:center; justify-content:flex-end; font-size:11px; color:var(--text-dim); font-weight:600; text-align:right; text-transform:uppercase; letter-spacing:1px; line-height:1.4;">🌡️ Thermography — Unavailable</div>
-      </div>
-
-      <!-- 2x2 Grid -->
-      <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; gap:3px; border-radius:12px; overflow:hidden; border:2px solid var(--border);">
-
-        <!-- Q1: Both available — Full Assessment -->
-        <div style="background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); padding:22px 20px; position:relative;">
-          <div style="font-size:22px; margin-bottom:10px;">✅</div>
-          <div style="font-size:14px; font-weight:700; color:#e6edf3; margin-bottom:8px;">Full COMPASS Assessment</div>
-          <div style="font-size:12.5px; color:var(--text-muted); line-height:1.6; margin-bottom:12px;">Both signals present. Full 4-zone classification issued with maximum clinical confidence. Safe, Recovery, Deceptive Readiness, and Danger zones are all resolvable.</div>
-          <div style="display:flex; flex-wrap:wrap; gap:6px;">
-            <span style="background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">All 4 Zones Active</span>
-            <span style="background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">High Confidence</span>
-          </div>
-        </div>
-
-        <!-- Q2: Thermal only, no wearable — Tissue alert, readiness blind -->
-        <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); padding:22px 20px; position:relative;">
-          <div style="font-size:22px; margin-bottom:10px;">🌡️</div>
-          <div style="font-size:14px; font-weight:700; color:#e6edf3; margin-bottom:8px;">Thermal-Only Advisory</div>
-          <div style="font-size:12.5px; color:var(--text-muted); line-height:1.6; margin-bottom:12px;">Thermal asymmetry can still be reported and flagged. However, without a readiness score the system cannot place the athlete on the horizontal axis — Safe and Deceptive Readiness zones are indistinguishable. A tissue alert is issued for any elevated asymmetry, but no full zone classification is produced.</div>
-          <div style="display:flex; flex-wrap:wrap; gap:6px;">
-            <span style="background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">Tissue Alert Only</span>
-            <span style="background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">No Zone Classification</span>
-            <span style="background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">Wearable Sync Required</span>
-          </div>
-        </div>
-
-        <!-- Q3: Wearable only, no thermal — Readiness known, tissue blind -->
-        <div style="background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.3); padding:22px 20px; position:relative;">
-          <div style="font-size:22px; margin-bottom:10px;">⚠️</div>
-          <div style="font-size:14px; font-weight:700; color:#e6edf3; margin-bottom:8px;">Readiness-Only Assessment</div>
-          <div style="font-size:12.5px; color:var(--text-muted); line-height:1.6; margin-bottom:12px;">Systemic readiness is assessable — Recovery Zone can be flagged and Safe Zone approximated. However, <strong style="color:#f97316;">Deceptive Readiness cannot be detected.</strong> An athlete with excellent wearable data and building tissue stress will appear "Safe." This is the framework's most dangerous blind spot. Output is explicitly labelled: "Thermal context unavailable — Deceptive Readiness cannot be excluded."</div>
-          <div style="display:flex; flex-wrap:wrap; gap:6px;">
-            <span style="background:rgba(249,115,22,0.15); color:#f97316; border:1px solid rgba(249,115,22,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">Readiness Only</span>
-            <span style="background:rgba(249,115,22,0.15); color:#f97316; border:1px solid rgba(249,115,22,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">Deceptive Zone Undetectable</span>
-            <span style="background:rgba(249,115,22,0.15); color:#f97316; border:1px solid rgba(249,115,22,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">Conservative Flag Applied</span>
-          </div>
-        </div>
-
-        <!-- Q4: Neither available — No classification -->
-        <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); padding:22px 20px; position:relative;">
-          <div style="font-size:22px; margin-bottom:10px;">🚫</div>
-          <div style="font-size:14px; font-weight:700; color:#e6edf3; margin-bottom:8px;">No Assessment Possible</div>
-          <div style="font-size:12.5px; color:var(--text-muted); line-height:1.6; margin-bottom:12px;">Neither axis can be scored. Zone classification is fully suspended. The system displays the last confirmed COMPASS Score with a timestamp and escalates a mandatory dual-resync alert. No load decision should be made on this output. Default clinical posture: treat as last known zone until data is restored.</div>
-          <div style="display:flex; flex-wrap:wrap; gap:6px;">
-            <span style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">Classification Suspended</span>
-            <span style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">Last Known Score Displayed</span>
-            <span style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600;">Dual Resync Required</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-    <div style="text-align:center; font-size:11px; color:var(--text-dim); margin-top:10px;">X-Axis: Wearable Data Availability &nbsp;|&nbsp; Y-Axis: Thermography Availability</div>
-  </div>
 
   <h3 style="margin-top:32px; margin-bottom:12px; font-size:15px; font-weight:700; color:var(--text-primary);">Metrics Available by Signal State</h3>
   <table class="data-table" style="margin-bottom:24px;">
@@ -1979,7 +1899,7 @@
 
 <!-- ══ 6. CDSS ══ -->
 <section id="cdss">
-  <div class="section-label">Section 06</div>
+  <div class="section-label">Section 07</div>
   <h2>Clinical Decision Support System</h2>
   <p class="section-intro">The CDSS translates COMPASS zone classifications into practitioner-ready outputs across three time horizons, and powers the <strong>Multimodal Reasoning Engine</strong> — an AI assistant that generates auditable explanations and tailored intervention plans for every assessment.</p>
 
@@ -2010,147 +1930,13 @@
     </div>
   </div>
 
-  <div class="pf">
-
-    <!-- Stage 01: Data Inputs -->
-    <div class="pf-stage-tag">Stage 01 — Data Inputs</div>
-    <div class="pf-row">
-      <div class="pf-block pf-wearables">
-        <div class="pf-title">Wearables</div>
-        <div class="pf-sub">Biometric stream</div>
-        <ul class="pf-list">
-          <li>HRV — heart rate variability</li>
-          <li>Sleep quality &amp; duration</li>
-          <li>Resting heart rate</li>
-          <li>ACWR — acute:chronic workload ratio</li>
-        </ul>
-      </div>
-      <div class="pf-block pf-thermography">
-        <div class="pf-title">Thermography</div>
-        <div class="pf-sub">IR camera scan</div>
-        <ul class="pf-list">
-          <li>Bilateral surface temperature scan</li>
-          <li>Contralateral temperature delta (%)</li>
-          <li>Region-specific asymmetry flags</li>
-          <li>Population threshold or individual SD baseline</li>
-        </ul>
-      </div>
+  <div class="alert" style="border-left-color:var(--accent);">
+    <div>
+      <p style="margin:0;">The full COMPASS pipeline — from raw sensor inputs through zone classification to practitioner outputs — is defined once in <strong><a href="#framework-pipeline" style="color:var(--accent);">Section 03 — Framework Pipeline</a></strong>. The CDSS operates as Stage F–G of that pipeline. Sections 7.1 and 7.2 detail what the reasoning engine produces for each zone.</p>
     </div>
-
-    <div class="pf-sep"></div>
-
-    <!-- Stage 02: Signal Computation -->
-    <div class="pf-stage-tag">Stage 02 — Signal Computation</div>
-    <div class="pf-row">
-      <div class="pf-block pf-systemic">
-        <div class="pf-score-num">0–100</div>
-        <div>
-          <div class="pf-title">Systemic Readiness Score</div>
-          <div class="pf-note">Full-body fatigue / recovery state derived from wearable signals</div>
-        </div>
-      </div>
-      <div class="pf-block pf-thermal">
-        <div class="pf-score-num">L/R&nbsp;Δ%</div>
-        <div>
-          <div class="pf-title">Thermal Asymmetry Index</div>
-          <div class="pf-note">Contralateral tissue inflammation or local stress indicator</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="pf-sep"></div>
-
-    <!-- Stage 03: COMPASS Fusion -->
-    <div class="pf-stage-tag">Stage 03 — COMPASS Fusion</div>
-    <div class="pf-row pf-center">
-      <div class="pf-block pf-fusion">
-        <div class="pf-title">COMPASS Scoring Engine</div>
-        <div class="pf-fusion-score">0 – 100</div>
-        <div class="pf-note">Two-axis matrix &nbsp;·&nbsp; Deterministic classification &nbsp;·&nbsp; Zone assignment output</div>
-      </div>
-    </div>
-
-    <div class="pf-sep"></div>
-
-    <!-- Stage 04: Zone Classification -->
-    <div class="pf-stage-tag">Stage 04 — Zone Classification</div>
-    <div class="pf-row pf-zones">
-      <div class="pf-zone safe">
-        <div class="pf-zone-range">76–100</div>
-        <div class="pf-zone-name">Safe</div>
-        <div class="pf-zone-sig">Systemic ready<br>Thermal clear</div>
-        <div class="pf-zone-pills">
-          <div class="pf-zone-pill">Load: Unrestricted</div>
-          <div class="pf-zone-pill">Scan: 7–10 days</div>
-          <div class="pf-zone-pill">Physio: Elective</div>
-        </div>
-      </div>
-      <div class="pf-zone recovery">
-        <div class="pf-zone-range">51–75</div>
-        <div class="pf-zone-name">Recovery</div>
-        <div class="pf-zone-sig">Systemic fatigued<br>Thermal clear</div>
-        <div class="pf-zone-pills">
-          <div class="pf-zone-pill">Load: Reduced</div>
-          <div class="pf-zone-pill">Scan: 5–7 days</div>
-          <div class="pf-zone-pill">Physio: Optional</div>
-        </div>
-      </div>
-      <div class="pf-zone deceptive">
-        <div class="pf-zone-range">26–50</div>
-        <div class="pf-zone-name">Deceptive</div>
-        <div class="pf-zone-sig">Systemic ready<br>Thermal inflamed</div>
-        <div class="pf-zone-pills">
-          <div class="pf-zone-pill">Load: Conservative</div>
-          <div class="pf-zone-pill">Scan: 3–5 days</div>
-          <div class="pf-zone-pill">Physio: Mandatory</div>
-        </div>
-      </div>
-      <div class="pf-zone danger">
-        <div class="pf-zone-range">0–25</div>
-        <div class="pf-zone-name">Danger</div>
-        <div class="pf-zone-sig">Systemic fatigued<br>Thermal inflamed</div>
-        <div class="pf-zone-pills">
-          <div class="pf-zone-pill">Load: Mandatory Stop</div>
-          <div class="pf-zone-pill">Scan: 2–3 days</div>
-          <div class="pf-zone-pill">Physio: Urgent</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="pf-sep"></div>
-
-    <!-- Stage 05: Reasoning Engine -->
-    <div class="pf-stage-tag">Stage 05 — AI Reasoning</div>
-    <div class="pf-row pf-center">
-      <div class="pf-block pf-engine">
-        <div class="pf-engine-badge">AI Layer · Read-only</div>
-        <div class="pf-title">Multimodal Reasoning Engine</div>
-        <div class="pf-note">Receives <code>compass_assessment</code> as read-only input &nbsp;·&nbsp; Cannot modify zones, scores, or thresholds &nbsp;·&nbsp; Sole function: explain and recommend</div>
-      </div>
-    </div>
-
-    <div class="pf-sep"></div>
-
-    <!-- Stage 06: Outputs -->
-    <div class="pf-stage-tag">Stage 06 — Practitioner Outputs</div>
-    <div class="pf-row">
-      <div class="pf-block pf-output">
-        <div class="pf-title">Verbose Explanation</div>
-        <div class="pf-note">Auditable reasoning chain for every assessment</div>
-      </div>
-      <div class="pf-block pf-output">
-        <div class="pf-title">Intervention Plan</div>
-        <div class="pf-note">Phase 1 Acute &nbsp;·&nbsp; Phase 2 Progressive &nbsp;·&nbsp; Threshold-gated progression</div>
-      </div>
-      <div class="pf-block pf-output">
-        <div class="pf-title">Reassessment Triggers</div>
-        <div class="pf-note">Named signal thresholds &nbsp;·&nbsp; Rule-based escalation</div>
-      </div>
-    </div>
-
   </div>
 
-  <h3>6.1 — Zone Action Guide</h3>
+  <h3 id="zone-guide">7.1 — Zone Action Guide</h3>
   <p>Each morning the system issues a zone classification and an AI-generated action plan. Each zone has a fixed traffic-light signal, a characteristic signal profile, and a corresponding intervention type.</p>
 
   <div class="zone-grid">
@@ -2204,7 +1990,7 @@
     <p><strong>Why 🟠 and 🟡 Amber Are Not the Same:</strong> Conventional systems collapse Recovery and Deceptive Readiness into a single amber. Recovery needs rest — Deceptive Readiness needs urgent region-specific physio. The systemic readiness signal is actively misleading in the Deceptive zone; acting on it without thermal context is the primary injury-risk scenario this framework is designed to prevent.</p>
   </div>
 
-  <div class="section-label" style="margin-top:48px;">Section 6.2</div>
+  <div class="section-label" style="margin-top:48px;">Section 7.2</div>
   <h3 id="trajectory">Zone Trajectory: Movement Matters</h3>
   <p class="section-intro">A single zone reading is a snapshot. What drives clinical urgency is movement: the rate and direction of change on each axis is as important as the current position.</p>
 
@@ -2217,21 +2003,262 @@
     <p><strong>The Clinical Question Is Not "Where Are They?" But "Where Are They Going?"</strong> Zone position tells you what to do today. Zone trajectory tells you how urgently to do it, and whether the current clinical strategy is working. Both views are essential for effective athlete management.</p>
   </div>
 
+  <div class="section-label" style="margin-top:48px;">Section 7.3</div>
+  <h3 id="scan-frequency">Scan Frequency Recommendations</h3>
+  <p>The zone in which an athlete is currently classified directly determines how soon the next thermography assessment is scheduled.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Clinical Context</th>
+        <th>Scan Interval</th>
+        <th>Rationale</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--safe)"></span>Safe Zone</span></td>
+        <td>Weekly</td>
+        <td>Baseline monitoring; no active risk signal <span style="font-size:10px; color:var(--text-dim);">[design assumption]</span></td>
+      </tr>
+      <tr>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--recovery)"></span>Recovery Zone</span></td>
+        <td>Weekly</td>
+        <td>Systemic fatigue concern; maintains vigilance during vulnerable recovery window <span style="font-size:10px; color:var(--text-dim);">[design assumption]</span></td>
+      </tr>
+      <tr>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--deceptive)"></span>Deceptive Readiness</span></td>
+        <td>Every 3–4 days</td>
+        <td>Elevated thermal risk with suppressed subjective awareness; high urgency to track trajectory <span style="font-size:10px; color:var(--accent);">[↗ Gómez-Carmona 2020 — daily protocol; Arnaiz-Lastras 2019 — twice weekly]</span></td>
+      </tr>
+      <tr>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--danger)"></span>Danger Zone</span></td>
+        <td>Within 3 days, then every 2–3 days</td>
+        <td>Acute combined risk; thermal trajectory essential for clinical decision-making <span style="font-size:10px; color:var(--accent);">[↗ Gómez-Carmona 2020 — daily protocol supports high-frequency scanning at peak risk]</span></td>
+      </tr>
+      <tr>
+        <td>🏥 Return-to-Sport Rehab</td>
+        <td>Twice weekly</td>
+        <td>Enhanced sensitivity required for progressive load decisions during active rehabilitation <span style="font-size:10px; color:var(--accent);">[↗ Arnaiz-Lastras 2019 — twice weekly post-match; Frontiers 2024 systematic review]</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert blue" style="margin-top: 20px;">
+    <div class="alert-icon">📋</div>
+    <div>
+      <strong>Evidence Note — Scan Intervals</strong>
+      <p>The literature supports the <em>direction</em> of these recommendations — higher clinical risk warrants higher scan frequency — but does not prescribe specific day-interval values. Gómez-Carmona et al. (2020, <em>Journal of Sport Rehabilitation</em>) used daily scanning and achieved a 60% injury reduction; Arnaiz-Lastras et al. (2019) applied twice-weekly scanning and triggered prevention protocols at &gt;0.4°C asymmetry. The specific intervals in this table (3–4 days, 2–3 days) are framework design decisions interpolated from this evidence base. Clinical leads should treat them as adjustable defaults. See Appendix A, Section 1.6.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ 7.4. Return to Play & Injury Monitoring ══ -->
+<section id="rtp-protocol">
+  <div class="section-label">Section 7.4</div>
+  <h3>Return-to-Play &amp; Injury Monitoring Protocol</h3>
+  <p class="section-intro">COMPASS operates in two distinct clinical modes. <strong>Prevention mode</strong> (default) identifies hidden injury risk in active athletes. <strong>Monitoring mode</strong> activates after a confirmed injury: the same dual-signal architecture tracks tissue healing progress and loads tolerance through each rehabilitation phase, replacing subjective clinical feel with objective thermal-physiological gates.</p>
+
+  <div class="alert" style="border-left-color:var(--accent);">
+    <div>
+      <p style="margin:0;">The same thermal scan that detects hidden tissue stress before injury becomes the most objective tool available for governing the return-to-play decision. Individual baselines established during the prevention phase carry directly into monitoring mode — the data continuity is a core clinical advantage.</p>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:40px;">Section 7.4.1</div>
+  <h4>Two Clinical Modes</h4>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Mode</th>
+        <th>Trigger</th>
+        <th>Primary Signal</th>
+        <th>Clinical Question</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Prevention</strong></td>
+        <td>Default — active, uninjured athlete</td>
+        <td>Thermal asymmetry as hidden-risk detector</td>
+        <td>Is this athlete about to get injured?</td>
+      </tr>
+      <tr>
+        <td><strong>Monitoring</strong></td>
+        <td>Confirmed injury entered by clinical lead</td>
+        <td>Thermal trajectory as tissue-healing tracker</td>
+        <td>Is this athlete's tissue ready for the next load increase?</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-label" style="margin-top:40px;">Section 7.4.2</div>
+  <h4>The Four RTP Phases</h4>
+  <p>Monitoring mode maps athlete rehabilitation to four sequential phases. Progression between phases requires COMPASS gate criteria to be met — not a fixed number of days. This removes time-based assumptions from the RTP decision.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Phase</th>
+        <th>Description</th>
+        <th>COMPASS Gate to Progress</th>
+        <th>Expected Zone</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Phase 1</strong><br><span style="font-size:12px;color:var(--text-dim);">Acute</span></td>
+        <td>Active tissue damage; rest or passive treatment only; no structured load</td>
+        <td>Thermal asymmetry peak identified; T Score trending upward across ≥2 consecutive scans</td>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--danger)"></span>Danger (acceptable)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Phase 2</strong><br><span style="font-size:12px;color:var(--text-dim);">Rehabilitation</span></td>
+        <td>Progressive rehabilitation exercises; controlled load introduction</td>
+        <td>Thermal asymmetry declining toward individual baseline; T Score improving each load increment</td>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--recovery)"></span>Recovery</span> or <span class="zone-dot"><span class="dot" style="background:var(--deceptive)"></span>Deceptive</span></td>
+      </tr>
+      <tr>
+        <td><strong>Phase 3</strong><br><span style="font-size:12px;color:var(--text-dim);">Progressive Loading</span></td>
+        <td>Sport-specific load reintroduction; functional movement patterns</td>
+        <td>Thermal asymmetry within 1.0 SD of individual baseline; COMPASS in Recovery or Safe zone</td>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--recovery)"></span>Recovery</span> or <span class="zone-dot"><span class="dot" style="background:var(--safe)"></span>Safe</span></td>
+      </tr>
+      <tr>
+        <td><strong>Phase 4</strong><br><span style="font-size:12px;color:var(--text-dim);">Return to Competition</span></td>
+        <td>Full training; medical clearance decision</td>
+        <td>Thermal asymmetry within 0.5 SD of individual baseline; Safe zone for ≥3 consecutive scans</td>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--safe)"></span>Safe ×3</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <p><strong>Why Phase-Gating Removes Guesswork:</strong> The most common driver of re-injury is premature return — an athlete who feels ready, whose wearable looks normal, but whose tissue has not completed repair. This is the same Deceptive Readiness state that causes first injuries. Phase gates anchored to thermal trajectory and individual baseline make the progression decision objective and auditable.</p>
+  </div>
+
+  <div class="section-label" style="margin-top:40px;">Section 7.4.3</div>
+  <h4>Thermal Trajectory as Objective Progression Gate</h4>
+  <p>In monitoring mode, the T Score is the primary gate for phase progression. A single reading is insufficient — what matters is the trajectory across successive scans under incrementally increasing load.</p>
+
+  <ul style="line-height:1.9; padding-left:20px; color:var(--text);">
+    <li><strong>Improving trajectory</strong> (T Score rising across scans): Load is within tissue repair capacity — safe to maintain or progress.</li>
+    <li><strong>Plateau</strong> (T Score stable across ≥2 scans at same load level): Tissue tolerance ceiling reached at current load — hold phase, do not progress.</li>
+    <li><strong>Worsening trajectory</strong> (T Score declining despite stable or reduced load): Current rehabilitation load is exceeding tissue repair capacity — regress one phase and reassess.</li>
+    <li><strong>RTP clearance</strong>: Not a single reading but a confirmed trend — thermal asymmetry within 0.5 SD of individual baseline across ≥3 consecutive scans with progressive load.</li>
+  </ul>
+
+  <div class="section-label" style="margin-top:40px;">Section 7.4.4</div>
+  <h4>Contralateral Limb Monitoring</h4>
+  <p>Injured athletes compensate by redistributing load to the contralateral (uninjured) limb. COMPASS bilateral scanning tracks both limbs simultaneously throughout rehabilitation. The contralateral limb requires its own thermal trajectory assessment — independent of the injury site.</p>
+
+  <div class="zone-grid" style="grid-template-columns:1fr 1fr; margin-top:16px;">
+    <div class="zone-card deceptive">
+      <h4>⚠️ Contralateral Alert</h4>
+      <p style="font-size:13.5px;margin:0 0 12px;">Rising thermal asymmetry on the healthy limb during rehabilitation signals compensatory overload. The contralateral limb is entering a Deceptive Readiness state — the athlete cannot perceive this stress.</p>
+      <div class="zone-signals">
+        <span>Action: Load redistribution</span>
+        <span>Physio: Mandatory</span>
+      </div>
+    </div>
+    <div class="zone-card safe">
+      <h4>🟢 Bilateral Symmetry Restored</h4>
+      <p style="font-size:13.5px;margin:0 0 12px;">Both the injured site and the contralateral limb showing thermal asymmetry within 0.5 SD of individual baseline is the full-body clearance condition. Unilateral clearance alone is insufficient.</p>
+      <div class="zone-signals">
+        <span>Both limbs: ≤0.5 SD baseline</span>
+        <span>Status: RTP eligible</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:40px;">Section 7.4.5</div>
+  <h4>Zone Reinterpretation in Monitoring Mode</h4>
+  <p>Zone labels remain the same in monitoring mode, but their clinical meaning shifts to reflect the rehabilitation context.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Zone</th>
+        <th>Prevention Meaning</th>
+        <th>Monitoring Mode Meaning</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--safe)"></span>Safe</span></td>
+        <td>Clear to train at full load</td>
+        <td>Tissue healing on track; current rehabilitation load can progress</td>
+      </tr>
+      <tr>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--recovery)"></span>Recovery</span></td>
+        <td>Systemic fatigue; reduce training volume</td>
+        <td>Systemic fatigue from rehabilitation load; reduce intensity but maintain frequency</td>
+      </tr>
+      <tr>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--deceptive)"></span>Deceptive Readiness</span></td>
+        <td>Hidden tissue stress; mandatory physio before load increase</td>
+        <td>Tissue stress accumulating under current rehab load; reduce load and reassess before progressing</td>
+      </tr>
+      <tr>
+        <td><span class="zone-dot"><span class="dot" style="background:var(--danger)"></span>Danger</span></td>
+        <td>Mandatory clinical stop; no load plan issued</td>
+        <td>Tissue not tolerating current rehabilitation load; regress to previous phase; urgent clinical review</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-label" style="margin-top:40px;">Section 7.4.6</div>
+  <h4>Scan Frequency During RTP Phases</h4>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>RTP Phase</th>
+        <th>Scan Frequency</th>
+        <th>Rationale</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Phase 1 — Acute</td>
+        <td>Every 2–3 days</td>
+        <td>Track asymmetry peak and confirm thermal decline before load introduction <span style="font-size:10px; color:var(--accent);">[↗ Gómez-Carmona 2020 — daily scanning at peak risk]</span></td>
+      </tr>
+      <tr>
+        <td>Phase 2 — Rehabilitation</td>
+        <td>Twice weekly</td>
+        <td>Each new exercise stimulus requires a scan response before the next increment <span style="font-size:10px; color:var(--accent);">[↗ Arnaiz-Lastras 2019 — twice-weekly protocol]</span></td>
+      </tr>
+      <tr>
+        <td>Phase 3 — Progressive Loading</td>
+        <td>Twice weekly</td>
+        <td>Each load increase is an experiment; thermal response must confirm safety before progression</td>
+      </tr>
+      <tr>
+        <td>Phase 4 — Return to Competition</td>
+        <td>3 consecutive scans; then weekly</td>
+        <td>Clearance requires confirmed trend across multiple readings, not a single pass; weekly resumes on RTP</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert blue" style="margin-top:20px;">
+    <div class="alert-icon">📋</div>
+    <div>
+      <strong>Clinical Note — Monitoring Mode Activation</strong>
+      <p>Monitoring mode is activated by the clinical lead upon confirming an injury. The individual thermal baseline established during prevention-mode scanning is the reference point for all RTP phase gates. Baseline continuity — using the athlete's own pre-injury thermal norm — is what makes the 0.5 SD and 1.0 SD clearance thresholds meaningful. Population norms cannot serve this function. See Section 05B for the SD-based asymmetry classification method.</p>
+    </div>
+  </div>
+
 </section>
 
 <!-- ══ 7A. Standardised Scan Protocol ══ -->
 <section id="scan-protocol">
-  <div class="section-label">Section 07A</div>
+  <div class="section-label">Section 08</div>
   <h2>Standardised Scan Protocol</h2>
   <p class="section-intro">The asymmetry thresholds defined in Sections 04A and 04B are only valid when scans are acquired under controlled, reproducible conditions. This section defines the mandatory environmental, preparation, timing, and technical parameters for every COMPASS thermography session.</p>
-
-  <div class="alert blue">
-    <div class="alert-icon">🌡️</div>
-    <div>
-      <strong>Why Standardised Conditions Are Non-Negotiable</strong>
-      <p>Skin surface temperature is exquisitely sensitive to environmental and physiological perturbation. A single unconditioned variable — a draughty room, a scan taken 30 minutes post-exercise, residual massage oil on the skin — can shift regional skin temperature by 0.5–1.5°C. At the 1.5 SD alert threshold (≈ 0.4°C), such artefacts would produce false positives indistinguishable from genuine tissue stress, or suppress a genuine signal entirely. Consistent protocol is not administrative hygiene — it is the validity condition on which all downstream COMPASS classifications depend.</p>
-    </div>
-  </div>
 
   <h3>Environmental Conditions</h3>
   <p>The scan room must meet all of the following environmental criteria before any athlete enters. Log actual room temperature and humidity at the start of each session. Parameters follow IACT Guidelines and TISEM Delphi Expert Consensus (2017).</p>
@@ -2550,7 +2577,7 @@
 
 <!-- ══ 7B. Technical Camera Protocol ══ -->
 <section id="tech-camera">
-  <div class="section-label">Section 07B</div>
+  <div class="section-label">Section 09</div>
   <h2>Technical</h2>
   <p class="section-intro">Camera setup parameters must be documented for every session. Changes to distance, emissivity settings, or temperature scale invalidate direct comparisons with prior sessions. Specifications follow IACT standards, ThermoHuman clinical guidance, and PMC (2022) standardisation recommendations.</p>
 
@@ -2740,7 +2767,7 @@
   </div>
 
   <h3>1.6 — Thermography Scan Frequency &amp; Monitoring Protocols</h3>
-  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">The literature supports increasing scan frequency when thermal asymmetry is detected, but does not prescribe specific day-interval values. The intervals used in Section 5.2 are framework design decisions directionally supported by the studies below.</p>
+  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">The literature supports increasing scan frequency when thermal asymmetry is detected, but does not prescribe specific day-interval values. The intervals used in Section 7.3 are framework design decisions directionally supported by the studies below.</p>
   <div class="evidence-grid">
     <div class="evidence-card">
       <span class="ev-strength strong">Strong</span>
@@ -2763,7 +2790,7 @@
   </div>
 
   <h3>1.7 — Thermographic Population Normative Values</h3>
-  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">Foundational studies establishing what constitutes a "normal" contralateral thermal asymmetry in healthy athletes. These normative values anchor the population-based classification framework used in Section 04A and define the population fallback thresholds active during athlete onboarding.</p>
+  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">Foundational studies establishing what constitutes a "normal" contralateral thermal asymmetry in healthy athletes. These normative values anchor the population-based classification framework used in Section 05A and define the population fallback thresholds active during athlete onboarding.</p>
   <div class="evidence-grid">
     <div class="evidence-card">
       <span class="ev-strength strong">Strong</span>
@@ -2781,24 +2808,24 @@
       <span class="ev-strength strong">Strong</span>
       <h4>Uematsu et al. (1988) — Part 2: Clinical Application</h4>
       <div class="ev-journal">Journal of Neurosurgery, 69(4):556–561</div>
-      <div class="ev-finding">Applied the normative values from Part 1 to 144 patients with low-back pain and sciatica. When asymmetry exceeded 1 SD above the normal mean of homologous regions: PPV = 94.7%, specificity = 87.5% for detecting pathological nerve root impingement. <strong>Establishes that 1 SD above the mean is a clinically meaningful threshold with strong diagnostic performance — the theoretical basis for the SD-based tier classification in Section 04B. A 2.0 SD personal threshold (Severe tier) would represent an even higher-confidence signal.</strong></div>
+      <div class="ev-finding">Applied the normative values from Part 1 to 144 patients with low-back pain and sciatica. When asymmetry exceeded 1 SD above the normal mean of homologous regions: PPV = 94.7%, specificity = 87.5% for detecting pathological nerve root impingement. <strong>Establishes that 1 SD above the mean is a clinically meaningful threshold with strong diagnostic performance — the theoretical basis for the SD-based tier classification in Section 05B. A 2.0 SD personal threshold (Severe tier) would represent an even higher-confidence signal.</strong></div>
     </div>
   </div>
 
   <h3>1.8 — SD Classification Framework in Sports Monitoring</h3>
-  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">Evidence supporting the use of standard deviation tiers — rather than fixed absolute values — as the authoritative classification system once an individual baseline is established. These studies underpin the COMPASS 1.5 SD alert threshold and the broader SD tier framework in Section 04B.</p>
+  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">Evidence supporting the use of standard deviation tiers — rather than fixed absolute values — as the authoritative classification system once an individual baseline is established. These studies underpin the COMPASS 1.5 SD alert threshold and the broader SD tier framework in Section 05B.</p>
   <div class="evidence-grid">
     <div class="evidence-card">
       <span class="ev-strength strong">Strong</span>
       <h4>Plews, D.J. et al. (2013) — SD Tier Consensus</h4>
       <div class="ev-journal">International Journal of Sports Physiology and Performance, 8(5):461–470</div>
-      <div class="ev-finding">Establishes the widely-adopted SD tier framework for individual monitoring in sport: &lt;0.5 SD = within normal variation; 1.0 SD = meaningful departure (training modification flag); 1.5 SD = clinically important; ≥2.0 SD = extreme deviation requiring clinical review. Applied here to thermography because the same intra-individual departure logic applies: the question is not "how far from population average?" but "how far from this athlete's personal norm?" <strong>Directly supports the 1.0 / 1.5 / 2.0 SD tier boundaries used in Section 04B.</strong></div>
+      <div class="ev-finding">Establishes the widely-adopted SD tier framework for individual monitoring in sport: &lt;0.5 SD = within normal variation; 1.0 SD = meaningful departure (training modification flag); 1.5 SD = clinically important; ≥2.0 SD = extreme deviation requiring clinical review. Applied here to thermography because the same intra-individual departure logic applies: the question is not "how far from population average?" but "how far from this athlete's personal norm?" <strong>Directly supports the 1.0 / 1.5 / 2.0 SD tier boundaries used in Section 05B.</strong></div>
     </div>
     <div class="evidence-card">
       <span class="ev-strength strong">Strong</span>
       <h4>Saw, A.E., Main, L.C., &amp; Gastin, P.B. (2016) — Individual vs. Population Reference</h4>
       <div class="ev-journal">British Journal of Sports Medicine, 50(3):192–200</div>
-      <div class="ev-finding">Intra-individual variability in HRV, sleep, and wellness scores is more sensitive to training load and fatigue than absolute values. Individual-referenced thresholds outperform population-referenced thresholds across all wellness biomarkers. Below 1 SD from personal baseline = normal fluctuation; above 1.5 SD = clinically important departure. <strong>Directly validates the principle that individual SD thresholds supersede population °C thresholds — the foundational logic of the Section 04B framework.</strong></div>
+      <div class="ev-finding">Intra-individual variability in HRV, sleep, and wellness scores is more sensitive to training load and fatigue than absolute values. Individual-referenced thresholds outperform population-referenced thresholds across all wellness biomarkers. Below 1 SD from personal baseline = normal fluctuation; above 1.5 SD = clinically important departure. <strong>Directly validates the principle that individual SD thresholds supersede population °C thresholds — the foundational logic of the Section 05B framework.</strong></div>
     </div>
     <div class="evidence-card">
       <span class="ev-strength emerging">Emerging</span>
@@ -2828,6 +2855,23 @@
       <h4>Arnaiz-Lastras et al. (2019) — 0.4°C Prevention Protocol</h4>
       <div class="ev-journal">PMC — Pilot Study (Complementary Screening)</div>
       <div class="ev-finding">Twice-weekly thermography (48 hours post-match) in professional soccer. Prevention protocol triggered when asymmetry exceeded 0.4°C. Muscle injuries reduced from 11 to 4 over the monitored period — a 64% reduction. <strong>Establishes 0.4°C as an operational prevention threshold. Critically, 0.4°C ≈ 1.5 SD for major muscle groups, confirming that the COMPASS 1.5 SD alert threshold and this literature-based 0.4°C threshold are drawing the line at the same physiological signal.</strong></div>
+    </div>
+  </div>
+
+  <h3>1.10 — Training Load Theory &amp; the Capacity Gap Model</h3>
+  <p style="font-size:14px; color:var(--text-muted); max-width:720px; margin-bottom:20px;">The theoretical underpinning of COMPASS's dual-axis design: why systemic load monitoring alone is insufficient for tissue-level injury risk detection, and how the IOC load-capacity model maps onto the four COMPASS zones.</p>
+  <div class="evidence-grid">
+    <div class="evidence-card">
+      <span class="ev-strength strong">Strong</span>
+      <h4>Kalkhoven, J.T., Watsford, M.L., &amp; Impellizzeri, F.M. (2021)</h4>
+      <div class="ev-journal">Sports Medicine, 51(3):469–479 · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7534945/" target="_blank">PMC7534945 ↗</a></div>
+      <div class="ev-finding">Demonstrated that training load measures — whether external (GPS, ACWR) or internal (HRV, RPE) — cannot provide a quantitative indication of whether particular load progressions will increase or decrease injury risk at the tissue level. Argued that a mechanistic, tissue-specific layer is required above and beyond systemic load monitoring. <strong>Directly motivates the COMPASS dual-axis architecture: the Thermal Asymmetry Index provides the spatially-resolved tissue signal that no systemic metric can reach, operationalising the theoretical gap this paper identifies.</strong></div>
+    </div>
+    <div class="evidence-card">
+      <span class="ev-strength strong">Strong</span>
+      <h4>Soligard, T. et al. (2016) — IOC Consensus on Load in Sport</h4>
+      <div class="ev-journal">British Journal of Sports Medicine, 50(17):1030–1041</div>
+      <div class="ev-finding">International Olympic Committee consensus statement defining injury risk as a function of the gap between an athlete's accumulated load and their capacity to absorb it: when load exceeds capacity, injury risk rises. Established the load-capacity framework as the theoretical lens for interpreting all monitoring data. <strong>COMPASS zones map directly onto this model — Safe (no gap), Recovery (systemic capacity eroded), Deceptive Readiness (hidden local-tissue capacity gap invisible to systemic metrics), Danger (critical dual-axis gap) — providing a principled clinical interpretation for each zone beyond the score label alone.</strong></div>
     </div>
   </div>
 </section>
