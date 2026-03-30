@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUR Platform — An Introduction for Sports Teams · Amplifai Health</title>
+<style>
+  /* ─────────────────────────────────────────
+     Design tokens
+  ───────────────────────────────────────── */
+  :root {
+    --bg:       #f4f6f9;
+    --surface:  #ffffff;
+    --surface2: #eef1f6;
+    --surface3: #e4e9f0;
+    --border:   #dae0ea;
+
+    --text:       #0f172a;
+    --text-muted: #475569;
+    --text-dim:   #94a3b8;
+
+    --accent:  #0369a1;
+    --accent2: #6d28d9;
+    --accent-bg: rgba(3,105,161,0.07);
+
+    --safe:         #15803d;
+    --safe-bg:      rgba(21,128,61,0.08);
+    --safe-border:  rgba(21,128,61,0.25);
+    --recovery:     #b45309;
+    --recovery-bg:  rgba(180,83,9,0.08);
+    --recovery-border: rgba(180,83,9,0.25);
+    --deceptive:    #c2410c;
+    --deceptive-bg: rgba(194,65,12,0.08);
+    --deceptive-border: rgba(194,65,12,0.28);
+    --danger:       #b91c1c;
+    --danger-bg:    rgba(185,28,28,0.08);
+    --danger-border:rgba(185,28,28,0.25);
+
+    --radius:    12px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 1px 3px rgba(15,23,42,0.07), 0 1px 2px rgba(15,23,42,0.05);
+    --shadow:    0 4px 14px rgba(15,23,42,0.09), 0 2px 4px rgba(15,23,42,0.05);
+    --shadow-lg: 0 8px 30px rgba(15,23,42,0.11), 0 4px 10px rgba(15,23,42,0.06);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ─────────────────────────────────────────
+     Sidebar
+  ───────────────────────────────────────── */
+  nav {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    padding: 28px 0 40px;
+    z-index: 100;
+  }
+
+  .nav-logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .nav-logo .logo-mark {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-logo .logo-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+
+  .nav-section {
+    padding: 8px 16px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 24px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  nav a:hover {
+    color: var(--accent);
+    background: var(--accent-bg);
+    border-left-color: var(--accent);
+  }
+  nav a.active {
+    color: var(--accent);
+    background: var(--accent-bg);
+    border-left-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ─────────────────────────────────────────
+     Main
+  ───────────────────────────────────────── */
+  main {
+    margin-left: 260px;
+    flex: 1;
+    max-width: 900px;
+    padding: 52px 56px 100px;
+  }
+
+  /* ─────────────────────────────────────────
+     Hero
+  ───────────────────────────────────────── */
+  .hero {
+    margin-bottom: 60px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-bg);
+    border: 1px solid rgba(3,105,161,0.18);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-lead {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 640px;
+    line-height: 1.8;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+
+  .hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .hero-meta-item .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ─────────────────────────────────────────
+     Sections
+  ───────────────────────────────────────── */
+  section {
+    margin-bottom: 72px;
+    scroll-margin-top: 32px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.25;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    max-width: 700px;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  /* ─────────────────────────────────────────
+     Callout / blockquote
+  ───────────────────────────────────────── */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 18px 22px;
+    margin: 24px 0;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .callout p {
+    font-size: 14.5px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 0;
+  }
+
+  .callout-danger {
+    border-left-color: var(--deceptive);
+    background: var(--deceptive-bg);
+    border-color: var(--deceptive-border);
+  }
+
+  .callout-danger p { color: #7c2d12; }
+
+  /* ─────────────────────────────────────────
+     Signal cards (How NUR Works)
+  ───────────────────────────────────────── */
+  .signal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+
+  .signal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.15s;
+  }
+
+  .signal-card:hover {
+    box-shadow: var(--shadow);
+  }
+
+  .signal-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 50%;
+    margin-bottom: 12px;
+  }
+
+  .signal-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .signal-card p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* ─────────────────────────────────────────
+     Zone cards
+  ───────────────────────────────────────── */
+  .zone-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+
+  .zone-card {
+    border-radius: var(--radius);
+    border: 1px solid;
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+
+  .zone-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+  }
+
+  .zone-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 80px; height: 80px;
+    border-radius: 0 0 0 80px;
+    opacity: 0.15;
+  }
+
+  .zone-card.safe    { background: var(--safe-bg);       border-color: var(--safe-border); }
+  .zone-card.recovery{ background: var(--recovery-bg);   border-color: var(--recovery-border); }
+  .zone-card.deceptive{background: var(--deceptive-bg);  border-color: var(--deceptive-border); }
+  .zone-card.danger  { background: var(--danger-bg);     border-color: var(--danger-border); }
+
+  .zone-card.safe::before       { background: var(--safe); }
+  .zone-card.recovery::before   { background: var(--recovery); }
+  .zone-card.deceptive::before  { background: var(--deceptive); }
+  .zone-card.danger::before     { background: var(--danger); }
+
+  .zone-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+  }
+
+  .zone-card.safe      .zone-badge { background: var(--safe-bg);       color: var(--safe);       border: 1px solid var(--safe-border); }
+  .zone-card.recovery  .zone-badge { background: var(--recovery-bg);   color: var(--recovery);   border: 1px solid var(--recovery-border); }
+  .zone-card.deceptive .zone-badge { background: var(--deceptive-bg);  color: var(--deceptive);  border: 1px solid var(--deceptive-border); }
+  .zone-card.danger    .zone-badge { background: var(--danger-bg);     color: var(--danger);     border: 1px solid var(--danger-border); }
+
+  .zone-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .zone-card.safe      h3 { color: var(--safe); }
+  .zone-card.recovery  h3 { color: var(--recovery); }
+  .zone-card.deceptive h3 { color: var(--deceptive); }
+  .zone-card.danger    h3 { color: var(--danger); }
+
+  .zone-card p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    margin: 0 0 12px;
+    max-width: none;
+  }
+
+  .zone-axis {
+    display: flex;
+    gap: 6px;
+    margin-top: 14px;
+  }
+
+  .axis-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 100px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .zone-action {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(0,0,0,0.07);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+  }
+
+  .zone-card.safe      .zone-action { color: var(--safe); }
+  .zone-card.recovery  .zone-action { color: var(--recovery); }
+  .zone-card.deceptive .zone-action { color: var(--deceptive); }
+  .zone-card.danger    .zone-action { color: var(--danger); }
+
+  .priority-tag {
+    display: inline-block;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* ─────────────────────────────────────────
+     Phase timeline (RTP)
+  ───────────────────────────────────────── */
+  .phase-list {
+    margin-top: 28px;
+    position: relative;
+    padding-left: 0;
+  }
+
+  .phase-item {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 4px;
+  }
+
+  .phase-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 40px;
+  }
+
+  .phase-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(3,105,161,0.25);
+  }
+
+  .phase-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    margin: 4px 0;
+    min-height: 20px;
+  }
+
+  .phase-item:last-child .phase-line { display: none; }
+
+  .phase-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    flex: 1;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .phase-body h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .phase-body p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    margin: 0;
+    max-width: none;
+  }
+
+  /* ─────────────────────────────────────────
+     Product cards
+  ───────────────────────────────────────── */
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+
+  .product-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 22px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+
+  .product-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+  }
+
+  .product-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 20px;
+  }
+
+  .product-for {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .product-card h3 {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .product-card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* ─────────────────────────────────────────
+     Differentiators
+  ───────────────────────────────────────── */
+  .diff-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 28px;
+  }
+
+  .diff-item {
+    display: flex;
+    gap: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.15s;
+  }
+
+  .diff-item:hover { box-shadow: var(--shadow); }
+
+  .diff-num {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    flex-shrink: 0;
+    padding-top: 2px;
+    min-width: 36px;
+  }
+
+  .diff-content h3 {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .diff-content p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    margin: 0;
+    max-width: none;
+  }
+
+  /* ─────────────────────────────────────────
+     Stat strip
+  ───────────────────────────────────────── */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 28px 0;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .stat-value {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* ─────────────────────────────────────────
+     Audience list
+  ───────────────────────────────────────── */
+  .audience-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .audience-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .audience-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--accent-bg);
+    border: 1px solid rgba(3,105,161,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+
+  .audience-item h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .audience-item p {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin: 0;
+    max-width: none;
+  }
+
+  /* ─────────────────────────────────────────
+     NURAI section
+  ───────────────────────────────────────── */
+  .nurai-card {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    border: 1px solid rgba(109,40,217,0.3);
+    border-radius: var(--radius);
+    padding: 36px 40px;
+    margin-top: 28px;
+    box-shadow: 0 8px 32px rgba(109,40,217,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nurai-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(109,40,217,0.2) 0%, transparent 70%);
+  }
+
+  .nurai-card::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 40px;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(3,105,161,0.15) 0%, transparent 70%);
+  }
+
+  .nurai-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #a78bfa;
+    margin-bottom: 10px;
+  }
+
+  .nurai-card h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  .nurai-card p {
+    font-size: 14.5px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.75;
+    max-width: 600px;
+  }
+
+  .nurai-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .nurai-feat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+  }
+
+  .nurai-feat::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #a78bfa;
+    flex-shrink: 0;
+  }
+
+  /* ─────────────────────────────────────────
+     Footer
+  ───────────────────────────────────────── */
+  .footer {
+    margin-top: 80px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+  }
+
+  .footer-brand {
+    font-size: 14px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .footer p {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin: 4px 0 0;
+    max-width: none;
+  }
+
+  /* ─────────────────────────────────────────
+     Responsive
+  ───────────────────────────────────────── */
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { margin-left: 0; padding: 32px 24px 80px; }
+    .signal-grid, .zone-grid, .product-grid,
+    .stat-strip, .audience-grid { grid-template-columns: 1fr; }
+    .nurai-features { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── Sidebar ─── -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-mark">NUR Platform</div>
+    <div class="logo-sub">By Amplifai Health</div>
+  </div>
+
+  <div class="nav-section">Overview</div>
+  <a href="#what-is-nur">What is NUR?</a>
+  <a href="#problem">The Blind Spot</a>
+  <a href="#how-it-works">How NUR Works</a>
+
+  <div class="nav-section">Clinical Framework</div>
+  <a href="#zones">Four Readiness Zones</a>
+  <a href="#rtp">Return to Play</a>
+
+  <div class="nav-section">Platform</div>
+  <a href="#team-tools">Team Tools</a>
+  <a href="#nurai">NURAI</a>
+
+  <div class="nav-section">Why NUR</div>
+  <a href="#differentiators">Four Differentiators</a>
+  <a href="#evidence">Evidence Base</a>
+  <a href="#audience">Who It's For</a>
+</nav>
+
+<!-- ─── Main ─── -->
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Amplifai Health · Platform Overview</div>
+    <h1>The athlete monitoring system that sees what <span>wearables can't.</span></h1>
+    <p class="hero-lead">NUR combines thermal imaging, physiological wearables, athlete demographics, and longitudinal health history into a single daily readiness score — flagging hidden injury risk before symptoms appear.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span class="dot"></span>Four-signal fusion</div>
+      <div class="hero-meta-item"><span class="dot"></span>COMPASS risk scoring</div>
+      <div class="hero-meta-item"><span class="dot"></span>30+ published studies</div>
+      <div class="hero-meta-item"><span class="dot"></span>64% soft-tissue injury reduction</div>
+    </div>
+  </div>
+
+  <!-- What is NUR -->
+  <section id="what-is-nur">
+    <div class="section-label">Overview</div>
+    <h2>What is the NUR Platform?</h2>
+    <p>The NUR Platform is an athlete health monitoring system that tells coaches and medical staff — clearly and early — when an athlete is at risk of injury. It does this by combining four sources of information that have never been brought together in one system before: the body-wide recovery data collected by a wearable device, a thermal scan that reveals hidden stress in specific muscles and tissues, the athlete's demographic profile, and their longitudinal health and injury history.</p>
+    <p>Together, they produce a single readiness score and a clear action recommendation for every athlete, every day.</p>
+  </section>
+
+  <!-- The Problem -->
+  <section id="problem">
+    <div class="section-label">The Problem</div>
+    <h2>The blind spot in traditional monitoring</h2>
+    <p>Modern sports teams already use wearables to track how recovered an athlete is. These devices measure heart rate, sleep quality, and training load. They are useful, but they have a fundamental blind spot.</p>
+    <p>An athlete can sleep well, show normal heart rate variability, and feel completely ready to train — and still be carrying hidden tissue stress in a hamstring, a knee, or a shoulder. The wearable cannot see this. The athlete cannot feel it yet. But the stress is building.</p>
+    <div class="callout callout-danger">
+      <p>This is the most dangerous moment in sport: the athlete who appears ready but is one hard session away from injury. It happens constantly, and current technology has no way to detect it.</p>
+    </div>
+  </section>
+
+  <!-- How it Works -->
+  <section id="how-it-works">
+    <div class="section-label">Signal Architecture</div>
+    <h2>How NUR Works</h2>
+    <p>NUR addresses this blind spot by fusing four independent signal classes into a single deterministic risk score via the COMPASS framework.</p>
+
+    <div class="signal-grid">
+      <div class="signal-card">
+        <div class="signal-num">1</div>
+        <h3>Wearable Data — Body-Wide Recovery</h3>
+        <p>NUR ingests the athlete's existing wearable data — sleep, heart rate, training load history — and uses it to assess their overall physical state. This tells us how the body as a whole is coping with demand.</p>
+      </div>
+      <div class="signal-card">
+        <div class="signal-num">2</div>
+        <h3>Thermal Scan — Tissue-Level Stress</h3>
+        <p>The athlete stands briefly in front of the NUR Sensor — a purpose-built thermal imaging device. The sensor captures heat patterns on both sides of the body. Inflammation shows up as a left-right temperature asymmetry: the signal NUR uses to detect hidden tissue stress before pain appears.</p>
+      </div>
+      <div class="signal-card">
+        <div class="signal-num">3</div>
+        <h3>Athlete Demographics</h3>
+        <p>Age, sex, body composition, and positional profile all influence how thermal and physiological data should be interpreted. NUR accounts for these factors within the scoring model, avoiding one-size-fits-all conclusions.</p>
+      </div>
+      <div class="signal-card">
+        <div class="signal-num">4</div>
+        <h3>Longitudinal Health History</h3>
+        <p>Each athlete's previous injury episodes, rehabilitation history, and prior thermal patterns inform the current risk classification. An athlete with a prior hamstring strain is not assessed the same way as one with a clean record.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Zones -->
+  <section id="zones">
+    <div class="section-label">COMPASS Framework</div>
+    <h2>Four Readiness Zones</h2>
+    <p>Every athlete receives a daily zone assignment. Each zone comes with a clear, evidence-based recommendation for coaches and medical staff — a score, a state, and a next step.</p>
+
+    <div class="zone-grid">
+      <div class="zone-card safe">
+        <div class="zone-badge">Safe · 76–100</div>
+        <h3>Safe Zone</h3>
+        <p>Both the athlete's overall recovery and their tissue health are clear. They are ready for full training load.</p>
+        <div class="zone-axis">
+          <span class="axis-pill">Systemic: Clear</span>
+          <span class="axis-pill">Thermal: Clear</span>
+        </div>
+        <div class="zone-action">→ Full training load. No action required.</div>
+      </div>
+      <div class="zone-card recovery">
+        <div class="zone-badge">Recovery · 51–75</div>
+        <h3>Recovery Zone</h3>
+        <p>The athlete's body-wide recovery is suppressed — they are fatigued. Their tissue, however, is fine.</p>
+        <div class="zone-axis">
+          <span class="axis-pill">Systemic: Fatigued</span>
+          <span class="axis-pill">Thermal: Clear</span>
+        </div>
+        <div class="zone-action">→ Reduce volume. Allow recovery.</div>
+      </div>
+      <div class="zone-card deceptive">
+        <div class="zone-badge">Deceptive · 26–50</div>
+        <h3>Deceptive Readiness <span class="priority-tag">Critical</span></h3>
+        <p>The athlete's wearable data looks normal. They feel ready. They will tell you they are fine. But their thermal scan shows significant tissue stress — inflammation that has not yet become pain. No other system in the world can detect this state.</p>
+        <div class="zone-axis">
+          <span class="axis-pill">Systemic: Ready</span>
+          <span class="axis-pill">Thermal: Inflamed</span>
+        </div>
+        <div class="zone-action">→ Modified load + region-specific physiotherapy assessment.</div>
+      </div>
+      <div class="zone-card danger">
+        <div class="zone-badge">Danger · 0–25</div>
+        <h3>Danger Zone</h3>
+        <p>The athlete is both fatigued overall and showing elevated tissue stress. This is a high-risk state requiring mandatory clinical intervention before any load is applied.</p>
+        <div class="zone-axis">
+          <span class="axis-pill">Systemic: Fatigued</span>
+          <span class="axis-pill">Thermal: Inflamed</span>
+        </div>
+        <div class="zone-action">→ Mandatory clinical review. Physio assessment required.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Return to Play -->
+  <section id="rtp">
+    <div class="section-label">Return-to-Play</div>
+    <h2>Managing injuries: phase-gated rehabilitation</h2>
+    <p>The hardest decision in sports medicine is not diagnosing an injury — it is deciding when an athlete is genuinely ready to return to competition. This decision is currently made largely on time elapsed since injury, how the athlete reports feeling, and clinical judgement. All three are unreliable.</p>
+
+    <div class="stat-strip">
+      <div class="stat-card">
+        <div class="stat-value">14–30%</div>
+        <div class="stat-label">Re-injury rate in hamstring injuries after return to play</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">4</div>
+        <div class="stat-label">Phase-gated rehabilitation milestones guided by COMPASS data</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">3×</div>
+        <div class="stat-label">Consecutive on-baseline scans required for RTP clearance</div>
+      </div>
+    </div>
+
+    <p>When an athlete is confirmed injured, NUR shifts into monitoring mode. The same asymmetry signal that flagged hidden risk now tracks tissue healing — and the wearable data continues to track how the athlete's body is coping with rehabilitation load. An athlete does not progress from one phase to the next based on time — they progress when the COMPASS data confirms it is safe to do so.</p>
+
+    <div class="phase-list">
+      <div class="phase-item">
+        <div class="phase-left">
+          <div class="phase-dot">1</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <h3>Acute Phase — Rest &amp; Passive Treatment</h3>
+          <p>NUR tracks the peak of tissue stress and confirms it is declining before any load is introduced. No time-based progression.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-left">
+          <div class="phase-dot">2</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <h3>Rehabilitation Phase — Progressive Loading</h3>
+          <p>Each new exercise stimulus is followed by a scan. If thermal asymmetry at the injury site is declining, load can increase. If it is plateauing or rising, the tissue has reached its tolerance ceiling.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-left">
+          <div class="phase-dot">3</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <h3>Progressive Loading Phase — Sport-Specific Movements</h3>
+          <p>Thermal asymmetry must be within the athlete's individual baseline range — not a population average, but their own pre-injury thermal norm — before higher intensities are permitted.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-left">
+          <div class="phase-dot">4</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <h3>Return to Competition — Confirmed Clearance</h3>
+          <p>Clearance is not a single scan reading. It requires three consecutive scans showing thermal asymmetry within the athlete's baseline at progressive load. This confirmed trend — not a single pass — is the RTP gate.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>Contralateral limb monitoring:</strong> Injured athletes compensate by placing more load on the healthy limb. NUR scans both sides of the body throughout rehabilitation and flags rising thermal stress on the uninjured side as a separate alert — preventing the secondary injury during rehabilitation.</p>
+    </div>
+  </section>
+
+  <!-- Team Tools -->
+  <section id="team-tools">
+    <div class="section-label">Platform</div>
+    <h2>What the team sees</h2>
+    <p>NUR is built around three tools that fit into your existing daily workflow — one for athletes, one for scan sessions, and one for the coaching and medical team.</p>
+
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-icon">📱</div>
+        <div class="product-for">For Athletes</div>
+        <h3>My NUR — Mobile App</h3>
+        <p>Each athlete sees their personal readiness score, zone assignment, AI coach guidance, and trend graphs showing how their scores evolve over time.</p>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">📷</div>
+        <div class="product-for">For Scan Sessions</div>
+        <h3>NUR Sensor — Operator App</h3>
+        <p>The physiotherapist guides the thermal imaging session — a few minutes per athlete. Images are automatically and securely sent for analysis. No manual uploads or data entry.</p>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">🖥</div>
+        <div class="product-for">Coaches &amp; Medical Staff</div>
+        <h3>NUR Teams — Web App</h3>
+        <p>Full squad zone status at a glance. High-risk athletes flagged. Natural language assistant — type "Which athletes are in Deceptive Readiness today?" and receive immediate answers. No spreadsheets.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- NURAI -->
+  <section id="nurai">
+    <div class="section-label">AI Assistant</div>
+    <h2>NURAI — AI-powered guidance</h2>
+
+    <div class="nurai-card">
+      <div class="nurai-label">NURAI · Clinical AI</div>
+      <h2>Personalised intervention plans, not generic alerts.</h2>
+      <p>NURAI draws on the full clinical dataset for each athlete — thermal asymmetry readings per body region, physiological metrics, reported pain entries, demographics, and injury history. When an athlete is flagged, NURAI produces a personalised, step-by-step intervention plan specific to that individual.</p>
+      <div class="nurai-features">
+        <div class="nurai-feat">Which body regions to assess</div>
+        <div class="nurai-feat">Appropriate treatment approaches</div>
+        <div class="nurai-feat">Training load modification plan</div>
+        <div class="nurai-feat">Phased rehabilitation guidance</div>
+        <div class="nurai-feat">Reassessment triggers</div>
+        <div class="nurai-feat">Plain-language athlete explanation</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Differentiators -->
+  <section id="differentiators">
+    <div class="section-label">Why NUR</div>
+    <h2>Four compounding differentiators</h2>
+    <p>Every sports technology platform on the market monitors one or two dimensions of athlete readiness. NUR is architecturally distinct across four dimensions — each a gap in the existing market, together forming a capability that cannot be replicated by adding a single feature to a single-modality platform.</p>
+
+    <div class="diff-list">
+      <div class="diff-item">
+        <div class="diff-num">01</div>
+        <div class="diff-content">
+          <h3>Multimodal Injury Risk Modelling</h3>
+          <p>NUR is the only platform that fuses four independent signal classes — thermal imaging, physiological wearables, athlete demographics, and longitudinal health history — into a single deterministic risk score. Competitors process one or two modalities in isolation, producing scores that are blind to the interactions between tissue stress, systemic fatigue, biological profile, and prior injury load.</p>
+        </div>
+      </div>
+      <div class="diff-item">
+        <div class="diff-num">02</div>
+        <div class="diff-content">
+          <h3>Personalised Thermographic Baselines</h3>
+          <p>Population-based thermal thresholds treat every athlete identically and produce high false-positive rates in naturally asymmetric individuals. NUR builds individual SD baselines from each athlete's longitudinal thermographic history, flagging deviations relative to their own normal — not a population mean. This is clinically superior for long-term monitoring and dramatically reduces alert fatigue in practice.</p>
+        </div>
+      </div>
+      <div class="diff-item">
+        <div class="diff-num">03</div>
+        <div class="diff-content">
+          <h3>Interpretable Risk Framework with Deceptive Readiness Detection</h3>
+          <p>NUR's COMPASS framework assigns athletes to one of four named clinical zones with fully traceable risk factors — every score is explainable to the clinician. The framework's highest-priority zone, Deceptive Readiness, detects the most dangerous injury state: normal systemic wearable data masking active local tissue inflammation. No competitor in any tier can detect this condition because it requires both signal axes simultaneously present in the scoring model.</p>
+        </div>
+      </div>
+      <div class="diff-item">
+        <div class="diff-num">04</div>
+        <div class="diff-content">
+          <h3>Tailored Intervention Plans</h3>
+          <p>NUR does not stop at risk classification. Each zone produces a deterministic intervention protocol derived from the athlete's specific thermal pattern, physiological state, and injury history — not a generic recommendation template. Clinicians receive a detailed, athlete-specific action plan covering training load modifications, physiotherapy referral triggers, and return-to-play criteria, closing the loop from detection to clinical decision.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Evidence -->
+  <section id="evidence">
+    <div class="section-label">Evidence Base</div>
+    <h2>Built on peer-reviewed science</h2>
+    <p>The COMPASS framework and the thermal thresholds NUR uses are grounded in published research. Every threshold and classification has a clinical rationale — this is not technology built on intuition.</p>
+
+    <div class="stat-strip">
+      <div class="stat-card">
+        <div class="stat-value">64%</div>
+        <div class="stat-label">Reduction in soft-tissue injury when athletes are identified and managed at the thermal asymmetry threshold</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">30+</div>
+        <div class="stat-label">Published studies in sports medicine, thermography, and athletic injury prevention supporting the framework</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">4</div>
+        <div class="stat-label">Independent signal classes — no single modality can replicate the combined risk model</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Audience -->
+  <section id="audience">
+    <div class="section-label">Who It's For</div>
+    <h2>Designed for every stakeholder in athlete health</h2>
+    <p>Whether you are managing a squad of 25 or an individual elite athlete, NUR provides the same clarity: a score, a zone, and a clear next step — every day.</p>
+
+    <div class="audience-grid">
+      <div class="audience-item">
+        <div class="audience-icon">🎯</div>
+        <div>
+          <h3>Performance Directors &amp; Head Coaches</h3>
+          <p>Reliable daily readiness data without added workflow complexity.</p>
+        </div>
+      </div>
+      <div class="audience-item">
+        <div class="audience-icon">🩺</div>
+        <div>
+          <h3>Physiotherapists &amp; Sports Scientists</h3>
+          <p>Early warning of injury risk, structured intervention guidance, and objective RTP criteria.</p>
+        </div>
+      </div>
+      <div class="audience-item">
+        <div class="audience-icon">⚡</div>
+        <div>
+          <h3>Athletes</h3>
+          <p>Understand your own body. Train with confidence. Know when to push and when to protect.</p>
+        </div>
+      </div>
+      <div class="audience-item">
+        <div class="audience-icon">🏥</div>
+        <div>
+          <h3>Club Medical Departments</h3>
+          <p>A defensible, evidence-based process for load management decisions with full thermal trajectory data.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>
+      <div class="footer-brand">NUR Platform · Amplifai Health</div>
+      <p>For further information, contact the Amplifai Health team.</p>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // Active nav highlighting on scroll
+  const sections = document.querySelectorAll('section[id], div.hero');
+  const navLinks = document.querySelectorAll('nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const id = entry.target.id || 'what-is-nur';
+        const link = document.querySelector(`nav a[href="#${id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

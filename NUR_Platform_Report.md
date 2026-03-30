@@ -6,7 +6,7 @@
 
 ## What is the NUR Platform?
 
-The NUR Platform is an athlete health monitoring system that tells coaches and medical staff — clearly and early — when an athlete is at risk of injury. It does this by combining two sources of information that have never been brought together in one system before: the body-wide recovery data collected by a wearable device, and a thermal scan that reveals hidden stress in specific muscles and tissues. Together, they produce a single readiness score and a clear action recommendation for every athlete, every day.
+The NUR Platform is an athlete health monitoring system that tells coaches and medical staff — clearly and early — when an athlete is at risk of injury. It does this by combining four sources of information that have never been brought together in one system before: the body-wide recovery data collected by a wearable device, a thermal scan that reveals hidden stress in specific muscles and tissues, the athlete's demographic profile, and their longitudinal health and injury history. Together, they produce a single readiness score and a clear action recommendation for every athlete, every day.
 
 ---
 
@@ -22,7 +22,7 @@ This is the most dangerous moment in sport: the athlete who appears ready but is
 
 ## How NUR Works
 
-NUR addresses this blind spot by combining two complementary inputs:
+NUR addresses this blind spot by fusing four independent signal classes into a single deterministic risk score:
 
 **1. Wearable Data (Body-Wide Recovery)**
 NUR pulls in the athlete's existing wearable data — sleep, heart rate, training load history — and uses it to assess their overall physical state. This tells us how the body as a whole is coping.
@@ -30,7 +30,13 @@ NUR pulls in the athlete's existing wearable data — sleep, heart rate, trainin
 **2. Thermal Scan (Tissue-Level Stress)**
 The athlete stands briefly in front of a NUR Sensor — a purpose-built thermal imaging device, similar to a smart mirror. The sensor captures the heat patterns on both sides of the body. Inflammation in a muscle or joint shows up as a temperature difference between the left and right side of the body. This asymmetry is the signal NUR uses to detect hidden tissue stress long before the athlete feels pain or shows visible symptoms.
 
-These two pieces of information are processed together to produce a single score — the COMPASS score — and place the athlete into one of four readiness zones.
+**3. Athlete Demographics**
+Age, sex, body composition, and positional profile all influence how an individual's thermal and physiological data should be interpreted. NUR accounts for these factors within the scoring model, avoiding one-size-fits-all conclusions.
+
+**4. Longitudinal Health History**
+Each athlete's previous injury episodes, rehabilitation history, and prior thermal patterns inform the current risk classification. An athlete with a prior hamstring strain is not assessed the same way as one with a clean record — and the system knows it.
+
+These four inputs are processed together to produce a single score — the COMPASS score — and place the athlete into one of four readiness zones.
 
 ---
 
@@ -106,9 +112,9 @@ The coaching and medical team views the full squad in one place. Every athlete's
 
 ## AI-Powered Guidance: NURAI
 
-NUR includes an AI coaching assistant called NURAI. Unlike generic AI tools, NURAI is fully informed by each athlete's actual scan data, medical history, and zone classification.
+NUR includes an AI coaching assistant called NURAI. Unlike generic AI tools, NURAI draws on the full clinical dataset for each athlete: thermal asymmetry readings per body region, physiological metrics, reported pain entries, athlete demographics, and injury history.
 
-When an athlete is flagged, NURAI does not just show a warning. It produces a personalised, step-by-step intervention plan: which body regions to assess, what treatment approaches are appropriate, how to modify training load, what signs would indicate the athlete is ready to progress, and when to reassess. These recommendations are specific, auditable, and grounded in the athlete's real data — not generic advice.
+When an athlete is flagged, NURAI does not just show a warning. It produces a personalised, step-by-step intervention plan: which body regions to assess, what treatment approaches are appropriate, how to modify training load, phased rehabilitation guidance with reassessment triggers, and when the athlete is likely ready to progress — all specific to that individual, not a generic zone response.
 
 NURAI also generates a plain-language explanation for the athlete themselves, so they understand what is happening and why their training has been adjusted.
 
@@ -116,15 +122,19 @@ NURAI also generates a plain-language explanation for the athlete themselves, so
 
 ## Why NUR is Different
 
-Every sports technology platform on the market today monitors either the whole body (via wearables) or local tissue (via thermal imaging) — but not both, and certainly not in an integrated scoring system.
+Every sports technology platform on the market today monitors one or two dimensions of athlete readiness. NUR is architecturally distinct across four compounding dimensions — each a gap in the existing market, together forming a capability that cannot be replicated by adding a single feature to a single-modality platform.
 
-What this means in practice:
+**1. Multimodal Injury Risk Modelling**
+NUR is the only platform that fuses four independent signal classes — thermal imaging, physiological wearables, athlete demographics, and longitudinal health history — into a single deterministic risk score. Competitors process one or two modalities in isolation, producing scores that are blind to the interactions between tissue stress, systemic fatigue, biological profile, and prior injury load.
 
-- Wearable-only platforms will always miss the Deceptive Readiness state. They cannot see tissue stress.
-- Thermal-only tools can identify inflammation, but without body-wide recovery context they cannot tell you how urgent it is or what to do about it.
-- No other platform produces a single unified score, a four-zone clinical classification, and a mandatory clinical protocol when the situation demands it.
+**2. Personalized Thermographic Baselines**
+Population-based thermal thresholds treat every athlete identically and produce high false-positive rates in naturally asymmetric individuals. NUR builds individual SD baselines from each athlete's longitudinal thermographic history, flagging deviations relative to their own normal — not a population mean. This is clinically superior for long-term monitoring and dramatically reduces alert fatigue in practice.
 
-NUR is the only system that detects Deceptive Readiness — the hidden injury state where athletes feel fine but are not. This is not a marginal improvement on existing tools. It is a capability that does not exist anywhere else.
+**3. Interpretable Risk Framework with Deceptive Readiness Detection**
+NUR's COMPASS framework assigns athletes to one of four named clinical zones with fully traceable risk factors — every score is explainable to the clinician. The framework's highest-priority zone, Deceptive Readiness, detects the most dangerous injury state: normal systemic wearable data masking active local tissue inflammation. No competitor in any tier can detect this condition because it requires both signal axes simultaneously present in the scoring model.
+
+**4. Tailored Intervention Plans**
+NUR does not stop at risk classification. Each zone produces a mandatory, deterministic intervention protocol derived from the athlete's specific thermal pattern, physiological state, and injury history — not a generic recommendation template. Clinicians receive a detailed, athlete-specific action plan covering training load modifications, physiotherapy referral triggers, and return-to-play criteria, closing the loop from detection to clinical decision.
 
 ---
 
