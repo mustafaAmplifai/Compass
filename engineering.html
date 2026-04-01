@@ -1199,35 +1199,156 @@
     </tbody>
   </table>
 
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.wearable_connections</strong> — schema defined in <a href="#s08" style="color:var(--accent);">§8.3 Wearables Integration</a>.</p>
-
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.metrics</strong> — wearable data written by Backend daily Spike pull; thermal composite outputs written by NURAI</p>
+  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.wearable_connections</strong> — one row per user-provider pair; tracks Spike OAuth state and token lifecycle</p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
-      <tr><td><code>metric_id</code></td><td>PK</td><td>Primary key.</td></tr>
-      <tr><td><code>session_id</code></td><td>FK &rarr; sessions</td><td>Associated scan session.</td></tr>
-      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user</td><td>Athlete.</td></tr>
-      <tr><td><code>recorded_at</code></td><td>timestamp</td><td>When the row was written to the DB.</td></tr>
-      <tr><td><code>spike_date</code></td><td>date</td><td>Calendar day the Spike Daily Statistics row covers.</td></tr>
-      <tr><td><code>source_platform</code></td><td>varchar, nullable</td><td>Wearable platform (e.g. <code>spike</code>).</td></tr>
-      <tr><td><code>hrv_rmssd</code></td><td>numeric, ms</td><td>HRV RMSSD.</td></tr>
-      <tr><td><code>hrv_sdnn</code></td><td>numeric, ms, nullable</td><td>HRV SDNN.</td></tr>
-      <tr><td><code>heartrate_resting</code></td><td>numeric, bpm</td><td>Resting heart rate.</td></tr>
-      <tr><td><code>heartrate</code></td><td>numeric, bpm, nullable</td><td>Daily average heart rate.</td></tr>
-      <tr><td><code>heartrate_max</code> / <code>heartrate_min</code></td><td>numeric, bpm, nullable</td><td>Daily max / min heart rate.</td></tr>
-      <tr><td><code>sleep_score</code></td><td>numeric</td><td>Spike sleep quality score.</td></tr>
-      <tr><td><code>sleep_duration_total</code></td><td>bigint, ms, nullable</td><td>Total sleep duration.</td></tr>
-      <tr><td><code>sleep_skin_temp_deviation</code></td><td>numeric, °C, nullable</td><td>Skin temperature deviation during sleep.</td></tr>
-      <tr><td><code>steps</code></td><td>integer, nullable</td><td>Daily step count.</td></tr>
-      <tr><td><code>activity_score</code></td><td>numeric, nullable</td><td>Spike activity score.</td></tr>
-      <tr><td><code>duration_low/moderate/high_intensity</code></td><td>bigint, ms, nullable</td><td>Time in low / moderate / high intensity activity.</td></tr>
-      <tr><td><code>calories_burned_total</code></td><td>numeric, kcal, nullable</td><td>Total daily calories burned.</td></tr>
-      <tr><td><code>activity_load</code></td><td>numeric</td><td>Backend-computed ACWR (7-day / 28-day Spike history).</td></tr>
-      <tr><td><code>recovery_score</code></td><td>numeric, nullable</td><td>Spike pre-computed recovery score; feeds NURAI <code>r_score</code>.</td></tr>
-      <tr><td><code>stress_score</code></td><td>numeric, nullable</td><td>Spike pre-computed stress score.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Identity</td></tr>
+      <tr><td><code>connection_id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
+      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, CASCADE</td><td>NUR user this connection belongs to.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Provider</td></tr>
+      <tr><td><code>provider</code></td><td>varchar(250)</td><td>Wearable platform identifier (e.g. <code>spike</code>).</td></tr>
+      <tr><td><code>provider_userId</code></td><td>varchar(250), nullable</td><td>User ID on the provider platform.</td></tr>
+      <tr><td><code>application_id</code></td><td>varchar(255), nullable</td><td>Spike application ID returned during connection setup.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Credentials</td></tr>
+      <tr><td><code>encrypted_access_token</code></td><td>varchar(2048), nullable</td><td>Spike JWT stored encrypted; used for all server-side Daily Statistics API calls.</td></tr>
+      <tr><td><code>spike_user_id</code></td><td>varchar(255), nullable</td><td><code>endUserId</code> assigned by Spike during SDK initialisation.</td></tr>
+      <tr><td><code>spike_signature</code></td><td>varchar(512), nullable</td><td>HMAC-SHA256 signature used to obtain the Spike JWT.</td></tr>
+      <tr><td><code>token_expires_at</code></td><td>timestamp, nullable</td><td>Expiry time of the stored access token.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Status &amp; Sync</td></tr>
+      <tr><td><code>status</code></td><td>varchar(30)</td><td><code>pending</code> / <code>connected</code> / <code>active</code> / <code>revoked</code> / <code>error</code> / <code>expired</code>.</td></tr>
+      <tr><td><code>sync_enabled</code></td><td>bool, default true</td><td>Whether the daily Spike pull is active for this connection.</td></tr>
+      <tr><td><code>last_synced_at</code></td><td>timestamp, nullable</td><td>Timestamp of the last successful Backend daily pull from Spike.</td></tr>
+      <tr><td><code>connected_at</code></td><td>timestamp, nullable</td><td>When the connection was first established.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Audit</td></tr>
+      <tr><td><code>created_at</code></td><td>timestamp</td><td>Row creation time (auto-set).</td></tr>
+      <tr><td><code>updated_at</code></td><td>timestamp</td><td>Last modification time (auto-updated).</td></tr>
     </tbody>
   </table>
+  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 20px;">Constraints: UNIQUE (<code>user_id</code>, <code>provider</code>). Indexes: <code>idx_wc_user_id</code>, <code>idx_wc_provider_status</code>, <code>idx_wc_status_sync</code>, <code>idx_wc_last_synced</code>.</p>
+
+  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.daily_metrics</strong> — current-day wearable data written by Backend daily Spike pull; one active row per user-platform-date-type</p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Identity</td></tr>
+      <tr><td><code>metric_id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
+      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, CASCADE</td><td>Athlete.</td></tr>
+      <tr><td><code>connection_id</code></td><td>FK &rarr; wearable_connections, SET NULL, nullable</td><td>Wearable connection that sourced this row.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Date &amp; Source</td></tr>
+      <tr><td><code>recorded_at</code></td><td>timestamp</td><td>When the row was written to the DB (auto-set).</td></tr>
+      <tr><td><code>metric_date</code></td><td>date</td><td>Calendar day this metric row represents.</td></tr>
+      <tr><td><code>spike_date</code></td><td>date, nullable</td><td>Calendar day the Spike Daily Statistics row covers.</td></tr>
+      <tr><td><code>source_platform</code></td><td>varchar(50), nullable</td><td>Wearable platform (e.g. <code>spike</code>).</td></tr>
+      <tr><td><code>metric_type</code></td><td>varchar(20), default <code>raw</code></td><td><code>raw</code> — direct Spike values; <code>derived</code> — Backend-computed outputs (e.g. ACWR).</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">HRV</td></tr>
+      <tr><td><code>hrv_rmssd</code></td><td>numeric(10,3), nullable</td><td>HRV RMSSD (ms).</td></tr>
+      <tr><td><code>hrv_sdnn</code></td><td>numeric(10,3), nullable</td><td>HRV SDNN (ms).</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Heart Rate</td></tr>
+      <tr><td><code>heartrate_resting</code></td><td>numeric(10,3), nullable</td><td>Resting heart rate (bpm).</td></tr>
+      <tr><td><code>heartrate</code></td><td>numeric(10,3), nullable</td><td>Daily average heart rate (bpm).</td></tr>
+      <tr><td><code>heartrate_max</code></td><td>numeric(10,3), nullable</td><td>Daily max heart rate (bpm).</td></tr>
+      <tr><td><code>heartrate_min</code></td><td>numeric(10,3), nullable</td><td>Daily min heart rate (bpm).</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Sleep</td></tr>
+      <tr><td><code>sleep_score</code></td><td>numeric(10,3), nullable</td><td>Spike sleep quality score.</td></tr>
+      <tr><td><code>sleep_duration_total</code></td><td>bigint, ms, nullable</td><td>Total sleep duration.</td></tr>
+      <tr><td><code>sleep_skin_temp_deviation</code></td><td>numeric(10,3), nullable</td><td>Skin temperature deviation during sleep (°C).</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Activity</td></tr>
+      <tr><td><code>steps</code></td><td>integer, nullable</td><td>Daily step count.</td></tr>
+      <tr><td><code>activity_score</code></td><td>numeric(10,3), nullable</td><td>Spike activity score.</td></tr>
+      <tr><td><code>duration_low_intensity</code></td><td>bigint, ms, nullable</td><td>Time in low-intensity activity.</td></tr>
+      <tr><td><code>duration_moderate_intensity</code></td><td>bigint, ms, nullable</td><td>Time in moderate-intensity activity.</td></tr>
+      <tr><td><code>duration_high_intensity</code></td><td>bigint, ms, nullable</td><td>Time in high-intensity activity.</td></tr>
+      <tr><td><code>calories_burned_total</code></td><td>numeric(10,3), nullable</td><td>Total daily calories burned (kcal).</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Readiness &amp; Load</td></tr>
+      <tr><td><code>activity_load</code></td><td>numeric(10,3), nullable</td><td>Backend-computed ACWR (7-day / 28-day Spike history).</td></tr>
+      <tr><td><code>recovery_score</code></td><td>numeric(10,3), nullable</td><td>Spike pre-computed recovery score; feeds NURAI <code>r_score</code>.</td></tr>
+      <tr><td><code>stress_score</code></td><td>numeric(10,3), nullable</td><td>Spike pre-computed stress score.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Raw &amp; Audit</td></tr>
+      <tr><td><code>raw_payload</code></td><td>JSONB, nullable</td><td>Full Spike API response payload for this day.</td></tr>
+      <tr><td><code>created_at</code></td><td>timestamp</td><td>Row creation time (auto-set).</td></tr>
+      <tr><td><code>updated_at</code></td><td>timestamp</td><td>Last modification time (auto-updated).</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 20px;">Constraints: UNIQUE (<code>user_id</code>, <code>source_platform</code>, <code>metric_date</code>, <code>metric_type</code>). Indexes: <code>idx_daily_metric_user_id</code>, <code>idx_daily_metric_connection_id</code>, <code>idx_daily_metric_user_date</code>, <code>idx_daily_metric_platform_date</code>.</p>
+
+  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.history_metrics</strong> — archive of historical wearable data; same column structure as <code>daily_metrics</code>, no uniqueness constraint</p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Identity</td></tr>
+      <tr><td><code>metric_id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
+      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, CASCADE</td><td>Athlete.</td></tr>
+      <tr><td><code>connection_id</code></td><td>FK &rarr; wearable_connections, SET NULL, nullable</td><td>Wearable connection that sourced this row.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Date &amp; Source</td></tr>
+      <tr><td><code>recorded_at</code></td><td>timestamp</td><td>When the row was written to the DB (auto-set).</td></tr>
+      <tr><td><code>metric_date</code></td><td>date</td><td>Calendar day this metric row represents.</td></tr>
+      <tr><td><code>spike_date</code></td><td>date, nullable</td><td>Calendar day the Spike Daily Statistics row covers.</td></tr>
+      <tr><td><code>source_platform</code></td><td>varchar(50), nullable</td><td>Wearable platform (e.g. <code>spike</code>).</td></tr>
+      <tr><td><code>metric_type</code></td><td>varchar(20), default <code>raw</code></td><td><code>raw</code> — direct Spike values; <code>derived</code> — Backend-computed outputs.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Wearable Metrics</td></tr>
+      <tr><td><code>hrv_rmssd</code> / <code>hrv_sdnn</code></td><td>numeric(10,3), nullable</td><td>HRV RMSSD and SDNN (ms).</td></tr>
+      <tr><td><code>heartrate_resting</code> / <code>heartrate</code> / <code>heartrate_max</code> / <code>heartrate_min</code></td><td>numeric(10,3), nullable</td><td>Resting, average, max, and min daily heart rate (bpm).</td></tr>
+      <tr><td><code>sleep_score</code> / <code>sleep_duration_total</code> / <code>sleep_skin_temp_deviation</code></td><td>numeric / bigint / numeric, nullable</td><td>Sleep quality score, total duration (ms), skin temp deviation (°C).</td></tr>
+      <tr><td><code>steps</code> / <code>activity_score</code></td><td>integer / numeric(10,3), nullable</td><td>Daily step count and Spike activity score.</td></tr>
+      <tr><td><code>duration_low_intensity</code> / <code>duration_moderate_intensity</code> / <code>duration_high_intensity</code></td><td>bigint, ms, nullable</td><td>Time in low / moderate / high intensity activity.</td></tr>
+      <tr><td><code>calories_burned_total</code></td><td>numeric(10,3), nullable</td><td>Total daily calories burned (kcal).</td></tr>
+      <tr><td><code>activity_load</code> / <code>recovery_score</code> / <code>stress_score</code></td><td>numeric(10,3), nullable</td><td>ACWR, Spike recovery score, Spike stress score.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Raw &amp; Audit</td></tr>
+      <tr><td><code>raw_payload</code></td><td>JSONB, nullable</td><td>Full Spike API response payload for this day.</td></tr>
+      <tr><td><code>created_at</code></td><td>timestamp</td><td>Row creation time (auto-set).</td></tr>
+      <tr><td><code>updated_at</code></td><td>timestamp</td><td>Last modification time (auto-updated).</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 20px;">No uniqueness constraint (archive table). Indexes: <code>idx_hist_metric_user_id</code>, <code>idx_hist_metric_conn_id</code>, <code>idx_hist_metric_user_date</code>, <code>idx_hist_metric_plat_date</code>.</p>
+
+  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.sync_logs</strong> — audit trail for each Spike data pull; records outcome, date window, and error detail per connection</p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Identity</td></tr>
+      <tr><td><code>sync_log_id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
+      <tr><td><code>connection_id</code></td><td>FK &rarr; wearable_connections, CASCADE</td><td>Connection this sync was performed for.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Sync Details</td></tr>
+      <tr><td><code>sync_type</code></td><td>varchar(20)</td><td><code>scheduled</code> — daily cron pull; <code>webhook_triggered</code> — initiated by a Spike webhook event.</td></tr>
+      <tr><td><code>status</code></td><td>varchar(10)</td><td><code>success</code> / <code>failed</code> / <code>partial</code>.</td></tr>
+      <tr><td><code>started_at</code></td><td>timestamp</td><td>When the sync operation began.</td></tr>
+      <tr><td><code>completed_at</code></td><td>timestamp, nullable</td><td>When the sync operation finished.</td></tr>
+      <tr><td><code>records_synced</code></td><td>integer, default 0</td><td>Number of metric rows written or upserted in this sync.</td></tr>
+      <tr><td><code>date_range_from</code></td><td>date, nullable</td><td>Start of the date window requested from Spike.</td></tr>
+      <tr><td><code>date_range_to</code></td><td>date, nullable</td><td>End of the date window requested from Spike.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Error &amp; Response</td></tr>
+      <tr><td><code>error_message</code></td><td>text, nullable</td><td>Error detail when <code>status = failed</code> or <code>partial</code>.</td></tr>
+      <tr><td><code>spike_response</code></td><td>JSONB, nullable</td><td>Raw Spike API response for debugging.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Audit</td></tr>
+      <tr><td><code>created_at</code></td><td>timestamp</td><td>Row creation time (auto-set).</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 20px;">Indexes: <code>idx_sl_connection_id</code>, <code>idx_sl_status</code>, <code>idx_sl_type_status</code>, <code>idx_sl_created_at</code>.</p>
+
+  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.spike_webhook_events</strong> — inbound Spike webhook events; tracks processing state for <code>record_change</code> and provider integration lifecycle events</p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Identity</td></tr>
+      <tr><td><code>event_id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
+      <tr><td><code>connection_id</code></td><td>FK &rarr; wearable_connections, SET NULL, nullable</td><td>Connection associated with this event; NULL if unresolvable at receipt time.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Event Details</td></tr>
+      <tr><td><code>spike_user_id</code></td><td>varchar(255)</td><td>Spike user identifier from the webhook payload.</td></tr>
+      <tr><td><code>event_type</code></td><td>varchar(40)</td><td><code>record_change</code> / <code>provider_integration_created</code> / <code>provider_integration_deleted</code>.</td></tr>
+      <tr><td><code>metrics</code></td><td>JSONB, default <code>[]</code></td><td>List of metric types affected (populated for <code>record_change</code> events).</td></tr>
+      <tr><td><code>provider_slug</code></td><td>varchar(100)</td><td>Wearable provider that generated the event (e.g. <code>apple_health</code>).</td></tr>
+      <tr><td><code>earliest_record_start_at</code></td><td>timestamp</td><td>Start of the earliest changed data window in this event.</td></tr>
+      <tr><td><code>latest_record_end_at</code></td><td>timestamp</td><td>End of the latest changed data window in this event.</td></tr>
+      <tr><td><code>raw_payload</code></td><td>JSONB</td><td>Full Spike webhook payload as received.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Processing State</td></tr>
+      <tr><td><code>status</code></td><td>varchar(15), default <code>pending</code></td><td><code>pending</code> / <code>processing</code> / <code>processed</code> / <code>failed</code>.</td></tr>
+      <tr><td><code>received_at</code></td><td>timestamp</td><td>When the webhook was received (auto-set).</td></tr>
+      <tr><td><code>processed_at</code></td><td>timestamp, nullable</td><td>When processing completed.</td></tr>
+      <tr><td><code>error_message</code></td><td>text, nullable</td><td>Error detail when <code>status = failed</code>.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 0;">Indexes: <code>idx_swe_connection_id</code>, <code>idx_swe_spike_user_id</code>, <code>idx_swe_status</code>, <code>idx_swe_status_received</code>.</p>
 
   <div id="s06-5-orgsettings"></div>
   <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.org_settings</strong> — per-org configuration store; one row per org (UNIQUE on <code>org_id</code>); editable only by <code>admin</code></p>
@@ -1276,13 +1397,13 @@
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
-      <tr><td><code>r_score</code></td><td>numeric, 0&ndash;100</td><td>Normalised systemic readiness score derived by NURAI from <code>recovery_score</code> in <code>tbscan.metrics</code>.</td></tr>
+      <tr><td><code>r_score</code></td><td>numeric, 0&ndash;100</td><td>Normalised systemic readiness score derived by NURAI from <code>recovery_score</code> in <code>tbscan.daily_metrics</code>.</td></tr>
       <tr><td><code>t_score</code></td><td>numeric, 0&ndash;100</td><td>Normalised thermal asymmetry score.</td></tr>
       <tr><td><code>compass_score</code></td><td>smallint, 0&ndash;100</td><td>Unified COMPASS risk score.</td></tr>
       <tr><td><code>compass_zone</code></td><td>varchar</td><td><code>safe</code> / <code>recovery</code> / <code>deceptive_readiness</code> / <code>danger</code>.</td></tr>
       <tr><td><code>asymmetry_scores</code></td><td>JSONB, nullable</td><td>Raw per-region left/right temperature deltas.</td></tr>
 
-      <tr><td><code>readiness_score</code></td><td>numeric, nullable</td><td>Spike recovery score sourced from <code>tbscan.metrics.recovery_score</code>; passed through to scan results for display without modification.</td></tr>
+      <tr><td><code>readiness_score</code></td><td>numeric, nullable</td><td>Spike recovery score sourced from <code>tbscan.daily_metrics.recovery_score</code>; passed through to scan results for display without modification.</td></tr>
       <tr><td><code>computed_at</code></td><td>timestamp</td><td>When NURAI wrote the scoring outputs.</td></tr>
       <tr><td><code>ai_coach_output</code></td><td>JSONB, nullable</td><td>Structured AI Coach output: zone-specific clinical response, workout and physiotherapy guidance, and coach narrative for My NUR rendering.</td></tr>
     </tbody>
@@ -1316,7 +1437,7 @@
       <div class="sc-stage-label">Stage A &mdash; Data Collection</div>
       <div class="sc-row">
         <div class="sc-block" data-track="wearable">
-          <div class="sc-block-title">Wearable Data — tbscan.metrics</div>
+          <div class="sc-block-title">Wearable Data — tbscan.daily_metrics</div>
           <div class="sc-block-body">HRV, resting HR, sleep score, ACWR, and pre-computed R Score written by the Backend daily Spike pull. See <a href="#s08" style="color:var(--accent);">§08</a>.</div>
         </div>
         <div class="sc-block" data-track="health">
@@ -1407,7 +1528,7 @@
       <tr><th>Stage</th><th>Input</th><th>Gate / Condition</th><th>Processing</th><th>Output → Table</th></tr>
     </thead>
     <tbody>
-      <tr><td><strong>A — Collect</strong></td><td>Wearable pull, thermogram, pain entries</td><td>—</td><td>Backend daily Spike pull writes raw fields to <code>tbscan.metrics</code>; NUR Sensor uploads thermogram to GCS</td><td><code>tbscan.metrics</code>, <code>pain_entries</code>, <code>sessions.gcs_path</code></td></tr>
+      <tr><td><strong>A — Collect</strong></td><td>Wearable pull, thermogram, pain entries</td><td>—</td><td>Backend daily Spike pull writes raw fields to <code>tbscan.daily_metrics</code>; NUR Sensor uploads thermogram to GCS</td><td><code>tbscan.daily_metrics</code>, <code>pain_entries</code>, <code>sessions.gcs_path</code></td></tr>
       <tr><td><strong>B — Gate</strong></td><td><code>metrics.last_synced_at</code></td><td>Wearable gap &le; 2 days → <code>full_compass</code>; else → <code>thermal_only</code>, skip to G</td><td>Set <code>advisory_mode</code>; short-circuit paths write <code>compass_score = null</code></td><td><code>scan_results.advisory_mode</code></td></tr>
       <tr><td><strong>E — Zone</strong></td><td>R score (0–100) from <code>recovery_score</code>; TAI from thermogram (<code>TAI = max(region deltas)</code>; T = <code>min(100, TAI_SD / 3.0 × 100)</code>)</td><td>R &ge; 50, T &lt; 50 → Safe; R &lt; 50, T &lt; 50 → Recovery; R &ge; 50, T &ge; 50 → Deceptive; R &lt; 50, T &ge; 50 → Danger</td><td>2&times;2 threshold matrix</td><td><code>scan_results.compass_zone</code>, <code>r_score</code>, <code>t_score</code></td></tr>
       <tr><td><strong>F — Score</strong></td><td>R, T, zone assignment</td><td>Safe/Recovery: 50/50 weight; Deceptive/Danger: 30/70 (thermal-heavy)</td><td><code>floor + 24 &times; weighted_dist(R, T)</code>. Floors: Safe 76, Recovery 51, Deceptive 26, Danger 1</td><td><code>scan_results.compass_score</code></td></tr>
@@ -1421,8 +1542,8 @@
       <tr><th>Signal / Output</th><th>Produced by</th><th>Field</th><th>Table</th></tr>
     </thead>
     <tbody>
-      <tr><td><strong>Spike Daily Statistics</strong></td><td>Backend daily Spike pull</td><td>17 wearable fields — see <a href="#s08" style="color:var(--accent);">§8.2</a></td><td><code>tbscan.metrics</code></td></tr>
-      <tr><td><strong>R Score (Systemic Readiness 0&ndash;100)</strong></td><td>NURAI — derives <code>r_score</code> from raw <code>recovery_score</code> stored in <code>tbscan.metrics</code>.</td><td><code>r_score</code></td><td><code>tbscan.scan_results</code></td></tr>
+      <tr><td><strong>Spike Daily Statistics</strong></td><td>Backend daily Spike pull</td><td>17 wearable fields — see <a href="#s08" style="color:var(--accent);">§8.2</a></td><td><code>tbscan.daily_metrics</code></td></tr>
+      <tr><td><strong>R Score (Systemic Readiness 0&ndash;100)</strong></td><td>NURAI — derives <code>r_score</code> from raw <code>recovery_score</code> stored in <code>tbscan.daily_metrics</code>.</td><td><code>r_score</code></td><td><code>tbscan.scan_results</code></td></tr>
       <tr><td><strong>Per-Region Temperatures</strong></td><td>NURAI — extracted from thermogram</td><td><code>tbscan.thermal_measurements</code></td><td><code>tbscan.thermal_measurements</code></td></tr>
       <tr><td><strong>T Score (Thermal Asymmetry 0&ndash;100)</strong></td><td>NURAI — normalised from TAI</td><td><code>t_score</code> (numeric)</td><td><code>tbscan.scan_results</code></td></tr>
       <tr><td><strong>Per-Region Asymmetry Deltas (TAI raw)</strong></td><td>NURAI — <code>max(region deltas)</code> and per-region values</td><td><code>asymmetry_scores</code> (JSONB)</td><td><code>tbscan.scan_results</code></td></tr>
@@ -1436,7 +1557,7 @@
   <p style="font-size:14px;color:var(--text-muted);margin-bottom:6px;">See §5.1 for the full session sequence. The inference-specific steps are:</p>
   <ul style="color:var(--text-muted);font-size:14px;line-height:1.9;padding-left:20px;max-width:720px;">
     <li>NUR Sensor uploads the thermogram <strong>directly to GCS</strong> via signed URL — binary never transits the API tier.</li>
-    <li>Backend calls <code>POST /infer { session_id }</code> (GCP IAM service account). NURAI reads all inputs from DB (<code>tbscan.metrics</code>, <code>pain_entries</code>, health history) and fetches the thermogram from GCS autonomously — no further API calls.</li>
+    <li>Backend calls <code>POST /infer { session_id }</code> (GCP IAM service account). NURAI reads all inputs from DB (<code>tbscan.daily_metrics</code>, <code>pain_entries</code>, health history) and fetches the thermogram from GCS autonomously — no further API calls.</li>
     <li>NURAI writes all outputs to <code>tbscan.scan_results</code> in a single record, returns <code>200 OK</code>; Backend dispatches FCM push to My NUR.</li>
   </ul>
 
@@ -1474,7 +1595,7 @@
   <h3>7.4 NURAI &mdash; Architecture &amp; Intelligence Layer</h3>
   <div class="alert blue" style="margin-bottom:20px;">
     <span class="alert-icon">&#8505;</span>
-    <div><strong>NURAI Scope</strong><p>NURAI's scope is to (1) read raw wearable metrics and the pre-computed R Score from <code>tbscan.metrics</code> — as populated by the Backend's daily Spike pull — (2) fetch the thermogram from GCS, (3) compute all composite metrics (TAI, T Score, COMPASS Score, zone), (4) maintain individual thermal baselines (SD method, nightly batch), and (5) write all scoring and coaching outputs to <code>tbscan.scan_results</code>. NURAI does not call any upstream wearable or Spike API.</p></div>
+    <div><strong>NURAI Scope</strong><p>NURAI's scope is to (1) read raw wearable metrics and the pre-computed R Score from <code>tbscan.daily_metrics</code> — as populated by the Backend's daily Spike pull — (2) fetch the thermogram from GCS, (3) compute all composite metrics (TAI, T Score, COMPASS Score, zone), (4) maintain individual thermal baselines (SD method, nightly batch), and (5) write all scoring and coaching outputs to <code>tbscan.scan_results</code>. NURAI does not call any upstream wearable or Spike API.</p></div>
   </div>
 
   <h4>Model Registry</h4>
@@ -1484,7 +1605,7 @@
     </thead>
     <tbody>
       <tr><td><strong>Thermal Asymmetry Extractor</strong></td><td>Bilateral IR thermogram (GCS)</td><td>Per-region temperature deltas, TAI value</td><td>&lt; 10 s post-upload</td></tr>
-      <tr><td><strong>COMPASS Scorer</strong></td><td>R score (<code>tbscan.metrics</code> raw), TAI (thermal extractor)</td><td>COMPASS score (0&ndash;100), zone label</td><td>&lt; 2 s post-TAI</td></tr>
+      <tr><td><strong>COMPASS Scorer</strong></td><td>R score (<code>tbscan.daily_metrics</code> raw), TAI (thermal extractor)</td><td>COMPASS score (0&ndash;100), zone label</td><td>&lt; 2 s post-TAI</td></tr>
       <tr><td><strong>Individual Baseline Calculator</strong></td><td>Historical TAI series per user</td><td>Personal SD mean + alert threshold</td><td>Batch (nightly) &mdash; <a href="#s07-baseline" style="color:var(--accent);">see &sect;7.5</a></td></tr>
       <tr><td><strong>AI Coach Generator</strong></td><td>COMPASS zone, health context (<code>pain_entries</code>)</td><td>Natural language corrective guidance</td><td>&lt; 5 s post-score</td></tr>
     </tbody>
@@ -1560,7 +1681,7 @@
 <section id="s08">
   <div class="section-label">Section 08</div>
   <h2>Wearables Integration</h2>
-  <p class="section-intro">NUR integrates with wearable and health platforms via the <strong>Spike SDK</strong>. My NUR authenticates through the Spike SDK on-device; the Backend performs a daily scheduled pull from the Spike API and writes raw wearable metrics (including the pre-computed R Score) to <code>tbscan.metrics (raw)</code>. NURAI reads from the DB — it does not call any upstream API.</p>
+  <p class="section-intro">NUR integrates with wearable and health platforms via the <strong>Spike SDK</strong>. My NUR authenticates through the Spike SDK on-device; the Backend performs a daily scheduled pull from the Spike API and writes raw wearable metrics (including the pre-computed R Score) to <code>tbscan.daily_metrics (raw)</code>. NURAI reads from the DB — it does not call any upstream API.</p>
 
   <h3>8.1 Integration Architecture</h3>
   <ul class="step-list">
@@ -1574,13 +1695,13 @@
 });</pre></p></li>
     <li><div class="step-num">4</div><p>My NUR calls <code>spikeConnection.requestHealthPermissions(...)</code>, which triggers the native OS permission dialogs — HealthKit on iOS, Health Connect on Android. <strong>No OAuth redirect. No callback URL.</strong> Permissions are granted locally on-device.</p></li>
     <li><div class="step-num">5</div><p>The Backend performs a <strong>daily scheduled pull</strong> from the Spike Daily Statistics API. Spike webhooks (<code>record_change</code> events) are used to build a per-user pull queue so the cron job only fetches data for users whose wearable data has actually been updated. See <a href="#s08-5" style="color:var(--accent);">§8.5</a> for the full cron and webhook design. <code>activity_load</code> (ACWR) is Backend-computed from Spike history, not a direct Spike field.</p></li>
-    <li><div class="step-num">6</div><p>Pulled values are written to <code>tbscan.metrics</code> (<code>metric_type = 'raw'</code>) with <code>source_platform = 'spike'</code>. Wearable data is correlated to the nearest scan session at NURAI inference time.</p></li>
+    <li><div class="step-num">6</div><p>Pulled values are written to <code>tbscan.daily_metrics</code> (<code>metric_type = 'raw'</code>) with <code>source_platform = 'spike'</code>. Wearable data is correlated to the nearest scan session at NURAI inference time.</p></li>
   </ul>
 
   <h3>8.2 Supported Metrics (via Spike)</h3>
   <table class="data-table">
     <thead>
-      <tr><th>Metric</th><th>Spike Field</th><th><code>tbscan.metrics</code> Column</th></tr>
+      <tr><th>Metric</th><th>Spike Field</th><th><code>tbscan.daily_metrics</code> column</th></tr>
     </thead>
     <tbody>
       <tr><td><strong>HRV RMSSD</strong></td><td><code>hrv_rmssd</code> (ms)</td><td><code>hrv_rmssd</code></td></tr>
@@ -1611,14 +1732,29 @@
       <tr><th>Column</th><th>Type</th><th>Description</th></tr>
     </thead>
     <tbody>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Identity</td></tr>
       <tr><td><code>connection_id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
-      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user</td><td>NUR user this connection belongs to.</td></tr>
-      <tr><td><code>encrypted_access_token</code></td><td>varchar (encrypted)</td><td>Spike access token issued via HMAC handshake.</td></tr>
-      <tr><td><code>spike_user_id</code></td><td>varchar</td><td><code>endUserId</code> passed during Spike SDK initialisation — same as NUR user ID.</td></tr>
-      <tr><td><code>last_synced_at</code></td><td>timestamptz</td><td>Timestamp of the last successful Backend daily pull from Spike.</td></tr>
-      <tr><td><code>status</code></td><td>varchar</td><td><code>active</code> / <code>revoked</code> / <code>error</code></td></tr>
+      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, CASCADE</td><td>NUR user this connection belongs to.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Provider</td></tr>
+      <tr><td><code>provider</code></td><td>varchar(250)</td><td>Wearable platform identifier (e.g. <code>spike</code>).</td></tr>
+      <tr><td><code>provider_userId</code></td><td>varchar(250), nullable</td><td>User ID on the provider platform.</td></tr>
+      <tr><td><code>application_id</code></td><td>varchar(255), nullable</td><td>Spike application ID returned during connection setup.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Credentials</td></tr>
+      <tr><td><code>encrypted_access_token</code></td><td>varchar(2048), nullable</td><td>Spike JWT stored encrypted; used for all server-side Daily Statistics API calls.</td></tr>
+      <tr><td><code>spike_user_id</code></td><td>varchar(255), nullable</td><td><code>endUserId</code> assigned by Spike during SDK initialisation.</td></tr>
+      <tr><td><code>spike_signature</code></td><td>varchar(512), nullable</td><td>HMAC-SHA256 signature used to obtain the Spike JWT.</td></tr>
+      <tr><td><code>token_expires_at</code></td><td>timestamp, nullable</td><td>Expiry time of the stored access token.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Status &amp; Sync</td></tr>
+      <tr><td><code>status</code></td><td>varchar(30)</td><td><code>pending</code> / <code>connected</code> / <code>active</code> / <code>revoked</code> / <code>error</code> / <code>expired</code>.</td></tr>
+      <tr><td><code>sync_enabled</code></td><td>bool, default true</td><td>Whether the daily Spike pull is active for this connection.</td></tr>
+      <tr><td><code>last_synced_at</code></td><td>timestamp, nullable</td><td>Timestamp of the last successful Backend daily pull from Spike.</td></tr>
+      <tr><td><code>connected_at</code></td><td>timestamp, nullable</td><td>When the connection was first established.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Audit</td></tr>
+      <tr><td><code>created_at</code></td><td>timestamp</td><td>Row creation time (auto-set).</td></tr>
+      <tr><td><code>updated_at</code></td><td>timestamp</td><td>Last modification time (auto-updated).</td></tr>
     </tbody>
   </table>
+  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 0;">Constraints: UNIQUE (<code>user_id</code>, <code>provider</code>). Indexes: <code>idx_wc_user_id</code>, <code>idx_wc_provider_status</code>, <code>idx_wc_status_sync</code>, <code>idx_wc_last_synced</code>.</p>
 
   <div id="s08-4"></div>
   <h3>8.4 SPIKE Authentication Flow</h3>
@@ -1755,7 +1891,7 @@ signature = hmac.new(
 
     <!-- 10: Backend writes to DB -->
     <rect x="245" y="368" width="120" height="22" rx="4" fill="#1f2937" stroke="#30363d"/>
-    <text x="305" y="383" text-anchor="middle" font-size="10.5" fill="#8b949e">write tbscan.metrics</text>
+    <text x="305" y="383" text-anchor="middle" font-size="10.5" fill="#8b949e">write tbscan.daily_metrics</text>
     <text x="305" y="396" text-anchor="middle" font-size="9.5" fill="#6e7681">metric_type = 'raw', source = 'spike'</text>
 
     <!-- divider label: Inference -->
@@ -1763,7 +1899,7 @@ signature = hmac.new(
     <text x="430" y="424" text-anchor="middle" font-size="11" font-weight="600" fill="#a78bfa" letter-spacing="1">INFERENCE — NURAI reads from DB (no upstream API calls)</text>
 
     <rect x="355" y="440" width="300" height="36" rx="6" fill="#1f2937" stroke="#7c3aed" stroke-width="1"/>
-    <text x="505" y="461" text-anchor="middle" font-size="11" fill="#a78bfa">NURAI reads tbscan.metrics → computes COMPASS</text>
+    <text x="505" y="461" text-anchor="middle" font-size="11" fill="#a78bfa">NURAI reads tbscan.daily_metrics → computes COMPASS</text>
     <text x="505" y="476" text-anchor="middle" font-size="10" fill="#6e7681">NURAI never calls Spike directly</text>
 
     <!-- arrowhead markers -->
@@ -1808,7 +1944,7 @@ signature = hmac.new(
     <div class="auth-card">
       <div class="auth-icon">&#128336;</div>
       <h4>Daily Cron Job</h4>
-      <p>Runs once per day (e.g. 02:00 UTC). Reads all rows from <code>spike_pull_queue</code>, calls the Spike Daily Statistics API for each user, writes results to <code>tbscan.metrics</code>, then clears the queue entries.</p>
+      <p>Runs once per day (e.g. 02:00 UTC). Reads all rows from <code>spike_pull_queue</code>, calls the Spike Daily Statistics API for each user, writes results to <code>tbscan.daily_metrics</code>, then clears the queue entries.</p>
     </div>
   </div>
 
@@ -1863,7 +1999,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
         <li><code>provider_integration_deleted</code> → mark connection revoked; dequeue user</li>
       </ul>
     </p></li>
-    <li><div class="step-num">4</div><p>If Spike does not receive HTTP 200 within 30 s, it retries with exponential backoff: <strong>5 s → 2 min → 30 min → 2 h → every 12 h</strong>, up to 10 attempts total. After 10 failures, the event is discarded. The Backend must be idempotent — duplicate deliveries must not create duplicate <code>tbscan.metrics</code> rows (upsert on <code>user_id + spike_date</code>).</p></li>
+    <li><div class="step-num">4</div><p>If Spike does not receive HTTP 200 within 30 s, it retries with exponential backoff: <strong>5 s → 2 min → 30 min → 2 h → every 12 h</strong>, up to 10 attempts total. After 10 failures, the event is discarded. The Backend must be idempotent — duplicate deliveries must not create duplicate <code>tbscan.daily_metrics</code> rows (upsert on <code>user_id + source_platform + metric_date + metric_type</code>).</p></li>
   </ul>
 
   <h4>Daily Cron Job Flow</h4>
@@ -1871,7 +2007,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <li><div class="step-num">1</div><p>GCP Cloud Scheduler triggers <code>POST /internal/cron/spike-pull</code> once per day (default 02:00 UTC). The endpoint is internal-only, authenticated via GCP IAM service account.</p></li>
     <li><div class="step-num">2</div><p>Backend reads all rows from <code>spike_pull_queue</code> where <code>status = 'pending'</code>. Users with no pending queue entry (no <code>record_change</code> since last pull) are skipped entirely.</p></li>
     <li><div class="step-num">3</div><p>For each queued user, Backend calls the Spike Daily Statistics API using the stored JWT (<code>wearable_connections.encrypted_access_token</code>), scoping the request to the <code>data_start</code> / <code>data_end</code> window from the webhook payload where available.</p></li>
-    <li><div class="step-num">4</div><p>Returned metrics are upserted into <code>tbscan.metrics</code> (<code>metric_type = 'raw'</code>, <code>source_platform = 'spike'</code>). <code>activity_load</code> (ACWR) is computed from the 7-day / 28-day history and written alongside the raw fields.</p></li>
+    <li><div class="step-num">4</div><p>Returned metrics are upserted into <code>tbscan.daily_metrics</code> (<code>metric_type = 'raw'</code>, <code>source_platform = 'spike'</code>). <code>activity_load</code> (ACWR) is computed from the 7-day / 28-day history and written alongside the raw fields.</p></li>
     <li><div class="step-num">5</div><p><code>wearable_connections.last_synced_at</code> is updated to <code>NOW()</code> on success. The processed row in <code>spike_pull_queue</code> is marked <code>status = 'done'</code> (or deleted). On API error the row is marked <code>status = 'error'</code> and <code>wearable_connections.status</code> is set to <code>error</code> if auth-related.</p></li>
   </ul>
 
@@ -1912,9 +2048,9 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <text x="320" y="192" text-anchor="middle" font-size="12" font-weight="700" fill="#4ade80">Daily Cron Job</text>
     <text x="320" y="207" text-anchor="middle" font-size="10" fill="#8b949e">POST /internal/cron/spike-pull</text>
 
-    <!-- tbscan.metrics box -->
+    <!-- tbscan.daily_metrics box -->
     <rect x="20" y="170" width="140" height="50" rx="8" fill="#1f2937" stroke="#a78bfa" stroke-width="1.5"/>
-    <text x="90" y="192" text-anchor="middle" font-size="12" font-weight="700" fill="#a78bfa">tbscan.metrics</text>
+    <text x="90" y="192" text-anchor="middle" font-size="12" font-weight="700" fill="#a78bfa">tbscan.daily_metrics</text>
     <text x="90" y="207" text-anchor="middle" font-size="10" fill="#8b949e">PostgreSQL</text>
 
     <!-- Spike → Webhook: record_change -->
@@ -1948,7 +2084,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <path d="M 100 170 Q 130 240 238 205" stroke="#fbbf24" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#wh-arr-amber)"/>
     <text x="135" y="235" text-anchor="middle" font-size="10" fill="#e6edf3">metrics payload</text>
 
-    <!-- Cron → tbscan.metrics: upsert -->
+    <!-- Cron → tbscan.daily_metrics: upsert -->
     <line x1="240" y1="205" x2="162" y2="205" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#wh-arr-purple)"/>
     <text x="201" y="198" text-anchor="middle" font-size="10" fill="#e6edf3">upsert rows</text>
     <text x="201" y="210" text-anchor="middle" font-size="9" fill="#8b949e">metric_type='raw'</text>
@@ -1987,7 +2123,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
 
   <div class="alert yellow" style="margin-top:4px;">
     <span class="alert-icon">&#9888;</span>
-    <div><strong>Idempotency requirement:</strong> The cron job must upsert on <code>(user_id, spike_date)</code> in <code>tbscan.metrics</code> — not insert. Spike may deliver duplicate <code>record_change</code> events (retries), and the cron may be re-triggered in error scenarios. Duplicate rows would corrupt ACWR calculations and NURAI readiness scoring.</div>
+    <div><strong>Idempotency requirement:</strong> The cron job must upsert on <code>(user_id, source_platform, metric_date, metric_type)</code> in <code>tbscan.daily_metrics</code> — not insert. Spike may deliver duplicate <code>record_change</code> events (retries), and the cron may be re-triggered in error scenarios. Duplicate rows would corrupt ACWR calculations and NURAI readiness scoring.</div>
   </div>
 
 </section>
@@ -2147,7 +2283,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     </thead>
     <tbody>
       <tr><td><strong>Readiness Dashboard</strong></td><td>Displays today's COMPASS zone and score (0&ndash;100), colour-coded by Safe / Recovery / Deceptive Readiness / Danger.</td><td>COMPASS score from Backend API (<code>/results/</code>)</td></tr>
-      <tr><td><strong>Scan History</strong></td><td>Timeline of past thermal scans with per-session TAI values and zone assignments.</td><td><code>tbscan.sessions</code> + <code>tbscan.metrics</code></td></tr>
+      <tr><td><strong>Scan History</strong></td><td>Timeline of past thermal scans with per-session TAI values and zone assignments.</td><td><code>tbscan.sessions</code> + <code>tbscan.daily_metrics</code></td></tr>
       <tr><td><strong>Wearables Connection</strong></td><td>Spike SDK connection flow. My NUR requests health permissions via the Spike SDK, which triggers native OS permission dialogs (HealthKit on iOS, Health Connect on Android). No OAuth redirect. Backend generates HMAC signature for Spike initialisation.</td><td><code>POST /wearables/connect</code> &rarr; Spike SDK init; see &sect;08</td></tr>
       <tr><td><strong>Health Data Entry</strong></td><td>Pre-scan questionnaire: pain region/intensity, chronic conditions. Feeds the AI Coach output only &mdash; not the R or T score.</td><td><code>pain_entries</code>, <code>users.health_history</code></td></tr>
       <tr><td><strong>AI Coach Recommendations</strong></td><td>Personalised corrective guidance generated by NURAI based on the athlete's COMPASS zone and health context.</td><td>NURAI inference output; see &sect;07</td></tr>
