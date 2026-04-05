@@ -674,14 +674,13 @@
   <a href="#s05-2" class="sub-link">5.2 Admin Flow</a>
   <a href="#s06"><span class="nav-num">06</span> Data Architecture</a>
   <a href="#s06-4" class="sub-link">6.4 Alpha Schema</a>
-  <a href="#s06-5" class="sub-link">6.5 BETA Extensions</a>
-  <a href="#s06-5-orgsettings" class="sub-link" style="padding-left:32px;">org_settings</a>
+  <a href="#s06-5" class="sub-link">6.5 BETA Schema</a>
 
   <div class="nav-section">AI &amp; Intelligence</div>
   <a href="#s07"><span class="nav-num">07</span> AI / ML &amp; NURAI</a>
-  <a href="#s07-metric" class="sub-link">7.3 Metric Pipeline Module</a>
-  <a href="#s07-nurai" class="sub-link">7.4 NURAI Architecture</a>
-  <a href="#s07-baseline" class="sub-link">7.5 Baseline Update Module</a>
+  <a href="#s07-flow-a" class="sub-link">7.1 Flow A — Full Pipeline</a>
+  <a href="#s07-flow-b" class="sub-link">7.2 Flow B — Daily Refresh</a>
+  <a href="#s07-baseline" class="sub-link">7.3 Baseline Update Module</a>
 
   <div class="nav-section">Wearables</div>
   <a href="#s08"><span class="nav-num">08</span> Wearables Integration</a>
@@ -1121,7 +1120,7 @@
 <section id="s06">
   <div class="section-label">Section 06</div>
   <h2>Data Architecture &amp; NUR Metrics</h2>
-  <p class="section-intro">This section documents the NUR data schema and storage architecture — covering the Alpha schema foundation and BETA extensions. Metric pipeline processing is owned and executed by NURAI; see <a href="#s07-metric" style="color:var(--accent);">&sect;7.3 NURAI Metric Pipeline Module</a>.</p>
+  <p class="section-intro">This section documents the NUR data schema — redesigned around a three-layer model. <strong style="color:var(--text);">Layer 1: Hardware Events</strong> (<code>sessions</code>) records the physical scan event and device context. <strong style="color:var(--text);">Layer 2: Thermal Computation</strong> (<code>thermal_scans</code>) stores NURAI inference outputs from a thermogram. <strong style="color:var(--text);">Layer 3: Daily COMPASS History</strong> (<code>daily_assessments</code>) is one authoritative computation record per athlete per calendar date — tying thermal and wearable inputs to the COMPASS score, zone, and AI coach output. Metric pipeline processing is owned and executed by NURAI; see <a href="#s07-metric" style="color:var(--accent);">&sect;7.3 NURAI Metric Pipeline Module</a>.</p>
 
   <div id="s06-4"></div>
   <h3>6.4 Alpha Schema Foundation (Existing)</h3>
@@ -1130,24 +1129,46 @@
   <h4>Core Application Tables</h4>
   <table class="data-table">
     <thead>
-      <tr><th>Table</th><th>Key Fields</th></tr>
+      <tr><th>Table</th><th>Key Fields</th><th>Status</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>tbscan.users</code></td><td>user_ptr_id (PK, FK &rarr; auth_user), full_name, phone_number, department, role, date_of_birth, gender, height_mm, weight_kg, health_history (JSON)</td></tr>
-      <tr><td><code>tbscan.sessions</code></td><td>session_id (PK), status, avoidance_flags (JSON), scanned_at, created_at, mirror_id (FK), user_id (FK), camera_id (FK), gcs_path, stg_gcs_path, activity_level (JSON)</td></tr>
-      <tr><td><code>tbscan.pain_entries</code></td><td>pain_entry_id (PK), session_id (FK), anatomical_ids (JSON), cause (JSON), onset_range (JSON), pain_level (JSON), pain_type (JSON)</td></tr>
-      <tr><td><code>tbscan.scan_results</code></td><td>result_id (PK), session_id (FK), confidence, detected_anatomical_ids (JSON), injury_type, risk_assessment, risk_assessment_summary, physio_recommendation, has_skin_mask, is_completed, generated_at</td></tr>
-      <tr><td><code>tbscan.thermal_measurements</code></td><td>measurement_id (PK), result_id (FK). Per-region quantitative thermal values extracted by the AI model.</td></tr>
-      <tr><td><code>tbscan.mirrors</code></td><td>mirror_id (PK), label. Device registry for smart mirror hardware units.</td></tr>
-      <tr><td><code>tbscan.thermal_cameras</code></td><td>camera_id (PK), label, serial_number, model, custom_label, thermal/visual image dimensions, last_modified.</td></tr>
-      <tr><td><code>tbscan.granular_anatomical_regions</code></td><td>granular_id (PK), region_name_en, region_name_ar, parent_id (self-FK for hierarchy). Fine-grained body region taxonomy.</td></tr>
-      <tr><td><code>tbscan.generic_anatomical_regions</code></td><td>generic_id (PK), region_name_en, region_name_ar. Coarse-grained region taxonomy for pain entry and result display.</td></tr>
-      <tr><td><code>tbscan.question_metadata</code></td><td>question_id (PK), section, question_text_en/ar, input_type, is_required, display_order. Drives dynamic pre-scan questionnaire.</td></tr>
-      <tr><td><code>tbscan.question_choices</code></td><td>choice_id (PK), question_id (FK), choice_label, choice_value_en/ar, icon_id, display_order. Answer options for questionnaire items.</td></tr>
-      <tr><td><code>tbscan.orgs</code></td><td>org_id (PK), org_name, created_at. Organisation registry. Parent entity for teams (BETA addition).</td></tr>
-      <tr><td><code>tbscan.notifications</code></td><td>id (PK), title, message, sender, destination_id, channel, notification_type, type_settings, priority, scheduled_time, status, created_at.</td></tr>
+      <tr><td><code>tbscan.users</code></td><td>user_ptr_id (PK, FK &rarr; auth_user), full_name, phone_number, department, role, date_of_birth, gender, height_mm, weight_kg, health_history (JSON)</td><td><span class="badge badge-ga">Retained</span></td></tr>
+      <tr><td><code>tbscan.sessions</code></td><td>session_id (PK), status, avoidance_flags (JSON), scanned_at, created_at, updated_at, mirror_id (FK), user_id (FK), camera_id (FK), operator_id (FK), session_type, qr_token_id (FK), gcs_path, stg_gcs_path. <em>activity_level removed — moved to user_profile_history.</em></td><td><span class="badge badge-beta">Narrowed</span></td></tr>
+      <tr><td><code>tbscan.mirrors</code></td><td>mirror_id (PK), label. Device registry for smart mirror hardware units.</td><td><span class="badge badge-ga">Retained</span></td></tr>
+      <tr><td><code>tbscan.thermal_cameras</code></td><td>camera_id (PK), label, serial_number, model, custom_label, thermal/visual image dimensions, last_modified.</td><td><span class="badge badge-ga">Retained</span></td></tr>
+      <tr><td><code>tbscan.granular_anatomical_regions</code></td><td>granular_id (PK), region_name_en, region_name_ar, parent_id (self-FK for hierarchy). Fine-grained body region taxonomy.</td><td><span class="badge badge-ga">Retained</span></td></tr>
+      <tr><td><code>tbscan.generic_anatomical_regions</code></td><td>generic_id (PK), region_name_en, region_name_ar. Coarse-grained region taxonomy for result display.</td><td><span class="badge badge-ga">Retained</span></td></tr>
+      <tr><td><code>tbscan.question_metadata</code></td><td>question_id (PK), section, question_text_en/ar, input_type, is_required, display_order. Drives dynamic pre-scan questionnaire.</td><td><span class="badge badge-ga">Retained</span></td></tr>
+      <tr><td><code>tbscan.question_choices</code></td><td>choice_id (PK), question_id (FK), choice_label, choice_value_en/ar, icon_id, display_order. Answer options for questionnaire items.</td><td><span class="badge badge-ga">Retained</span></td></tr>
+      <tr><td><code>tbscan.orgs</code></td><td>org_id (PK), org_name, created_at. Organisation registry.</td><td><span class="badge badge-ga">Retained</span></td></tr>
+      <tr><td><code>tbscan.notifications</code></td><td>id (PK), title, message, sender, destination_id, channel, notification_type, type_settings, priority, scheduled_time, status, created_at.</td><td><span class="badge badge-ga">Retained</span></td></tr>
+      <tr style="background:rgba(239,68,68,0.06);border-left:3px solid var(--danger);"><td style="text-decoration:line-through;opacity:0.6;"><code style="text-decoration:line-through;color:var(--danger);">tbscan.scan_results</code></td><td style="color:var(--text-muted);">Outputs split into <code>thermal_scans</code> (thermal inference) and <code>daily_assessments</code> (COMPASS scores + AI coach). All legacy free-text physio fields dropped.</td><td><span class="badge" style="background:rgba(239,68,68,0.15);color:var(--danger);border:1px solid rgba(239,68,68,0.35);font-weight:700;">&#10005; Eliminated</span></td></tr>
+      <tr style="background:rgba(239,68,68,0.06);border-left:3px solid var(--danger);"><td style="text-decoration:line-through;opacity:0.6;"><code style="text-decoration:line-through;color:var(--danger);">tbscan.thermal_measurements</code></td><td style="color:var(--text-muted);">Per-region measurements collapsed into <code>thermal_scans.measurements</code> JSONB — single row fetch, no join needed.</td><td><span class="badge" style="background:rgba(239,68,68,0.15);color:var(--danger);border:1px solid rgba(239,68,68,0.35);font-weight:700;">&#10005; Eliminated</span></td></tr>
+      <tr style="background:rgba(239,68,68,0.06);border-left:3px solid var(--danger);"><td style="text-decoration:line-through;opacity:0.6;"><code style="text-decoration:line-through;color:var(--danger);">tbscan.pain_entries</code></td><td style="color:var(--text-muted);">Pain data moved to <code>user_profile_history.pain_entries</code> JSONB — pain is a profile attribute, not a scan artifact.</td><td><span class="badge" style="background:rgba(239,68,68,0.15);color:var(--danger);border:1px solid rgba(239,68,68,0.35);font-weight:700;">&#10005; Eliminated</span></td></tr>
     </tbody>
   </table>
+
+  <!-- Eliminated Tables Callout -->
+  <div style="border:1px solid rgba(239,68,68,0.35);border-radius:10px;background:rgba(239,68,68,0.05);padding:18px 22px;margin:20px 0 28px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <span style="font-size:16px;color:var(--danger);">&#128683;</span>
+      <strong style="color:var(--danger);font-size:14px;letter-spacing:0.02em;">Three Tables Eliminated in BETA</strong>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:14px;">
+        <code style="color:var(--danger);font-size:12px;text-decoration:line-through;">tbscan.scan_results</code>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5;">Catch-all table conflating thermal inference, COMPASS outputs, and AI coach data. Split into <strong style="color:var(--text);">thermal_scans</strong> + <strong style="color:var(--text);">daily_assessments</strong>. 14 columns dropped (redundant physio free-text, <code>r_score</code>, <code>advisory_mode</code>, <code>confidence</code>, <code>is_completed</code>).</p>
+      </div>
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:14px;">
+        <code style="color:var(--danger);font-size:12px;text-decoration:line-through;">tbscan.thermal_measurements</code>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5;">Relational per-region measurement rows (one row per region per scan). Collapsed into <strong style="color:var(--text);">thermal_scans.measurements</strong> JSONB. All cross-scan per-region queries are handled by <code>thermal_baselines</code> (standalone pre-computed table).</p>
+      </div>
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:14px;">
+        <code style="color:var(--danger);font-size:12px;text-decoration:line-through;">tbscan.pain_entries</code>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5;">Standalone pain entry rows linked to sessions. Moved into <strong style="color:var(--text);">user_profile_history.pain_entries</strong> JSONB. Pain is always read as a complete set alongside the profile — no standalone pain query pattern exists.</p>
+      </div>
+    </div>
+  </div>
 
   <h4>Auth &amp; Framework Tables</h4>
   <table class="data-table">
@@ -1166,12 +1187,400 @@
   </table>
 
   <div id="s06-5"></div>
-  <h3>6.5 BETA Schema Extensions</h3>
+  <h3>6.5 BETA Schema</h3>
   <p>Applied as Django migrations on top of the existing Alpha database. No Alpha tables are dropped or renamed.</p>
 
-  <h4>New Tables</h4>
+  <h4 style="margin-top:32px;">Entity Relationship Diagram</h4>
+  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:12px;">
+    <span style="display:inline-flex;align-items:center;gap:5px;margin-right:16px;"><span style="display:inline-block;width:18px;height:3px;background:#00c8ff;border-radius:2px;"></span>New tables</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;margin-right:16px;"><span style="display:inline-block;width:18px;height:3px;background:#4ade80;border-radius:2px;"></span>Retained / narrowed</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;margin-right:16px;"><span style="display:inline-block;width:18px;height:3px;background:#a78bfa;border-radius:2px;"></span>Wearable tables</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;margin-right:16px;"><span style="display:inline-block;width:12px;height:2px;background:#f59e0b;border-radius:1px;"></span><span style="font-size:11px;background:rgba(245,158,11,0.15);color:#f59e0b;padding:1px 5px;border-radius:3px;font-weight:700;">PK</span> Primary key</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;"><span style="font-size:11px;background:rgba(96,165,250,0.15);color:#60a5fa;padding:1px 5px;border-radius:3px;font-weight:700;">FK</span> Foreign key &nbsp;<span style="font-size:11px;background:rgba(147,197,253,0.12);color:#93c5fd;padding:1px 5px;border-radius:3px;font-weight:700;">FK?</span> Nullable FK</span>
+  </p>
+  <svg viewBox="0 0 1060 555" width="100%" style="max-width:1060px;margin:8px 0 28px;display:block;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
+    <defs>
+      <marker id="erd-c" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6,3.5z" fill="#00c8ff"/></marker>
+      <marker id="erd-g" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6,3.5z" fill="#4ade80"/></marker>
+      <marker id="erd-p" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6,3.5z" fill="#a78bfa"/></marker>
+    </defs>
+    <rect width="1060" height="555" rx="12" fill="#161b22"/>
 
-  <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;"><strong>tbscan.session_qr_tokens</strong> — single-use QR codes for individual scan initiation</p>
+    <!-- ── Layer band annotations ── -->
+    <text x="22" y="103" font-size="8.5" fill="#4ade80" opacity="0.55" letter-spacing="0.5">LAYER 1</text>
+    <text x="268" y="103" font-size="8.5" fill="#00c8ff" opacity="0.55" letter-spacing="0.5">LAYER 2 — NEW</text>
+    <text x="548" y="84" font-size="8.5" fill="#00c8ff" opacity="0.55" letter-spacing="0.5">LAYER 3 — NEW</text>
+    <text x="854" y="103" font-size="8.5" fill="#a78bfa" opacity="0.55" letter-spacing="0.5">WEARABLE</text>
+
+    <!-- ══ auth_user ══ -->
+    <rect x="390" y="18" width="230" height="44" rx="7" fill="#1a2618" stroke="#4ade80" stroke-width="1.5"/>
+    <rect x="390" y="18" width="230" height="44" rx="7" fill="rgba(74,222,128,0.07)"/>
+    <text x="505" y="36" text-anchor="middle" font-size="12" font-weight="700" fill="#4ade80">auth_user</text>
+    <text x="505" y="52" text-anchor="middle" font-size="9.5" fill="#6e7681">id · username · email · is_active · date_joined</text>
+
+    <!-- ══ sessions ══ -->
+    <rect x="12" y="112" width="210" height="162" rx="7" fill="#1c2128" stroke="#4ade80" stroke-width="1.5"/>
+    <rect x="12" y="112" width="210" height="27" rx="7" fill="rgba(74,222,128,0.10)"/>
+    <rect x="12" y="127" width="210" height="12" fill="rgba(74,222,128,0.10)"/>
+    <text x="20" y="130" font-size="10.5" font-weight="700" fill="#4ade80">tbscan.sessions</text>
+    <line x1="12" y1="139" x2="222" y2="139" stroke="#2d3741" stroke-width="1"/>
+    <text x="20" y="153"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">session_id</tspan></text>
+    <text x="220" y="153" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="20" y="171"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">user_id</tspan></text>
+    <text x="220" y="171" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="20" y="189"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">mirror_id</tspan></text>
+    <text x="220" y="189" text-anchor="end" font-size="9" fill="#4b5563">mirrors</text>
+    <text x="20" y="207"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">camera_id</tspan></text>
+    <text x="220" y="207" text-anchor="end" font-size="9" fill="#4b5563">cameras</text>
+    <text x="28" y="225" font-size="9.5" fill="#8b949e">status</text>
+    <text x="220" y="225" text-anchor="end" font-size="9" fill="#4b5563">varchar(30)</text>
+    <text x="28" y="243" font-size="9.5" fill="#8b949e">gcs_path</text>
+    <text x="220" y="243" text-anchor="end" font-size="9" fill="#4b5563">varchar</text>
+    <text x="28" y="261" font-size="9.5" fill="#8b949e">scanned_at</text>
+    <text x="220" y="261" text-anchor="end" font-size="9" fill="#4b5563">timestamptz</text>
+
+    <!-- ══ thermal_scans (NEW) ══ -->
+    <rect x="262" y="112" width="230" height="180" rx="7" fill="#0e1e2a" stroke="#00c8ff" stroke-width="2"/>
+    <rect x="262" y="112" width="230" height="27" rx="7" fill="rgba(0,200,255,0.12)"/>
+    <rect x="262" y="127" width="230" height="12" fill="rgba(0,200,255,0.12)"/>
+    <text x="270" y="130" font-size="10.5" font-weight="700" fill="#00c8ff">tbscan.thermal_scans</text>
+    <rect x="455" y="117" width="30" height="13" rx="3" fill="rgba(0,200,255,0.18)" stroke="rgba(0,200,255,0.4)" stroke-width="0.5"/>
+    <text x="470" y="127" text-anchor="middle" font-size="7.5" fill="#00c8ff" font-weight="700">NEW</text>
+    <line x1="262" y1="139" x2="492" y2="139" stroke="#1d3444" stroke-width="1"/>
+    <text x="270" y="153"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">thermal_scan_id</tspan></text>
+    <text x="490" y="153" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="270" y="171"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">session_id</tspan></text>
+    <text x="490" y="171" text-anchor="end" font-size="9" fill="#4b5563">UNIQUE</text>
+    <text x="270" y="189"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">user_id</tspan></text>
+    <text x="490" y="189" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="278" y="207" font-size="9.5" fill="#8b949e">t_score</text>
+    <text x="490" y="207" text-anchor="end" font-size="9" fill="#4b5563">numeric(5,2)</text>
+    <text x="278" y="225" font-size="9.5" fill="#8b949e">measurements</text>
+    <text x="490" y="225" text-anchor="end" font-size="9" fill="#4b5563">JSONB</text>
+    <text x="278" y="243" font-size="9.5" fill="#8b949e">baseline_mode</text>
+    <text x="490" y="243" text-anchor="end" font-size="9" fill="#4b5563">varchar</text>
+    <text x="278" y="261" font-size="9.5" fill="#8b949e">is_valid</text>
+    <text x="490" y="261" text-anchor="end" font-size="9" fill="#4b5563">boolean</text>
+    <text x="278" y="279" font-size="9.5" fill="#8b949e">generated_at</text>
+    <text x="490" y="279" text-anchor="end" font-size="9" fill="#4b5563">timestamptz</text>
+
+    <!-- ══ daily_assessments (NEW) ══ -->
+    <rect x="542" y="92" width="250" height="218" rx="7" fill="#0e1e2a" stroke="#00c8ff" stroke-width="2"/>
+    <rect x="542" y="92" width="250" height="27" rx="7" fill="rgba(0,200,255,0.12)"/>
+    <rect x="542" y="107" width="250" height="12" fill="rgba(0,200,255,0.12)"/>
+    <text x="550" y="110" font-size="10.5" font-weight="700" fill="#00c8ff">tbscan.daily_assessments</text>
+    <rect x="725" y="97" width="30" height="13" rx="3" fill="rgba(0,200,255,0.18)" stroke="rgba(0,200,255,0.4)" stroke-width="0.5"/>
+    <text x="740" y="107" text-anchor="middle" font-size="7.5" fill="#00c8ff" font-weight="700">NEW</text>
+    <line x1="542" y1="119" x2="792" y2="119" stroke="#1d3444" stroke-width="1"/>
+    <text x="550" y="133"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">daily_assessment_id</tspan></text>
+    <text x="790" y="133" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="550" y="151"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">user_id</tspan></text>
+    <text x="790" y="151" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="558" y="169" font-size="9.5" fill="#8b949e">date</text>
+    <text x="790" y="169" text-anchor="end" font-size="9" fill="#4b5563">UNIQUE w/ user_id</text>
+    <text x="550" y="187"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">thermal_scan_id</tspan></text>
+    <text x="790" y="187" text-anchor="end" font-size="9" fill="#4b5563">thermal_scans</text>
+    <text x="550" y="205"><tspan font-size="8" fill="#93c5fd" font-weight="700">FK?</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="4">metric_record_id</tspan></text>
+    <text x="790" y="205" text-anchor="end" font-size="9" fill="#4b5563">daily_metrics · null</text>
+    <text x="550" y="223"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">profile_id</tspan></text>
+    <text x="790" y="223" text-anchor="end" font-size="9" fill="#4b5563">user_profile_history</text>
+    <text x="558" y="241" font-size="9.5" fill="#8b949e">compass_score</text>
+    <text x="790" y="241" text-anchor="end" font-size="9" fill="#4b5563">smallint</text>
+    <text x="558" y="259" font-size="9.5" fill="#8b949e">compass_zone</text>
+    <text x="790" y="259" text-anchor="end" font-size="9" fill="#4b5563">varchar</text>
+    <text x="558" y="277" font-size="9.5" fill="#8b949e">ai_coach_response</text>
+    <text x="790" y="277" text-anchor="end" font-size="9" fill="#4b5563">JSONB</text>
+    <text x="558" y="295" font-size="9.5" fill="#8b949e">trigger_type</text>
+    <text x="790" y="295" text-anchor="end" font-size="9" fill="#4b5563">varchar</text>
+
+    <!-- ══ daily_metrics ══ -->
+    <rect x="842" y="112" width="204" height="180" rx="7" fill="#1a1528" stroke="#a78bfa" stroke-width="1.5"/>
+    <rect x="842" y="112" width="204" height="27" rx="7" fill="rgba(167,139,250,0.10)"/>
+    <rect x="842" y="127" width="204" height="12" fill="rgba(167,139,250,0.10)"/>
+    <text x="850" y="130" font-size="10.5" font-weight="700" fill="#a78bfa">tbscan.daily_metrics</text>
+    <line x1="842" y1="139" x2="1046" y2="139" stroke="#2a2040" stroke-width="1"/>
+    <text x="850" y="153"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">metric_id</tspan></text>
+    <text x="1044" y="153" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="850" y="171"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">user_id</tspan></text>
+    <text x="1044" y="171" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="858" y="189" font-size="9.5" fill="#8b949e">metric_date</text>
+    <text x="1044" y="189" text-anchor="end" font-size="9" fill="#4b5563">date</text>
+    <text x="858" y="207" font-size="9.5" fill="#8b949e">recovery_score</text>
+    <text x="1044" y="207" text-anchor="end" font-size="9" fill="#4b5563">numeric</text>
+    <text x="858" y="225" font-size="9.5" fill="#8b949e">hrv_ms</text>
+    <text x="1044" y="225" text-anchor="end" font-size="9" fill="#4b5563">numeric</text>
+    <text x="858" y="243" font-size="9.5" fill="#8b949e">sleep_score</text>
+    <text x="1044" y="243" text-anchor="end" font-size="9" fill="#4b5563">numeric</text>
+    <text x="858" y="261" font-size="9.5" fill="#8b949e">activity_load</text>
+    <text x="1044" y="261" text-anchor="end" font-size="9" fill="#4b5563">numeric (ACWR)</text>
+
+    <!-- ══ user_profile_history (NEW) ══ -->
+    <rect x="12" y="355" width="215" height="144" rx="7" fill="#0e1e2a" stroke="#00c8ff" stroke-width="1.5"/>
+    <rect x="12" y="355" width="215" height="27" rx="7" fill="rgba(0,200,255,0.10)"/>
+    <rect x="12" y="370" width="215" height="12" fill="rgba(0,200,255,0.10)"/>
+    <text x="20" y="373" font-size="10" font-weight="700" fill="#00c8ff">user_profile_history</text>
+    <rect x="182" y="360" width="30" height="13" rx="3" fill="rgba(0,200,255,0.18)" stroke="rgba(0,200,255,0.4)" stroke-width="0.5"/>
+    <text x="197" y="370" text-anchor="middle" font-size="7.5" fill="#00c8ff" font-weight="700">NEW</text>
+    <line x1="12" y1="382" x2="227" y2="382" stroke="#1d3444" stroke-width="1"/>
+    <text x="20" y="396"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">profile_id</tspan></text>
+    <text x="225" y="396" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="20" y="414"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">user_id</tspan></text>
+    <text x="225" y="414" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="28" y="432" font-size="9.5" fill="#8b949e">pain_entries</text>
+    <text x="225" y="432" text-anchor="end" font-size="9" fill="#4b5563">JSONB</text>
+    <text x="28" y="450" font-size="9.5" fill="#8b949e">activity_level</text>
+    <text x="225" y="450" text-anchor="end" font-size="9" fill="#4b5563">JSONB</text>
+    <text x="28" y="468" font-size="9.5" fill="#8b949e">is_current</text>
+    <text x="225" y="468" text-anchor="end" font-size="9" fill="#4b5563">boolean</text>
+    <text x="20" y="488" text-anchor="start" font-size="8.5" fill="#00c8ff" opacity="0.55">versioned · append-only</text>
+
+    <!-- ══ thermal_baselines (NEW) ══ -->
+    <rect x="262" y="355" width="230" height="108" rx="7" fill="#0e1e2a" stroke="#00c8ff" stroke-width="1.5"/>
+    <rect x="262" y="355" width="230" height="27" rx="7" fill="rgba(0,200,255,0.10)"/>
+    <rect x="262" y="370" width="230" height="12" fill="rgba(0,200,255,0.10)"/>
+    <text x="270" y="373" font-size="10" font-weight="700" fill="#00c8ff">thermal_baselines</text>
+    <rect x="432" y="360" width="30" height="13" rx="3" fill="rgba(0,200,255,0.18)" stroke="rgba(0,200,255,0.4)" stroke-width="0.5"/>
+    <text x="447" y="370" text-anchor="middle" font-size="7.5" fill="#00c8ff" font-weight="700">NEW</text>
+    <line x1="262" y1="382" x2="492" y2="382" stroke="#1d3444" stroke-width="1"/>
+    <text x="270" y="396"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="8" fill="#60a5fa" font-weight="700" dx="3">FK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">user_id</tspan></text>
+    <text x="490" y="396" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="278" y="414" font-size="9.5" fill="#c9d1d9">baseline</text>
+    <text x="490" y="414" text-anchor="end" font-size="9" fill="#4b5563">JSONB</text>
+    <text x="278" y="432" font-size="9.5" fill="#8b949e">last_updated_at</text>
+    <text x="490" y="432" text-anchor="end" font-size="9" fill="#4b5563">timestamptz</text>
+    <text x="270" y="452" text-anchor="start" font-size="8.5" fill="#00c8ff" opacity="0.55">one row per user · JSONB regions · nightly batch</text>
+
+    <!-- ══ Connection Arrows ══ -->
+
+    <!-- auth_user → sessions (dashed green) -->
+    <path d="M 432,62 L 432,84 L 117,84 L 117,112" stroke="#4ade80" stroke-width="1" fill="none" stroke-dasharray="4,2" marker-end="url(#erd-g)" opacity="0.6"/>
+    <!-- auth_user → thermal_scans (dashed cyan) -->
+    <path d="M 476,62 L 476,84 L 377,84 L 377,112" stroke="#00c8ff" stroke-width="1" fill="none" stroke-dasharray="4,2" marker-end="url(#erd-c)" opacity="0.6"/>
+    <!-- auth_user → daily_assessments (dashed cyan) -->
+    <path d="M 548,62 L 548,76 L 667,76 L 667,92" stroke="#00c8ff" stroke-width="1" fill="none" stroke-dasharray="4,2" marker-end="url(#erd-c)" opacity="0.6"/>
+    <!-- auth_user → daily_metrics (dashed purple) -->
+    <path d="M 588,62 L 588,76 L 944,76 L 944,112" stroke="#a78bfa" stroke-width="1" fill="none" stroke-dasharray="4,2" marker-end="url(#erd-p)" opacity="0.6"/>
+
+    <!-- sessions → thermal_scans (solid, 1:0..1) -->
+    <line x1="222" y1="194" x2="262" y2="194" stroke="#4ade80" stroke-width="1.5" marker-end="url(#erd-c)"/>
+    <text x="242" y="188" text-anchor="middle" font-size="8.5" fill="#6e7681">1 : 0..1</text>
+
+    <!-- thermal_scans → daily_assessments (solid cyan thick — key reuse relationship) -->
+    <line x1="492" y1="194" x2="542" y2="194" stroke="#00c8ff" stroke-width="2.5" marker-end="url(#erd-c)"/>
+    <rect x="497" y="178" width="40" height="24" rx="3" fill="#161b22"/>
+    <text x="517" y="189" text-anchor="middle" font-size="8.5" fill="#00c8ff" font-weight="700">1 : N</text>
+    <text x="517" y="199" text-anchor="middle" font-size="7.5" fill="#6e7681">reuse ≤ 7 d</text>
+
+    <!-- daily_assessments → daily_metrics (dashed purple, nullable FK) -->
+    <line x1="792" y1="194" x2="842" y2="194" stroke="#a78bfa" stroke-width="1.5" fill="none" stroke-dasharray="5,2" marker-end="url(#erd-p)"/>
+    <text x="817" y="188" text-anchor="middle" font-size="8" fill="#a78bfa">nullable</text>
+
+    <!-- thermal_scans bottom → thermal_baselines top (dashed, updates Flow A) -->
+    <line x1="377" y1="292" x2="377" y2="355" stroke="#00c8ff" stroke-width="1.2" stroke-dasharray="4,2" marker-end="url(#erd-c)"/>
+    <rect x="382" y="313" width="72" height="24" rx="3" fill="#161b22"/>
+    <text x="418" y="323" text-anchor="middle" font-size="8.5" fill="#6e7681">updates</text>
+    <text x="418" y="333" text-anchor="middle" font-size="7.5" fill="#6e7681">Flow A only</text>
+  </svg>
+
+  <h4 style="margin-top:28px;">New Tables (BETA)</h4>
+
+  <p style="margin-bottom:8px;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.thermal_scans</code><span style="font-size:13px;color:var(--text-muted);"> — Layer 2: AI inference output from a single thermogram. One row per session. Referenced by multiple <code>daily_assessments</code> rows across up to 7 days (thermal scan reuse).</span></p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Identity</td></tr>
+      <tr><td><code>thermal_scan_id</code></td><td>UUID (PK)</td><td>Primary key. Generated by NURAI when inference completes.</td></tr>
+      <tr><td><code>session_id</code></td><td>FK &rarr; sessions, UNIQUE</td><td>The hardware session that produced this thermogram. UNIQUE enforces one thermal_scan per session. Image paths are read from <code>sessions.gcs_path</code> via this FK — not duplicated here.</td></tr>
+      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user</td><td>Denormalized from sessions for efficient gate queries (Flow B freshness check).</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Thermal Inference Outputs</td></tr>
+      <tr><td><code>t_score</code></td><td>numeric(5,2), nullable</td><td>Normalised Thermal Asymmetry Score (0–100). NULL if inference failed.</td></tr>
+      <tr><td><code>measurements</code></td><td>JSONB, nullable</td><td>Per-region thermal data. Structure: <code>{"12": {"temp_left": 36.2, "temp_right": 35.8, "delta": 0.4, "affected_side": "left"}, ...}</code> — keyed by <code>granular_region_id</code> (<code>granular_anatomical_regions.granular_id</code>). Replaces both <code>asymmetry_scores</code> and the old <code>thermal_measurements</code> table.</td></tr>
+      <tr><td><code>detected_anatomical_ids</code></td><td>JSONB, nullable</td><td>List of anatomical region IDs the AI successfully detected in the thermogram.</td></tr>
+      <tr><td><code>has_skin_mask</code></td><td>boolean, default false</td><td>Whether a skin segmentation mask was produced during inference.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Baseline &amp; Validity</td></tr>
+      <tr><td><code>baseline_mode</code></td><td>varchar(30)</td><td><code>individual_sd</code> — athlete's own historical baseline used; <code>population_fallback</code> — population threshold applied.</td></tr>
+      <tr><td><code>is_valid</code></td><td>boolean, default true</td><td>Set to false if the scan is retrospectively invalidated (e.g. avoidance_flags trigger disqualification). Excluded from Flow B gate and baseline batch.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Audit</td></tr>
+      <tr><td><code>generated_at</code></td><td>timestamptz</td><td>When NURAI completed thermal inference for this scan.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 12px;">Indexes: <code>idx_ts_session_id</code> (UNIQUE), <code>idx_ts_user_generated (user_id, generated_at DESC)</code>, <code>idx_ts_user_valid (user_id, generated_at DESC) WHERE is_valid = true</code> — hot path for Flow B gate check.</p>
+
+  <div style="margin:0 0 28px;">
+    <p style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">thermal_scans.measurements — JSONB schema</p>
+    <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">One key per detected anatomical region, keyed by <code>granular_region_id</code> (<code>granular_anatomical_regions.granular_id</code>). Replaces both <code>asymmetry_scores</code> (delta-only) and the eliminated <code>thermal_measurements</code> table (raw temps). All per-scan measurement reads are a single row fetch with no join.</p>
+<pre style="margin:0;font-size:12px;line-height:1.7;color:#7dd3fc;">{
+  <span style="color:#a5f3fc;">"12"</span>: {                                        <span style="color:#6e7681;">// granular_region_id (granular_anatomical_regions.granular_id)</span>
+    <span style="color:#a5f3fc;">"temp_left"</span>:     <span style="color:#86efac;">36.2</span>,          <span style="color:#6e7681;">// °C — raw left-side surface temperature</span>
+    <span style="color:#a5f3fc;">"temp_right"</span>:    <span style="color:#86efac;">35.8</span>,          <span style="color:#6e7681;">// °C — raw right-side surface temperature</span>
+    <span style="color:#a5f3fc;">"delta"</span>:         <span style="color:#86efac;">0.4</span>,           <span style="color:#6e7681;">// |temp_left - temp_right|</span>
+    <span style="color:#a5f3fc;">"affected_side"</span>: <span style="color:#fde68a;">"left"</span>         <span style="color:#6e7681;">// "left" | "right" | "none"</span>
+  },
+  <span style="color:#a5f3fc;">"7"</span>: {
+    <span style="color:#a5f3fc;">"temp_left"</span>:     <span style="color:#86efac;">35.1</span>,
+    <span style="color:#a5f3fc;">"temp_right"</span>:    <span style="color:#86efac;">35.3</span>,
+    <span style="color:#a5f3fc;">"delta"</span>:         <span style="color:#86efac;">0.2</span>,
+    <span style="color:#a5f3fc;">"affected_side"</span>: <span style="color:#fde68a;">"none"</span>
+  },
+  <span style="color:#a5f3fc;">"15"</span>: {
+    <span style="color:#a5f3fc;">"temp_left"</span>:     <span style="color:#86efac;">34.9</span>,
+    <span style="color:#a5f3fc;">"temp_right"</span>:    <span style="color:#86efac;">34.7</span>,
+    <span style="color:#a5f3fc;">"delta"</span>:         <span style="color:#86efac;">0.2</span>,
+    <span style="color:#a5f3fc;">"affected_side"</span>: <span style="color:#fde68a;">"none"</span>
+  }
+  <span style="color:#6e7681;">/* ... one entry per detected region */</span>
+}</pre>
+    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;">NURAI updates <code>thermal_baselines</code> incrementally after each Flow A scan using the <code>delta</code> values from this field. The <code>affected_side</code> field is computed by NURAI during inference (hotter side = affected).</p>
+  </div>
+
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.daily_assessments</code><span style="font-size:13px;color:var(--text-muted);"> — Layer 3: one authoritative COMPASS computation record per athlete per calendar date. Ties together the thermal scan used, the wearable record used, and the COMPASS outputs.</span></p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Identity</td></tr>
+      <tr><td><code>daily_assessment_id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
+      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, NOT NULL</td><td>The athlete.</td></tr>
+      <tr><td><code>date</code></td><td>date, NOT NULL</td><td>Calendar date this record represents (UTC). UNIQUE with <code>user_id</code>.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Inputs Used</td></tr>
+      <tr><td><code>thermal_scan_id</code></td><td>FK &rarr; thermal_scans, NOT NULL</td><td>The thermal scan used as input. May point to a scan from a prior date (reuse within 7-day window).</td></tr>
+      <tr><td><code>metric_record_id</code></td><td>FK &rarr; daily_metrics, nullable</td><td>Wearable record used for this computation. <strong>NULL indicates thermal-only run</strong> — wearable data was unavailable or gap exceeded 2 days. No separate advisory_mode flag needed.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">COMPASS Outputs</td></tr>
+      <tr><td><code>compass_score</code></td><td>smallint, nullable</td><td>Unified COMPASS score (0–100). NULL when <code>metric_record_id</code> is NULL (thermal-only).</td></tr>
+      <tr><td><code>compass_zone</code></td><td>varchar(30), nullable</td><td><code>safe</code> / <code>recovery</code> / <code>deceptive_readiness</code> / <code>danger</code>. NULL when thermal-only.</td></tr>
+      <tr><td><code>ai_coach_response</code></td><td>JSONB, nullable</td><td>Full structured AI Coach output: zone rationale, intervention plan, reassessment triggers, coach narrative.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Pipeline Context</td></tr>
+      <tr><td><code>profile_id</code></td><td>FK &rarr; user_profile_history, NOT NULL</td><td>The profile version active at computation time. Captures which pain entries, activity level, and health history the AI Coach used as context — enables exact replay of any assessment.</td></tr>
+      <tr><td><code>trigger_type</code></td><td>varchar(30), NOT NULL</td><td><code>new_thermal_scan</code> — triggered by NUR Sensor scan submission (Flow A); <code>wearable_refresh</code> — triggered by My NUR or NUR Teams daily refresh (Flow B).</td></tr>
+      <tr><td><code>done_by</code></td><td>FK &rarr; auth_user, nullable</td><td>Operator/coach user_id for admin-initiated computations. NULL for self-initiated or automated.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Audit</td></tr>
+      <tr><td><code>computed_at</code></td><td>timestamptz, NOT NULL</td><td>When NURAI completed this computation.</td></tr>
+      <tr><td><code>created_at</code></td><td>timestamptz</td><td>Row creation time (auto-set).</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 12px;">Constraint: UNIQUE (<code>user_id</code>, <code>date</code>) — one authoritative record per athlete per day; upsert on same-day <code>wearable_refresh</code>. Indexes: <code>idx_ud_user_date (user_id, date DESC)</code> — primary read path; <code>idx_ud_date (date DESC)</code> — squad snapshot; <code>idx_ud_compass_zone (date, compass_zone)</code> — zone-filtered squad queries; <code>idx_ud_thermal_scan_id</code>, <code>idx_ud_metric_record_id</code> — audit.</p>
+
+  <div style="margin:0 0 28px;">
+    <p style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">daily_assessments.ai_coach_response — JSONB schema</p>
+    <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">Full structured GenAI output written by NURAI at the end of both Flow A and Flow B. Supersedes all legacy <code>physio_recommendation</code>, <code>physio_title</code>, <code>physio_highlight</code>, and <code>risk_assessment_summary</code> free-text columns.</p>
+<pre style="margin:0;font-size:12px;line-height:1.7;color:#7dd3fc;">{
+  <span style="color:#a5f3fc;">"zone"</span>:           <span style="color:#fde68a;">"deceptive_readiness"</span>,
+  <span style="color:#a5f3fc;">"zone_rationale"</span>: <span style="color:#fde68a;">"HRV is within normal range — systemic readiness looks good. However,</span>
+<span style="color:#fde68a;">                    left hamstring asymmetry (ΔT = 0.4°C) indicates localised thermal stress.</span>
+<span style="color:#fde68a;">                    Athlete feels ready but tissue is stressed — highest-risk zone."</span>,
+
+  <span style="color:#a5f3fc;">"intervention_plan"</span>: {
+    <span style="color:#a5f3fc;">"phase_1"</span>: {
+      <span style="color:#a5f3fc;">"label"</span>:    <span style="color:#fde68a;">"Acute (Days 1–3)"</span>,
+      <span style="color:#a5f3fc;">"protocol"</span>: <span style="color:#fde68a;">"Reduce sprint volume by 40%. Avoid eccentric hamstring loading."</span>
+    },
+    <span style="color:#a5f3fc;">"phase_2"</span>: {
+      <span style="color:#a5f3fc;">"label"</span>:    <span style="color:#fde68a;">"Progressive (Days 4–7)"</span>,
+      <span style="color:#a5f3fc;">"protocol"</span>: <span style="color:#fde68a;">"Gradual reintroduction at 70% load. Monitor ΔT each session."</span>
+    },
+    <span style="color:#a5f3fc;">"progression_criteria"</span>: <span style="color:#fde68a;">"Return to full load when ΔT &lt; 0.3°C for 3 consecutive sessions."</span>
+  },
+
+  <span style="color:#a5f3fc;">"reassessment"</span>: {
+    <span style="color:#a5f3fc;">"next_scan_in_days"</span>:    <span style="color:#86efac;">3</span>,
+    <span style="color:#a5f3fc;">"escalation_triggers"</span>: [<span style="color:#fde68a;">"ΔT increase &gt; 0.2°C from baseline"</span>, <span style="color:#fde68a;">"pain level &gt; 6/10"</span>],
+    <span style="color:#a5f3fc;">"auto_flag_if"</span>:         <span style="color:#fde68a;">"zone remains deceptive_readiness after 5 days"</span>
+  },
+
+  <span style="color:#a5f3fc;">"coach_narrative"</span>: <span style="color:#fde68a;">"Your body is showing early signs of localised stress in the left hamstring.</span>
+<span style="color:#fde68a;">                    While your systemic readiness looks good today, we recommend a modified</span>
+<span style="color:#fde68a;">                    session to avoid compounding the tissue strain."</span>,
+
+  <span style="color:#a5f3fc;">"generated_at"</span>: <span style="color:#fde68a;">"2026-04-05T08:30:00Z"</span>
+}</pre>
+    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;"><code>zone_rationale</code>, <code>coach_narrative</code>, and <code>intervention_plan</code> are the primary consumer-facing fields. <code>reassessment</code> drives next-scan cadence recommendations shown in My NUR.</p>
+  </div>
+
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.user_profile_history</code><span style="font-size:13px;color:var(--text-muted);"> — versioned history of mutable member profile state. Append-only; <code>is_current = true</code> marks the active row. Replaces standalone <code>pain_entries</code> table — pain data is a profile attribute, not a scan artifact.</span></p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>profile_id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
+      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, NOT NULL</td><td>The member this profile version belongs to.</td></tr>
+      <tr><td><code>activity_level</code></td><td>JSONB, nullable</td><td>Current activity level. Moved from <code>sessions.activity_level</code> — this is a per-member attribute, not a per-scan attribute.</td></tr>
+      <tr><td><code>health_history</code></td><td>JSONB, nullable</td><td>Versioned health history snapshot. When updated, a new row is inserted rather than overwriting, preserving audit trail.</td></tr>
+      <tr><td><code>pain_entries</code></td><td>JSONB, nullable</td><td>Array of current pain entries at the time this profile version was recorded. Structure: <code>[{"anatomical_ids": [12, 9], "cause": "...", "onset_range": "...", "pain_level": "...", "pain_type": "...", "recorded_at": "..."}]</code> — <code>anatomical_ids</code> contains <code>granular_region_id</code> integers.</td></tr>
+      <tr><td><code>last_updated</code></td><td>timestamptz, NOT NULL</td><td>When this profile version was created.</td></tr>
+      <tr><td><code>updated_by</code></td><td>FK &rarr; auth_user, nullable</td><td>Who made this profile update. NULL for system-generated snapshots.</td></tr>
+      <tr><td><code>is_current</code></td><td>boolean, default true</td><td>Only one row per user is true at any time. Prior versions are set to false on new insert.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 12px;">Indexes: <code>idx_uph_user_current (user_id, is_current)</code>, <code>idx_uph_user_updated (user_id, last_updated DESC)</code>.</p>
+
+  <div style="margin:0 0 28px;">
+    <p style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">user_profile_history.pain_entries — JSONB schema</p>
+    <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">Array of pain entries as recorded at the time this profile version was created. Replaces the eliminated <code>tbscan.pain_entries</code> table. A new profile history row is inserted on every pain submission — prior versions are preserved (<code>is_current = false</code>).</p>
+<pre style="margin:0;font-size:12px;line-height:1.7;color:#7dd3fc;">[
+  {
+    <span style="color:#a5f3fc;">"anatomical_ids"</span>: [<span style="color:#86efac;">12</span>],                    <span style="color:#6e7681;">// granular_region_id values from granular_anatomical_regions</span>
+    <span style="color:#a5f3fc;">"cause"</span>:           <span style="color:#fde68a;">"training_overload"</span>,
+    <span style="color:#a5f3fc;">"onset_range"</span>:     <span style="color:#fde68a;">"2-7_days"</span>,               <span style="color:#6e7681;">// "0-1_days" | "2-7_days" | "7+_days"</span>
+    <span style="color:#a5f3fc;">"pain_level"</span>:      <span style="color:#fde68a;">"moderate"</span>,               <span style="color:#6e7681;">// "mild" | "moderate" | "severe"</span>
+    <span style="color:#a5f3fc;">"pain_type"</span>:       <span style="color:#fde68a;">"soreness"</span>,               <span style="color:#6e7681;">// "soreness" | "sharp" | "stiffness" | "numbness"</span>
+    <span style="color:#a5f3fc;">"recorded_at"</span>:     <span style="color:#fde68a;">"2026-04-03T10:00:00Z"</span>
+  },
+  {
+    <span style="color:#a5f3fc;">"anatomical_ids"</span>: [<span style="color:#86efac;">9</span>, <span style="color:#86efac;">10</span>],
+    <span style="color:#a5f3fc;">"cause"</span>:           <span style="color:#fde68a;">"previous_injury"</span>,
+    <span style="color:#a5f3fc;">"onset_range"</span>:     <span style="color:#fde68a;">"7+_days"</span>,
+    <span style="color:#a5f3fc;">"pain_level"</span>:      <span style="color:#fde68a;">"mild"</span>,
+    <span style="color:#a5f3fc;">"pain_type"</span>:       <span style="color:#fde68a;">"stiffness"</span>,
+    <span style="color:#a5f3fc;">"recorded_at"</span>:     <span style="color:#fde68a;">"2026-03-28T09:15:00Z"</span>
+  }
+  <span style="color:#6e7681;">/* ... all current pain entries for this athlete at profile-update time */</span>
+]</pre>
+    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;"><code>anatomical_ids</code> contains <code>granular_region_id</code> integer values from <code>granular_anatomical_regions.granular_id</code>. The baseline qualifying gate checks <code>pain_entries = []</code> (empty array) on the current profile version instead of the previously eliminated <code>COUNT(*) WHERE session_id = Y</code> query on <code>pain_entries</code>. NURAI reads the current profile snapshot at inference time via the <code>is_current = true</code> index.</p>
+  </div>
+
+  <h4 style="margin-top:28px;">Modified Existing Tables</h4>
+
+  <p style="margin:12px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.users</code><span style="font-size:13px;color:var(--text-muted);"> — BETA additions</span></p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>org_id</code></td><td>FK &rarr; orgs, nullable</td><td>Organisation this user belongs to. NULL for individual (non-team) users.</td></tr>
+      <tr><td><code>org_role</code></td><td>varchar, nullable</td><td>Role within the organisation: <code>admin</code> — full org management (settings, user provisioning, scan initiation); <code>member</code> — standard access. NULL when <code>org_id</code> is NULL.</td></tr>
+      <tr><td><code>fcm_token</code></td><td>varchar, nullable</td><td>FCM device token for push notification delivery.</td></tr>
+      <tr><td><code>privacy_policy_version</code></td><td>varchar</td><td>Version identifier of the Privacy Statement accepted by this user (e.g. <code>pp-2026-03</code>). Set at signup; updated on re-acceptance.</td></tr>
+      <tr><td><code>terms_version</code></td><td>varchar</td><td>Version identifier of the Terms of Use accepted by this user (e.g. <code>tou-2026-03</code>). Set at signup; updated on re-acceptance.</td></tr>
+      <tr><td><code>consent_accepted_at</code></td><td>timestamp</td><td>Timestamp of the most recent consent acceptance event (either document). Denormalised from <code>consent_records</code> for fast profile reads.</td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.sessions</code><span style="font-size:13px;color:var(--text-muted);"> — full redesigned schema (Layer 1 hardware event log; all computation columns removed)</span></p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>session_id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
+      <tr><td><code>status</code></td><td>varchar(30)</td><td><code>pending</code> / <code>authenticated</code> / <code>scanning</code> / <code>processing</code> / <code>completed</code> / <code>error</code>. Lifecycle of the hardware scan event only.</td></tr>
+      <tr><td><code>session_type</code></td><td>varchar(20)</td><td><code>individual</code> (QR flow) / <code>admin</code> (operator-selected member).</td></tr>
+      <tr><td><code>mirror_id</code></td><td>FK &rarr; mirrors</td><td>Physical smart mirror unit used.</td></tr>
+      <tr><td><code>camera_id</code></td><td>FK &rarr; thermal_cameras</td><td>Thermal camera on that mirror.</td></tr>
+      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, nullable</td><td>Populated when session is claimed (individual) or selected (admin).</td></tr>
+      <tr><td><code>operator_id</code></td><td>FK &rarr; auth_user, nullable</td><td>Staff member who initiated the scan. NULL for individual sessions.</td></tr>
+      <tr><td><code>qr_token_id</code></td><td>FK &rarr; session_qr_tokens, nullable</td><td>Single-use QR token. NULL for admin sessions.</td></tr>
+      <tr><td><code>gcs_path</code></td><td>varchar(512), nullable</td><td>GCS URI of the production thermogram after upload confirmation.</td></tr>
+      <tr><td><code>stg_gcs_path</code></td><td>varchar(512), nullable</td><td>Staging/intermediate GCS path. Cleared after processing.</td></tr>
+      <tr><td><code>avoidance_flags</code></td><td>JSONB, nullable</td><td>AI-flagged image quality issues (clothing interference, positioning deviation). Drives baseline qualifying gate.</td></tr>
+      <tr><td><code>scanned_at</code></td><td>timestamptz, nullable</td><td>Timestamp of the actual thermal image capture. Set by NUR Sensor at completion.</td></tr>
+      <tr><td><code>created_at</code></td><td>timestamptz</td><td>Auto-set at session record creation.</td></tr>
+      <tr><td><code>updated_at</code></td><td>timestamptz</td><td>Auto-updated on any status change.</td></tr>
+    </tbody>
+  </table>
+  <div class="alert blue" style="margin-top:8px;margin-bottom:16px;">
+    <span class="alert-icon">&#8505;</span>
+    <div><strong>sessions no longer owns computation data</strong><p><code>activity_level</code> moved to <code>tbscan.user_profile_history</code>. <code>gcs_path</code> / <code>stg_gcs_path</code> remain on sessions; <code>tbscan.thermal_scans</code> reads the image from <code>sessions.gcs_path</code> via its FK — no path duplication. All scoring, zone, and AI coach outputs are written to <code>tbscan.daily_assessments</code> by NURAI, never to sessions.</p></div>
+  </div>
+
+  <div class="alert blue">
+    <span class="alert-icon">&#8505;</span>
+    <div><strong>Auth Migration Note</strong><p>The Alpha uses DRF's static <code>authtoken_token</code> for all API auth. For BETA: NUR Sensor migrates to a static API key; My NUR consumers migrate to JWT via email OTP; NUR Teams migrate to JWT via SMS/WhatsApp OTP. No Firebase Auth dependency exists in the BETA auth stack &mdash; Firebase is retained only for FCM push notifications and RTDB session signalling. <code>authtoken_token</code> is retained during BETA transition and deprecated post-BETA.</p></div>
+  </div>
+  <p style="margin-bottom:8px;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.session_qr_tokens</code><span style="font-size:13px;color:var(--text-muted);"> — single-use QR codes for individual scan initiation</span></p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -1185,7 +1594,7 @@
     </tbody>
   </table>
 
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.otp_codes</strong> — hashed OTPs for My NUR and NUR Teams login (raw OTP never persisted)</p>
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.otp_codes</code><span style="font-size:13px;color:var(--text-muted);"> — hashed OTPs for My NUR and NUR Teams login (raw OTP never persisted)</span></p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -1199,7 +1608,7 @@
     </tbody>
   </table>
 
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.wearable_connections</strong> — one row per user-provider pair; tracks Spike OAuth state and token lifecycle</p>
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.wearable_connections</code><span style="font-size:13px;color:var(--text-muted);"> — one row per user-provider pair; tracks Spike OAuth state and token lifecycle</span></p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -1227,7 +1636,7 @@
   </table>
   <p style="font-size:12px;color:var(--text-dim);margin:8px 0 20px;">Constraints: UNIQUE (<code>user_id</code>, <code>provider</code>). Indexes: <code>idx_wc_user_id</code>, <code>idx_wc_provider_status</code>, <code>idx_wc_status_sync</code>, <code>idx_wc_last_synced</code>.</p>
 
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.daily_metrics</strong> — current-day wearable data written by Backend daily Spike pull; one active row per user-platform-date-type</p>
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.daily_metrics</code><span style="font-size:13px;color:var(--text-muted);"> — current-day wearable data written by Backend daily Spike pull; one active row per user-platform-date-type</span></p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -1272,7 +1681,7 @@
   </table>
   <p style="font-size:12px;color:var(--text-dim);margin:8px 0 20px;">Constraints: UNIQUE (<code>user_id</code>, <code>source_platform</code>, <code>metric_date</code>, <code>metric_type</code>). Indexes: <code>idx_daily_metric_user_id</code>, <code>idx_daily_metric_connection_id</code>, <code>idx_daily_metric_user_date</code>, <code>idx_daily_metric_platform_date</code>.</p>
 
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.history_metrics</strong> — archive of historical wearable data; same column structure as <code>daily_metrics</code>, no uniqueness constraint</p>
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.history_metrics</code><span style="font-size:13px;color:var(--text-muted);"> — archive of historical wearable data; same column structure as <code>daily_metrics</code>, no uniqueness constraint</span></p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -1302,7 +1711,7 @@
   </table>
   <p style="font-size:12px;color:var(--text-dim);margin:8px 0 20px;">No uniqueness constraint (archive table). Indexes: <code>idx_hist_metric_user_id</code>, <code>idx_hist_metric_conn_id</code>, <code>idx_hist_metric_user_date</code>, <code>idx_hist_metric_plat_date</code>.</p>
 
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.sync_logs</strong> — audit trail for each Spike data pull; records outcome, date window, and error detail per connection</p>
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.sync_logs</code><span style="font-size:13px;color:var(--text-muted);"> — audit trail for each Spike data pull; records outcome, date window, and error detail per connection</span></p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -1326,7 +1735,7 @@
   </table>
   <p style="font-size:12px;color:var(--text-dim);margin:8px 0 20px;">Indexes: <code>idx_sl_connection_id</code>, <code>idx_sl_status</code>, <code>idx_sl_type_status</code>, <code>idx_sl_created_at</code>.</p>
 
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.spike_webhook_events</strong> — inbound Spike webhook events; tracks processing state for <code>record_change</code> and provider integration lifecycle events</p>
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.spike_webhook_events</code><span style="font-size:13px;color:var(--text-muted);"> — inbound Spike webhook events; tracks processing state for <code>record_change</code> and provider integration lifecycle events</span></p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -1350,8 +1759,8 @@
   </table>
   <p style="font-size:12px;color:var(--text-dim);margin:8px 0 0;">Indexes: <code>idx_swe_connection_id</code>, <code>idx_swe_spike_user_id</code>, <code>idx_swe_status</code>, <code>idx_swe_status_received</code>.</p>
 
-  <div id="s06-5-orgsettings"></div>
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.org_settings</strong> — per-org configuration store; one row per org (UNIQUE on <code>org_id</code>); editable only by <code>admin</code></p>
+
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.org_settings</code><span style="font-size:13px;color:var(--text-muted);"> — per-org configuration store; one row per org (UNIQUE on <code>org_id</code>); editable only by <code>admin</code></span></p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -1368,258 +1777,266 @@
     </tbody>
   </table>
 
-  <h4 style="margin-top:28px;">Modified Existing Tables</h4>
-
-  <p style="font-size:13px;color:var(--text-muted);margin:12px 0 8px;"><strong>tbscan.users</strong> — BETA additions</p>
-  <table class="data-table">
-    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
-    <tbody>
-      <tr><td><code>org_id</code></td><td>FK &rarr; orgs, nullable</td><td>Organisation this user belongs to. NULL for individual (non-team) users.</td></tr>
-      <tr><td><code>org_role</code></td><td>varchar, nullable</td><td>Role within the organisation: <code>admin</code> — full org management (settings, user provisioning, scan initiation); <code>member</code> — standard access. NULL when <code>org_id</code> is NULL.</td></tr>
-      <tr><td><code>fcm_token</code></td><td>varchar, nullable</td><td>FCM device token for push notification delivery.</td></tr>
-      <tr><td><code>privacy_policy_version</code></td><td>varchar</td><td>Version identifier of the Privacy Statement accepted by this user (e.g. <code>pp-2026-03</code>). Set at signup; updated on re-acceptance.</td></tr>
-      <tr><td><code>terms_version</code></td><td>varchar</td><td>Version identifier of the Terms of Use accepted by this user (e.g. <code>tou-2026-03</code>). Set at signup; updated on re-acceptance.</td></tr>
-      <tr><td><code>consent_accepted_at</code></td><td>timestamp</td><td>Timestamp of the most recent consent acceptance event (either document). Denormalised from <code>consent_records</code> for fast profile reads.</td></tr>
-    </tbody>
-  </table>
-
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.sessions</strong> — BETA additions</p>
-  <table class="data-table">
-    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
-    <tbody>
-      <tr><td><code>session_type</code></td><td>varchar</td><td><code>individual</code> / <code>admin</code>.</td></tr>
-      <tr><td><code>qr_token_id</code></td><td>FK &rarr; session_qr_tokens, nullable</td><td>QR token that initiated this session.</td></tr>
-      <tr><td><code>operator_id</code></td><td>FK &rarr; auth_user, nullable</td><td>Staff operator for admin sessions; NULL for individual sessions.</td></tr>
-    </tbody>
-  </table>
-
-  <p style="font-size:13px;color:var(--text-muted);margin:20px 0 8px;"><strong>tbscan.scan_results</strong> — BETA additions (all COMPASS scoring and coaching outputs written directly by NURAI; no separate scoring table)</p>
-  <table class="data-table">
-    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
-    <tbody>
-      <tr><td><code>r_score</code></td><td>numeric, 0&ndash;100</td><td>Normalised systemic readiness score derived by NURAI from <code>recovery_score</code> in <code>tbscan.daily_metrics</code>.</td></tr>
-      <tr><td><code>t_score</code></td><td>numeric, 0&ndash;100</td><td>Normalised thermal asymmetry score.</td></tr>
-      <tr><td><code>compass_score</code></td><td>smallint, 0&ndash;100</td><td>Unified COMPASS risk score.</td></tr>
-      <tr><td><code>compass_zone</code></td><td>varchar</td><td><code>safe</code> / <code>recovery</code> / <code>deceptive_readiness</code> / <code>danger</code>.</td></tr>
-      <tr><td><code>asymmetry_scores</code></td><td>JSONB, nullable</td><td>Raw per-region left/right temperature deltas.</td></tr>
-
-      <tr><td><code>readiness_score</code></td><td>numeric, nullable</td><td>Spike recovery score sourced from <code>tbscan.daily_metrics.recovery_score</code>; passed through to scan results for display without modification.</td></tr>
-      <tr><td><code>computed_at</code></td><td>timestamp</td><td>When NURAI wrote the scoring outputs.</td></tr>
-      <tr><td><code>ai_coach_output</code></td><td>JSONB, nullable</td><td>Structured AI Coach output: zone-specific clinical response, workout and physiotherapy guidance, and coach narrative for My NUR rendering.</td></tr>
-    </tbody>
-  </table>
-
-  <div class="alert blue">
-    <span class="alert-icon">&#8505;</span>
-    <div><strong>Auth Migration Note</strong><p>The Alpha uses DRF's static <code>authtoken_token</code> for all API auth. For BETA: NUR Sensor migrates to a static API key; My NUR consumers migrate to JWT via email OTP; NUR Teams migrate to JWT via SMS/WhatsApp OTP. No Firebase Auth dependency exists in the BETA auth stack &mdash; Firebase is retained only for FCM push notifications and RTDB session signalling. <code>authtoken_token</code> is retained during BETA transition and deprecated post-BETA.</p></div>
-  </div>
 </section>
 
 <!-- ══ 07: AI/ML Pipeline & NURAI ══ -->
 <section id="s07">
   <div class="section-label">Section 07</div>
   <h2>AI / ML Pipeline &amp; NURAI</h2>
-  <p class="section-intro">NURAI is the AI inference service on Cloud Run. Invoked after thermogram upload, it computes COMPASS scores and AI Coach outputs, writing all results directly to <code>tbscan.scan_results</code>.</p>
+  <p class="section-intro">NURAI is the AI inference service deployed on Cloud Run. It is composed of three internal modules — <strong>Computer Vision &amp; Thermal ROI</strong>, <strong>Metrics Pipeline</strong>, and <strong>GenAI Reasoning</strong> — exposed via two endpoints: <code>POST /infer</code> (Flow A) and <code>POST /infer/refresh</code> (Flow B), called exclusively by the Backend, never by clients directly. It reads all inputs from the database and GCS; it does not call any upstream wearable or Spike API.</p>
+
+  <!-- ── NURAI Module Diagram ── -->
+  <svg viewBox="0 0 780 200" width="100%" style="max-width:780px;display:block;margin:28px 0 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
+
+    <!-- Module 1 — Computer Vision & Thermal ROI -->
+    <rect x="0" y="30" width="210" height="100" rx="10" fill="#1c1812" stroke="rgba(249,115,22,0.5)" stroke-width="1.5"/>
+    <rect x="0" y="30" width="210" height="28" rx="10" fill="rgba(249,115,22,0.12)"/>
+    <rect x="0" y="46" width="210" height="12" fill="rgba(249,115,22,0.12)"/>
+    <text x="105" y="50" text-anchor="middle" font-size="9" font-weight="700" fill="#fdba74" letter-spacing="0.07em">MODULE 1</text>
+    <text x="105" y="76" text-anchor="middle" font-size="12.5" font-weight="700" fill="#e6edf3">Computer Vision</text>
+    <text x="105" y="93" text-anchor="middle" font-size="12.5" font-weight="700" fill="#e6edf3">&amp; Thermal ROI</text>
+    <text x="105" y="114" text-anchor="middle" font-size="10.5" fill="#8b949e">Thermogram fetch · ROI</text>
+    <text x="105" y="129" text-anchor="middle" font-size="10.5" fill="#8b949e">extraction · t_score</text>
+
+    <!-- Arrow 1→2 -->
+    <line x1="214" y1="80" x2="278" y2="80" stroke="#30363d" stroke-width="1.5"/>
+    <polygon points="278,75 286,80 278,85" fill="#30363d"/>
+
+    <!-- Module 2 — Metrics Pipeline -->
+    <rect x="286" y="30" width="210" height="100" rx="10" fill="#1a1528" stroke="rgba(124,58,237,0.5)" stroke-width="1.5"/>
+    <rect x="286" y="30" width="210" height="28" rx="10" fill="rgba(124,58,237,0.12)"/>
+    <rect x="286" y="46" width="210" height="12" fill="rgba(124,58,237,0.12)"/>
+    <text x="391" y="50" text-anchor="middle" font-size="9" font-weight="700" fill="#a78bfa" letter-spacing="0.07em">MODULE 2</text>
+    <text x="391" y="76" text-anchor="middle" font-size="12.5" font-weight="700" fill="#e6edf3">Metrics Pipeline</text>
+    <text x="391" y="114" text-anchor="middle" font-size="10.5" fill="#8b949e">COMPASS scoring · zone</text>
+    <text x="391" y="129" text-anchor="middle" font-size="10.5" fill="#8b949e">classification · fusion</text>
+
+    <!-- Arrow 2→3 -->
+    <line x1="500" y1="80" x2="564" y2="80" stroke="#30363d" stroke-width="1.5"/>
+    <polygon points="564,75 572,80 564,85" fill="#30363d"/>
+
+    <!-- Module 3 — GenAI Reasoning -->
+    <rect x="572" y="30" width="208" height="100" rx="10" fill="#0e1e2a" stroke="rgba(0,200,255,0.4)" stroke-width="1.5"/>
+    <rect x="572" y="30" width="208" height="28" rx="10" fill="rgba(0,200,255,0.10)"/>
+    <rect x="572" y="46" width="208" height="12" fill="rgba(0,200,255,0.10)"/>
+    <text x="676" y="50" text-anchor="middle" font-size="9" font-weight="700" fill="#00c8ff" letter-spacing="0.07em">MODULE 3</text>
+    <text x="676" y="76" text-anchor="middle" font-size="12.5" font-weight="700" fill="#e6edf3">GenAI Reasoning</text>
+    <text x="676" y="114" text-anchor="middle" font-size="10.5" fill="#8b949e">Zone rationale · intervention</text>
+    <text x="676" y="129" text-anchor="middle" font-size="10.5" fill="#8b949e">plan · coach narrative</text>
+
+    <!-- Flow A bracket (spans all 3 modules) -->
+    <line x1="0" y1="155" x2="780" y2="155" stroke="rgba(249,115,22,0.55)" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="390" y="170" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(249,115,22,0.85)" letter-spacing="0.05em">FLOW A — runs modules 1 → 2 → 3</text>
+
+    <!-- Flow B bracket (spans modules 2 & 3 only) -->
+    <line x1="286" y1="183" x2="780" y2="183" stroke="rgba(124,58,237,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="533" y="198" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(124,58,237,0.85)" letter-spacing="0.05em">FLOW B — runs modules 2 → 3 only</text>
+  </svg>
 
   <div class="alert orange">
     <span class="alert-icon">&#9888;</span>
-    <div><strong>Synchronous Processing (Current)</strong><p>The pipeline is currently synchronous: the backend waits for the inference response before returning the result preview to NUR Sensor. See Section 11, Open Question #2 for the sync vs. async decision.</p></div>
+    <div><strong>Synchronous Processing (Current)</strong><p>The pipeline is currently synchronous: the Backend waits for the NURAI inference response before returning the result preview to NUR Sensor. See Section 11, Open Question #2 for the sync vs. async decision.</p></div>
   </div>
 
-  <div id="s07-metric"></div>
-  <h3>7.3 NURAI Metric Pipeline Module</h3>
-  <p>Internal NURAI module. Accepts wearable metrics (pre-populated by the Backend's daily Spike pull) and a thermogram from GCS, executes all stages autonomously, and writes all outputs directly to <code>tbscan.scan_results</code>. Health questionnaire data feeds the AI Coach output only — not the R or T score.</p>
+  <div id="s07-flow-a"></div>
+  <h3>7.1 Flow A — Full Pipeline <span style="font-size:13px;font-weight:400;color:var(--text-muted);">triggered by NUR Sensor</span></h3>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Runs when an athlete completes a physical scan at a smart mirror. Executes all three NURAI modules in sequence: <strong style="color:var(--text);">Computer Vision &amp; Thermal ROI → Metrics Pipeline → GenAI Reasoning</strong>. NUR Sensor uploads the thermogram <strong style="color:var(--text);">directly to GCS</strong> via signed URL — the binary never transits the Backend. The Backend then calls <code>POST /infer { session_id }</code> (API Key auth) to trigger NURAI.</p>
 
   <div class="sc-pipeline">
-
-    <!-- Stage A -->
     <div class="sc-stage">
-      <div class="sc-stage-label">Stage A &mdash; Data Collection</div>
+      <div class="sc-stage-label">Module 1 — Computer Vision &amp; Thermal ROI</div>
       <div class="sc-row">
-        <div class="sc-block" data-track="wearable">
-          <div class="sc-block-title">Wearable Data — tbscan.daily_metrics</div>
-          <div class="sc-block-body">HRV, resting HR, sleep score, ACWR, and pre-computed R Score written by the Backend daily Spike pull. See <a href="#s08" style="color:var(--accent);">§08</a>.</div>
-        </div>
-        <div class="sc-block" data-track="health">
-          <div class="sc-block-title">Session &amp; History Data</div>
-          <div class="sc-block-body">Thermogram GCS path from <code>tbscan.sessions</code>; pain entries from <code>pain_entries</code>; chronic conditions and demographics from <code>users.health_history</code>.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sc-arrow"></div>
-
-    <!-- Stage B (NEW) -->
-    <div class="sc-stage">
-      <div class="sc-stage-label">Stage B &mdash; Input Validation &amp; Data Availability Gate</div>
-      <div class="sc-gate">
-        <div class="sc-gate-title">Wearable Data Freshness</div>
-        <div class="sc-gate-body">
-          <p>Gap &le; 2 days → <code>advisory_mode = full_compass</code>, continue. Gap &gt; 2 days → <code>advisory_mode = thermal_only</code>, write <code>compass_score = null</code>, skip to Stage G.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="sc-arrow"></div>
-
-    <!-- Stage E -->
-    <div class="sc-stage">
-      <div class="sc-stage-label">Stage E &mdash; Zone Classification (2 &times; 2 Matrix)</div>
-      <div class="sc-matrix">
-        <div class="sc-matrix-cell dec">
-          Deceptive Readiness<div class="sc-matrix-sub">R &ge; 50, T &ge; 50</div>
-        </div>
-        <div class="sc-matrix-cell dan">
-          Danger<div class="sc-matrix-sub">R &lt; 50, T &ge; 50</div>
-        </div>
-        <div class="sc-matrix-cell safe">
-          Safe<div class="sc-matrix-sub">R &ge; 50, T &lt; 50</div>
-        </div>
-        <div class="sc-matrix-cell rec">
-          Recovery<div class="sc-matrix-sub">R &lt; 50, T &lt; 50</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sc-arrow"></div>
-
-    <!-- Stage F -->
-    <div class="sc-stage">
-      <div class="sc-stage-label">Stage F &mdash; COMPASS Scoring Engine</div>
-      <div class="sc-block--full" data-track="fusion">
-        <div class="sc-block-title">Fusion Formula</div>
-        <div class="sc-block-body">
-          <strong>Safe / Recovery zones (equal weight):</strong><br>
-          <code>Score = floor + 24 &times; (0.5 &times; R_dist + 0.5 &times; T_dist)</code><br><br>
-          <strong>Deceptive Readiness / Danger zones (thermal-weighted):</strong><br>
-          <code>Score = floor + 24 &times; (0.3 &times; R_dist + 0.7 &times; T_dist)</code><br><br>
-          Where <code>R_dist</code> and <code>T_dist</code> are normalised distances from the zone boundary (0–1). Zone floor values: Safe 76, Recovery 51, Deceptive Readiness 26, Danger 1. When thermal asymmetry is elevated, the score is deliberately pulled down even when R is high — an athlete in Deceptive Readiness cannot score in the upper half of that band.<br><br>
-          <strong>Per-Zone Expanded Form:</strong><br><br>
-          <strong>Safe (76–100):</strong><br>
-          <code>76 + 24 &times; avg( (R&minus;50)/50 , (50&minus;T)/50 )</code><br><br>
-          <strong>Recovery (51–75):</strong><br>
-          <code>51 + 24 &times; avg( R/50 , (50&minus;T)/50 )</code><br><br>
-          <strong>Deceptive Readiness (26–50):</strong><br>
-          <code>26 + 24 &times; ( 0.3&times;(R&minus;50)/50 + 0.7&times;(100&minus;T)/50 )</code><br><br>
-          <strong>Danger (0–25):</strong><br>
-          <code>25 &times; ( 0.3&times;R/50 + 0.7&times;(100&minus;T)/50 )</code>
-        </div>
-      </div>
-    </div>
-
-    <div class="sc-arrow"></div>
-
-    <!-- Stage G -->
-    <div class="sc-stage">
-      <div class="sc-stage-label">Stage G &mdash; Storage &amp; Delivery</div>
-      <div class="sc-block--full" data-track="storage">
-        <div class="sc-block-title">Database Writes + My NUR Delivery</div>
-        <div class="sc-block-body">
-          Single write to <code>tbscan.scan_results</code>: <code>r_score</code>, <code>t_score</code>, <code>asymmetry_scores</code>, <code>compass_score</code>, <code>compass_zone</code>, <code>ai_coach_output</code> (JSONB — zone response, physio guidance, coach narrative). Backend dispatches FCM push on <code>200 OK</code>. See §6.5 for full schema.
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /sc-pipeline -->
-
-  <h4>Pipeline Reference</h4>
-  <table class="data-table">
-    <thead>
-      <tr><th>Stage</th><th>Input</th><th>Gate / Condition</th><th>Processing</th><th>Output → Table</th></tr>
-    </thead>
-    <tbody>
-      <tr><td><strong>A — Collect</strong></td><td>Wearable pull, thermogram, pain entries</td><td>—</td><td>Backend daily Spike pull writes raw fields to <code>tbscan.daily_metrics</code>; NUR Sensor uploads thermogram to GCS</td><td><code>tbscan.daily_metrics</code>, <code>pain_entries</code>, <code>sessions.gcs_path</code></td></tr>
-      <tr><td><strong>B — Gate</strong></td><td><code>metrics.last_synced_at</code></td><td>Wearable gap &le; 2 days → <code>full_compass</code>; else → <code>thermal_only</code>, skip to G</td><td>Set <code>advisory_mode</code>; short-circuit paths write <code>compass_score = null</code></td><td><code>scan_results.advisory_mode</code></td></tr>
-      <tr><td><strong>E — Zone</strong></td><td>R score (0–100) from <code>recovery_score</code>; TAI from thermogram (<code>TAI = max(region deltas)</code>; T = <code>min(100, TAI_SD / 3.0 × 100)</code>)</td><td>R &ge; 50, T &lt; 50 → Safe; R &lt; 50, T &lt; 50 → Recovery; R &ge; 50, T &ge; 50 → Deceptive; R &lt; 50, T &ge; 50 → Danger</td><td>2&times;2 threshold matrix</td><td><code>scan_results.compass_zone</code>, <code>r_score</code>, <code>t_score</code></td></tr>
-      <tr><td><strong>F — Score</strong></td><td>R, T, zone assignment</td><td>Safe/Recovery: 50/50 weight; Deceptive/Danger: 30/70 (thermal-heavy)</td><td><code>floor + 24 &times; weighted_dist(R, T)</code>. Floors: Safe 76, Recovery 51, Deceptive 26, Danger 1</td><td><code>scan_results.compass_score</code></td></tr>
-      <tr><td><strong>G — Deliver</strong></td><td>All computed outputs + health context</td><td>—</td><td>Single DB write to <code>scan_results</code>; NURAI returns 200 OK; Backend dispatches FCM push</td><td><code>tbscan.scan_results</code> (all fields), FCM → My NUR</td></tr>
-    </tbody>
-  </table>
-
-  <h4>Signal &amp; Output Storage Reference</h4>
-  <table class="data-table">
-    <thead>
-      <tr><th>Signal / Output</th><th>Produced by</th><th>Field</th><th>Table</th></tr>
-    </thead>
-    <tbody>
-      <tr><td><strong>Spike Daily Statistics</strong></td><td>Backend daily Spike pull</td><td>17 wearable fields — see <a href="#s08" style="color:var(--accent);">§8.2</a></td><td><code>tbscan.daily_metrics</code></td></tr>
-      <tr><td><strong>R Score (Systemic Readiness 0&ndash;100)</strong></td><td>NURAI — derives <code>r_score</code> from raw <code>recovery_score</code> stored in <code>tbscan.daily_metrics</code>.</td><td><code>r_score</code></td><td><code>tbscan.scan_results</code></td></tr>
-      <tr><td><strong>Per-Region Temperatures</strong></td><td>NURAI — extracted from thermogram</td><td><code>tbscan.thermal_measurements</code></td><td><code>tbscan.thermal_measurements</code></td></tr>
-      <tr><td><strong>T Score (Thermal Asymmetry 0&ndash;100)</strong></td><td>NURAI — normalised from TAI</td><td><code>t_score</code> (numeric)</td><td><code>tbscan.scan_results</code></td></tr>
-      <tr><td><strong>Per-Region Asymmetry Deltas (TAI raw)</strong></td><td>NURAI — <code>max(region deltas)</code> and per-region values</td><td><code>asymmetry_scores</code> (JSONB)</td><td><code>tbscan.scan_results</code></td></tr>
-      <tr><td><strong>COMPASS Score (0&ndash;100)</strong></td><td>NURAI — fusion formula</td><td><code>compass_score</code> (smallint)</td><td><code>tbscan.scan_results</code></td></tr>
-      <tr><td><strong>COMPASS Zone</strong></td><td>NURAI — 2&times;2 matrix classification</td><td><code>compass_zone</code> (varchar)</td><td><code>tbscan.scan_results</code></td></tr>
-      <tr><td><strong>Zone Clinical Response + Coach Narrative</strong></td><td>NURAI — AI Coach, written directly to DB</td><td><code>ai_coach_output</code> (JSONB)</td><td><code>tbscan.scan_results</code></td></tr>
-    </tbody>
-  </table>
-
-  <h3>7.1 Thermal Inference Pipeline</h3>
-  <p style="font-size:14px;color:var(--text-muted);margin-bottom:6px;">See §5.1 for the full session sequence. The inference-specific steps are:</p>
-  <ul style="color:var(--text-muted);font-size:14px;line-height:1.9;padding-left:20px;max-width:720px;">
-    <li>NUR Sensor uploads the thermogram <strong>directly to GCS</strong> via signed URL — binary never transits the API tier.</li>
-    <li>Backend calls <code>POST /infer { session_id }</code> (GCP IAM service account). NURAI reads all inputs from DB (<code>tbscan.daily_metrics</code>, <code>pain_entries</code>, health history) and fetches the thermogram from GCS autonomously — no further API calls.</li>
-    <li>NURAI writes all outputs to <code>tbscan.scan_results</code> in a single record, returns <code>200 OK</code>; Backend dispatches FCM push to My NUR.</li>
-  </ul>
-
-  <h3>7.2 NURAI GenAI Layer &mdash; Stage F &amp; G <span class="badge badge-beta" style="vertical-align:middle;margin-left:8px;">BETA</span></h3>
-
-  <h4>Stage F &mdash; AI Reasoning Engine</h4>
-  <p>NURAI's GenAI layer receives the fully computed COMPASS assessment as a <strong>read-only</strong> input. It cannot alter scores, zone assignments, or thresholds. Its sole function is to explain and recommend based on the deterministic output from Stage E (COMPASS Scorer).</p>
-
-  <h4>Stage G &mdash; Practitioner Outputs</h4>
-  <div class="sc-pipeline" style="margin-top:16px;">
-    <div class="sc-stage">
-      <div class="sc-stage-label">Output Channels</div>
-      <div class="sc-row">
-        <div class="sc-block" data-track="wearable">
-          <div class="sc-block-title">Verbose Explanation</div>
-          <div class="sc-block-body">Auditable reasoning chain for every assessment — named signals, zone rationale, and severity context. Stored in <code>scan_results.ai_coach_output</code> (JSONB).</div>
-        </div>
         <div class="sc-block" data-track="thermal">
-          <div class="sc-block-title">Intervention Plan</div>
-          <div class="sc-block-body">Phase 1 Acute &middot; Phase 2 Progressive &middot; Threshold-gated progression criteria. Written to <code>scan_results.ai_coach_output.intervention_plan</code>.</div>
+          <div class="sc-block-title">ROI Extraction &amp; Measurements</div>
+          <div class="sc-block-body">NURAI fetches the thermogram from <code>sessions.gcs_path</code> (GCS). Runs region-of-interest extraction to compute per-region surface temperatures and left-right deltas. Results written to <code>thermal_scans.measurements</code> (JSONB) along with <code>t_score</code>, <code>baseline_mode</code>, and <code>has_skin_mask</code>.</div>
         </div>
-        <div class="sc-block" data-track="health">
-          <div class="sc-block-title">Reassessment Triggers</div>
-          <div class="sc-block-body">Named signal thresholds &middot; Rule-based escalation &middot; Next scan cadence recommendation. Written to <code>scan_results.ai_coach_output.reassessment</code>.</div>
+        <div class="sc-block" data-track="wearable">
+          <div class="sc-block-title">Wearable Data Read</div>
+          <div class="sc-block-body">Reads the latest row from <code>tbscan.daily_metrics</code> (written by the Backend daily Spike pull — see <a href="#s08" style="color:var(--accent);">§08</a>). If the gap exceeds 2 days, <code>metric_record_id</code> is set to <code>NULL</code> and COMPASS scoring is skipped — thermal data is stored but no zone or score is produced.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-arrow"></div>
+
+    <div class="sc-stage">
+      <div class="sc-stage-label">Module 2 — Metrics Pipeline</div>
+      <div class="sc-row">
+        <div class="sc-block" data-track="fusion">
+          <div class="sc-block-title">Zone Classification (2 &times; 2 Matrix)</div>
+          <div class="sc-block-body">
+            <div class="sc-matrix" style="margin-top:8px;">
+              <div class="sc-matrix-cell dec">Deceptive Readiness<div class="sc-matrix-sub">R &ge; 50, T &ge; 50</div></div>
+              <div class="sc-matrix-cell dan">Danger<div class="sc-matrix-sub">R &lt; 50, T &ge; 50</div></div>
+              <div class="sc-matrix-cell safe">Safe<div class="sc-matrix-sub">R &ge; 50, T &lt; 50</div></div>
+              <div class="sc-matrix-cell rec">Recovery<div class="sc-matrix-sub">R &lt; 50, T &lt; 50</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="sc-block" data-track="fusion">
+          <div class="sc-block-title">Score Fusion Formula</div>
+          <div class="sc-block-body">
+            <strong>Safe / Recovery (equal weight):</strong><br>
+            <code>Score = floor + 24 &times; (0.5&times;R_dist + 0.5&times;T_dist)</code><br><br>
+            <strong>Deceptive / Danger (thermal-weighted):</strong><br>
+            <code>Score = floor + 24 &times; (0.3&times;R_dist + 0.7&times;T_dist)</code><br><br>
+            Zone floors: Safe 76, Recovery 51, Deceptive 26, Danger 1. When thermal asymmetry is elevated, the score is pulled down even when R is high — an athlete in Deceptive Readiness cannot score above the midpoint of that band.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-arrow"></div>
+
+    <div class="sc-stage">
+      <div class="sc-stage-label">Module 3 — GenAI Reasoning</div>
+      <div class="sc-block--full" data-track="health">
+        <div class="sc-block-title">GenAI Reasoning Layer</div>
+        <div class="sc-block-body">Receives the computed zone, score, <code>thermal_scans.measurements</code>, and health context from <code>user_profile_history</code> as <strong>read-only</strong> inputs. Cannot alter scores or zone assignments. Produces: zone rationale, two-phase intervention plan, reassessment triggers, and coach narrative. All output written to <code>daily_assessments.ai_coach_response</code> (JSONB — see §06 schema).</div>
+      </div>
+    </div>
+
+    <div class="sc-arrow"></div>
+
+    <div class="sc-stage">
+      <div class="sc-stage-label">4 — Storage &amp; Delivery</div>
+      <div class="sc-block--full" data-track="storage">
+        <div class="sc-block-title">Database Writes + FCM Push</div>
+        <div class="sc-block-body">
+          Writes <code>tbscan.thermal_scans</code> (t_score, measurements JSONB, baseline_mode, generated_at) and updates <code>tbscan.thermal_baselines</code> incrementally. Then upserts <code>tbscan.daily_assessments</code> (compass_score, compass_zone, ai_coach_response, metric_record_id, trigger_type = <code>new_thermal_scan</code>). Returns <code>200 OK</code> to the Backend, which dispatches the FCM push to the athlete.
         </div>
       </div>
     </div>
   </div>
-  <div class="alert blue" style="margin-top:16px;">
-    <span class="alert-icon">&#8505;</span>
-    <div><strong>Storage Note</strong><p>NURAI writes all three Stage G outputs to <code>tbscan.scan_results.ai_coach_output</code> (JSONB). The Backend does not generate or modify these outputs.</p></div>
-  </div>
 
-  <div id="s07-nurai"></div>
-  <h3>7.4 NURAI &mdash; Architecture &amp; Intelligence Layer</h3>
-  <div class="alert blue" style="margin-bottom:20px;">
-    <span class="alert-icon">&#8505;</span>
-    <div><strong>NURAI Scope</strong><p>NURAI's scope is to (1) read raw wearable metrics and the pre-computed R Score from <code>tbscan.daily_metrics</code> — as populated by the Backend's daily Spike pull — (2) fetch the thermogram from GCS, (3) compute all composite metrics (TAI, T Score, COMPASS Score, zone), (4) maintain individual thermal baselines (SD method, nightly batch), and (5) write all scoring and coaching outputs to <code>tbscan.scan_results</code>. NURAI does not call any upstream wearable or Spike API.</p></div>
-  </div>
+  <div id="s07-flow-b"></div>
+  <h3 style="margin-top:40px;">7.2 Flow B — Daily Refresh <span style="font-size:13px;font-weight:400;color:var(--text-muted);">triggered by My NUR or NUR Teams</span></h3>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Runs on days without a new thermal scan. Executes only the last two NURAI modules — <strong style="color:var(--text);">Metrics Pipeline → GenAI Reasoning</strong> — skipping Module 1 (Computer Vision &amp; Thermal ROI): no thermogram fetch, no ROI extraction, no writes to <code>thermal_scans</code> or <code>thermal_baselines</code>. Triggered by <code>POST /compass/refresh</code> (JWT auth). The Backend always returns the latest <code>daily_assessments</code> record — the gates below only determine whether NURAI is invoked, never whether data is returned.</p>
 
-  <h4>Model Registry</h4>
+  <!-- ── Flow B Module Diagram ── -->
+  <svg viewBox="0 0 500 160" width="100%" style="max-width:500px;display:block;margin:20px 0 28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
+
+    <!-- Module 2 — Metrics Pipeline -->
+    <rect x="0" y="16" width="210" height="100" rx="10" fill="#1a1528" stroke="rgba(124,58,237,0.5)" stroke-width="1.5"/>
+    <rect x="0" y="16" width="210" height="28" rx="10" fill="rgba(124,58,237,0.12)"/>
+    <rect x="0" y="32" width="210" height="12" fill="rgba(124,58,237,0.12)"/>
+    <text x="105" y="36" text-anchor="middle" font-size="9" font-weight="700" fill="#a78bfa" letter-spacing="0.07em">MODULE 2</text>
+    <text x="105" y="62" text-anchor="middle" font-size="12.5" font-weight="700" fill="#e6edf3">Metrics Pipeline</text>
+    <text x="105" y="98" text-anchor="middle" font-size="10.5" fill="#8b949e">COMPASS scoring · zone</text>
+    <text x="105" y="113" text-anchor="middle" font-size="10.5" fill="#8b949e">classification · fusion</text>
+
+    <!-- Arrow 2→3 -->
+    <line x1="214" y1="66" x2="278" y2="66" stroke="#30363d" stroke-width="1.5"/>
+    <polygon points="278,61 286,66 278,71" fill="#30363d"/>
+
+    <!-- Module 3 — GenAI Reasoning -->
+    <rect x="286" y="16" width="214" height="100" rx="10" fill="#0e1e2a" stroke="rgba(0,200,255,0.4)" stroke-width="1.5"/>
+    <rect x="286" y="16" width="214" height="28" rx="10" fill="rgba(0,200,255,0.10)"/>
+    <rect x="286" y="32" width="214" height="12" fill="rgba(0,200,255,0.10)"/>
+    <text x="393" y="36" text-anchor="middle" font-size="9" font-weight="700" fill="#00c8ff" letter-spacing="0.07em">MODULE 3</text>
+    <text x="393" y="62" text-anchor="middle" font-size="12.5" font-weight="700" fill="#e6edf3">GenAI Reasoning</text>
+    <text x="393" y="98" text-anchor="middle" font-size="10.5" fill="#8b949e">Zone rationale · intervention</text>
+    <text x="393" y="113" text-anchor="middle" font-size="10.5" fill="#8b949e">plan · coach narrative</text>
+
+    <!-- Flow B bracket -->
+    <line x1="0" y1="138" x2="500" y2="138" stroke="rgba(124,58,237,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="250" y="153" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(124,58,237,0.85)" letter-spacing="0.05em">FLOW B — runs modules 2 → 3 only</text>
+  </svg>
+
+  <h4>Backend Gate Checks</h4>
+
+  <svg viewBox="0 0 720 470" width="100%" style="max-width:720px;display:block;margin:16px 0 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
+
+    <!-- Entry -->
+    <rect x="210" y="8" width="300" height="38" rx="8" fill="#1e2630" stroke="#30363d" stroke-width="1.5"/>
+    <text x="360" y="32" text-anchor="middle" font-size="12" font-weight="700" fill="#e6edf3">POST /compass/refresh</text>
+
+    <!-- Entry → Gate 1 -->
+    <line x1="360" y1="46" x2="360" y2="74" stroke="#30363d" stroke-width="1.5"/>
+    <polygon points="355,74 365,74 360,82" fill="#30363d"/>
+
+    <!-- Gate 1: No scan on record -->
+    <rect x="130" y="82" width="300" height="72" rx="8" fill="#1c1812" stroke="rgba(245,158,11,0.5)" stroke-width="1.5"/>
+    <rect x="130" y="82" width="300" height="24" rx="8" fill="rgba(245,158,11,0.10)"/>
+    <rect x="130" y="94" width="300" height="12" fill="rgba(245,158,11,0.10)"/>
+    <text x="280" y="99" text-anchor="middle" font-size="9.5" font-weight="700" fill="#f59e0b" letter-spacing="0.06em">GATE 1 — NO SCAN ON RECORD</text>
+    <text x="280" y="120" text-anchor="middle" font-size="11" fill="#8b949e">No thermal_scans row exists for this user</text>
+    <text x="280" y="144" text-anchor="middle" font-size="10.5" fill="#6e7681">thermal_scans table lookup</text>
+    <!-- Fail branch right -->
+    <line x1="430" y1="118" x2="490" y2="118" stroke="rgba(239,68,68,0.6)" stroke-width="1.5"/>
+    <polygon points="490,113 498,118 490,123" fill="rgba(239,68,68,0.6)"/>
+    <text x="462" y="112" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="700">FAIL</text>
+    <rect x="500" y="104" width="194" height="30" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+    <text x="597" y="123" text-anchor="middle" font-size="10.5" fill="#fca5a5">refresh_status = "no_scan"</text>
+
+    <!-- Gate 1 → Gate 2 -->
+    <line x1="360" y1="154" x2="360" y2="180" stroke="#30363d" stroke-width="1.5"/>
+    <polygon points="355,180 365,180 360,188" fill="#30363d"/>
+    <text x="372" y="170" font-size="9" fill="#22c55e" font-weight="700">PASS</text>
+
+    <!-- Gate 2: Thermal scan age -->
+    <rect x="130" y="188" width="300" height="72" rx="8" fill="#1c1812" stroke="rgba(245,158,11,0.5)" stroke-width="1.5"/>
+    <rect x="130" y="188" width="300" height="24" rx="8" fill="rgba(245,158,11,0.10)"/>
+    <rect x="130" y="200" width="300" height="12" fill="rgba(245,158,11,0.10)"/>
+    <text x="280" y="205" text-anchor="middle" font-size="9.5" font-weight="700" fill="#f59e0b" letter-spacing="0.06em">GATE 2 — THERMAL SCAN AGE</text>
+    <text x="280" y="226" text-anchor="middle" font-size="11" fill="#8b949e">Latest valid scan must be ≤ 7 days old</text>
+    <text x="280" y="250" text-anchor="middle" font-size="10.5" fill="#6e7681">thermal_scans WHERE is_valid = true</text>
+    <!-- Fail branch right -->
+    <line x1="430" y1="224" x2="490" y2="224" stroke="rgba(239,68,68,0.6)" stroke-width="1.5"/>
+    <polygon points="490,219 498,224 490,229" fill="rgba(239,68,68,0.6)"/>
+    <text x="462" y="218" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="700">FAIL</text>
+    <rect x="500" y="210" width="194" height="30" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+    <text x="597" y="229" text-anchor="middle" font-size="10.5" fill="#fca5a5">refresh_status = "stale_scan"</text>
+
+    <!-- Gate 2 → Gate 3 -->
+    <line x1="360" y1="260" x2="360" y2="286" stroke="#30363d" stroke-width="1.5"/>
+    <polygon points="355,286 365,286 360,294" fill="#30363d"/>
+    <text x="372" y="276" font-size="9" fill="#22c55e" font-weight="700">PASS</text>
+
+    <!-- Gate 3: Wearable freshness -->
+    <rect x="130" y="294" width="300" height="72" rx="8" fill="#1c1812" stroke="rgba(245,158,11,0.5)" stroke-width="1.5"/>
+    <rect x="130" y="294" width="300" height="24" rx="8" fill="rgba(245,158,11,0.10)"/>
+    <rect x="130" y="306" width="300" height="12" fill="rgba(245,158,11,0.10)"/>
+    <text x="280" y="311" text-anchor="middle" font-size="9.5" font-weight="700" fill="#f59e0b" letter-spacing="0.06em">GATE 3 — WEARABLE FRESHNESS</text>
+    <text x="280" y="332" text-anchor="middle" font-size="11" fill="#8b949e">daily_metrics newer than last computation</text>
+    <text x="280" y="356" text-anchor="middle" font-size="10.5" fill="#6e7681">daily_metrics vs daily_assessments.metric_record_id</text>
+    <!-- Fail branch right -->
+    <line x1="430" y1="330" x2="490" y2="330" stroke="rgba(239,68,68,0.6)" stroke-width="1.5"/>
+    <polygon points="490,325 498,330 490,335" fill="rgba(239,68,68,0.6)"/>
+    <text x="462" y="324" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="700">FAIL</text>
+    <rect x="500" y="316" width="194" height="30" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+    <text x="597" y="335" text-anchor="middle" font-size="10.5" fill="#fca5a5">refresh_status = "cached"</text>
+
+    <!-- Gate 3 → NURAI -->
+    <line x1="360" y1="366" x2="360" y2="394" stroke="#30363d" stroke-width="1.5"/>
+    <polygon points="355,394 365,394 360,402" fill="#30363d"/>
+    <text x="372" y="383" font-size="9" fill="#22c55e" font-weight="700">PASS</text>
+
+    <!-- NURAI invocation -->
+    <rect x="110" y="402" width="340" height="56" rx="8" fill="#0e1e2a" stroke="rgba(0,200,255,0.45)" stroke-width="1.5"/>
+    <rect x="110" y="402" width="340" height="22" rx="8" fill="rgba(0,200,255,0.10)"/>
+    <rect x="110" y="414" width="340" height="10" fill="rgba(0,200,255,0.10)"/>
+    <text x="280" y="418" text-anchor="middle" font-size="9.5" font-weight="700" fill="#00c8ff" letter-spacing="0.06em">POST /infer/refresh → NURAI</text>
+    <text x="280" y="439" text-anchor="middle" font-size="11" fill="#8b949e">Modules 2 + 3 · upserts daily_assessments</text>
+    <text x="280" y="454" text-anchor="middle" font-size="10.5" fill="#6e7681">refresh_status = "computed" | "inference_failed"</text>
+  </svg>
+
+  <h4>Response — always HTTP 200, always includes latest daily_assessments</h4>
   <table class="data-table">
-    <thead>
-      <tr><th>Model / Component</th><th>Input Signals</th><th>Output</th><th>Latency Target</th></tr>
-    </thead>
+    <thead><tr><th><code>refresh_status</code></th><th>NURAI invoked</th><th>daily_assessments returned</th></tr></thead>
     <tbody>
-      <tr><td><strong>Thermal Asymmetry Extractor</strong></td><td>Bilateral IR thermogram (GCS)</td><td>Per-region temperature deltas, TAI value</td><td>&lt; 10 s post-upload</td></tr>
-      <tr><td><strong>COMPASS Scorer</strong></td><td>R score (<code>tbscan.daily_metrics</code> raw), TAI (thermal extractor)</td><td>COMPASS score (0&ndash;100), zone label</td><td>&lt; 2 s post-TAI</td></tr>
-      <tr><td><strong>Individual Baseline Calculator</strong></td><td>Historical TAI series per user</td><td>Personal SD mean + alert threshold</td><td>Batch (nightly) &mdash; <a href="#s07-baseline" style="color:var(--accent);">see &sect;7.5</a></td></tr>
-      <tr><td><strong>AI Coach Generator</strong></td><td>COMPASS zone, health context (<code>pain_entries</code>)</td><td>Natural language corrective guidance</td><td>&lt; 5 s post-score</td></tr>
+      <tr><td><code>no_scan</code></td><td>No</td><td>Latest on record (may be null for new users)</td></tr>
+      <tr><td><code>stale_scan</code></td><td>No</td><td>Latest on record</td></tr>
+      <tr><td><code>cached</code></td><td>No</td><td>Latest on record</td></tr>
+      <tr><td><code>computed</code></td><td>Yes</td><td>Newly written record for today</td></tr>
+      <tr><td><code>inference_failed</code></td><td>Yes (failed)</td><td>Latest on record before failure</td></tr>
     </tbody>
   </table>
-
-  <div class="alert blue">
-    <span class="alert-icon">&#8505;</span>
-    <div><strong>Asynchronous Operation</strong><p>NURAI operates entirely asynchronously. The COMPASS score is not available at scan-time — it is computed after the thermogram upload completes and the Backend triggers <code>POST /infer</code>. NURAI reads all inputs from DB and GCS, writes all outputs directly to DB, and returns <code>200 OK</code> to the Backend. The Backend then dispatches the FCM push to the athlete. Scores are delivered to clients via FCM push once ready. See <a href="#s09" style="color:var(--accent);">&sect;09 Notifications</a> for the delivery pipeline.</p></div>
-  </div>
 
   <div id="s07-baseline"></div>
-  <h3>7.5 Thermal Baseline Update Module <span class="badge badge-beta" style="vertical-align:middle;margin-left:8px;">BETA</span></h3>
+  <h3 style="margin-top:40px;">7.3 Thermal Baseline Update Module <span class="badge badge-beta" style="vertical-align:middle;margin-left:8px;">BETA</span></h3>
 
-  <p>Nightly batch that maintains per-region, per-athlete SD baselines (COMPASS §05B). Computes mean and sample SD of left-right temperature delta per body region from qualifying "healthy reference" scans. Stored in <code>tbscan.thermal_baselines</code>; consumed by NURAI at inference in preference to the population threshold. Corresponds to "Individual Baseline Calculator" in §7.4 Model Registry.</p>
+  <p>Nightly batch that maintains per-region, per-athlete SD baselines (COMPASS §05B). Computes mean and sample SD of left-right temperature delta per body region from qualifying "healthy reference" scans. Stored in <code>tbscan.thermal_baselines</code>; consumed by NURAI at inference in preference to the population threshold.</p>
 
   <div class="alert" style="background:rgba(255,165,0,0.12);border-left:4px solid #ffa500;margin-bottom:20px;">
     <span class="alert-icon" style="color:#ffa500;">&#9888;</span>
@@ -1633,8 +2050,8 @@
       <tr><th>Gate</th><th>Condition</th><th>Source</th></tr>
     </thead>
     <tbody>
-      <tr><td><strong>No pain entry</strong></td><td>Zero records in <code>tbscan.pain_entries</code> for this <code>session_id</code></td><td><code>pain_entries.session_id</code></td></tr>
-      <tr><td><strong>No major asymmetry</strong></td><td>All per-region temperature deltas &lt; <strong>1.0&deg;C</strong> (below COMPASS Severe tier boundary)</td><td><code>tbscan.thermal_measurements</code></td></tr>
+      <tr><td><strong>No pain entry</strong></td><td>No pain entries recorded in <code>tbscan.user_profile_history.pain_entries</code> for this user at the time of the scan</td><td><code>user_profile_history.pain_entries</code></td></tr>
+      <tr><td><strong>No major asymmetry</strong></td><td>All per-region temperature deltas &lt; <strong>1.0&deg;C</strong> (below COMPASS Severe tier boundary)</td><td><code>thermal_scans.measurements</code> (delta field per region)</td></tr>
       <tr><td><strong>Session complete</strong></td><td><code>tbscan.sessions.status = 'completed'</code> and no <code>avoidance_flags</code> indicating a compromised scan</td><td><code>tbscan.sessions</code></td></tr>
     </tbody>
   </table>
@@ -1644,10 +2061,10 @@
   <table class="data-table">
     <thead><tr><th>Step</th><th>Action</th><th>Condition / Output</th></tr></thead>
     <tbody>
-      <tr><td><strong>1 — Filter</strong></td><td>Collect sessions per user passing all three qualifying gates</td><td>No <code>pain_entries</code> + all deltas &lt; 1.0°C + <code>status='completed'</code></td></tr>
-      <tr><td><strong>2 — Extract</strong></td><td>Pull left-right delta per region from <code>tbscan.thermal_measurements</code></td><td>Per-region delta list across qualifying sessions</td></tr>
+      <tr><td><strong>1 — Filter</strong></td><td>Collect sessions per user passing all three qualifying gates</td><td>Empty <code>pain_entries</code> + all deltas &lt; 1.0°C + <code>status='completed'</code></td></tr>
+      <tr><td><strong>2 — Extract</strong></td><td>Pull left-right delta per region from <code>tbscan.thermal_scans.measurements</code> JSONB (delta field)</td><td>Per-region delta list across qualifying sessions</td></tr>
       <tr><td><strong>3 — Compute</strong></td><td>Arithmetic mean + sample SD per region</td><td>n &ge; 6 → <code>is_active = true</code>; n &lt; 6 → <code>is_active = false</code></td></tr>
-      <tr><td><strong>4 — Upsert</strong></td><td>One row per (user, region) in <code>tbscan.thermal_baselines</code></td><td><code>mean_delta_c</code>, <code>sd_delta_c</code>, <code>qualifying_scan_count</code>, <code>last_updated_at</code></td></tr>
+      <tr><td><strong>4 — Upsert</strong></td><td>Single row upsert per user in <code>tbscan.thermal_baselines</code> — full JSONB replace</td><td><code>baseline</code> JSONB keyed by <code>granular_region_id</code> (<code>granular_anatomical_regions.granular_id</code>); each value contains <code>mean_delta_c</code>, <code>sd_delta_c</code>, <code>qualifying_scan_count</code>, <code>is_active</code></td></tr>
     </tbody>
   </table>
 
@@ -1657,19 +2074,40 @@
       <tr><th>Column</th><th>Type</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>baseline_id</code></td><td>UUID (PK)</td><td>Primary key</td></tr>
-      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user</td><td>Athlete this baseline belongs to</td></tr>
-      <tr><td><code>region_id</code></td><td>FK &rarr; granular_anatomical_regions</td><td>Muscle / region this row covers</td></tr>
-      <tr><td><code>mean_delta_c</code></td><td>numeric</td><td>Mean left-right temperature delta (&deg;C) across qualifying scans</td></tr>
-      <tr><td><code>sd_delta_c</code></td><td>numeric</td><td>Sample SD of left-right delta across qualifying scans</td></tr>
-      <tr><td><code>qualifying_scan_count</code></td><td>smallint</td><td>Number of qualifying scans contributing to this baseline</td></tr>
-      <tr><td><code>is_active</code></td><td>boolean</td><td>True when <code>qualifying_scan_count &ge; 6</code>; false while accumulating</td></tr>
-      <tr><td><code>last_updated_at</code></td><td>timestamptz</td><td>Timestamp of last nightly batch run for this row</td></tr>
+      <tr><td><code>user_id</code></td><td>PK, FK &rarr; auth_user</td><td>Athlete this baseline belongs to. One row per athlete.</td></tr>
+      <tr><td><code>baseline</code></td><td>JSONB</td><td>Per-region stats keyed by <code>granular_region_id</code> (<code>granular_anatomical_regions.granular_id</code>). Each entry: <code>{"mean_delta_c": 0.31, "sd_delta_c": 0.09, "qualifying_scan_count": 12, "is_active": true}</code>. Regions with fewer than 6 qualifying scans are present with <code>is_active: false</code>.</td></tr>
+      <tr><td><code>last_updated_at</code></td><td>timestamptz</td><td>Timestamp of last nightly batch run.</td></tr>
     </tbody>
   </table>
 
+  <div style="margin:0 0 28px;">
+    <p style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">thermal_baselines.baseline — JSONB schema</p>
+    <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">One key per region with at least one qualifying scan, keyed by <code>granular_region_id</code> (<code>granular_anatomical_regions.granular_id</code>). Written by the nightly batch; consumed by NURAI at inference time.</p>
+<pre style="margin:0;font-size:12px;line-height:1.7;color:#7dd3fc;">{
+  <span style="color:#a5f3fc;">"12"</span>: {                                        <span style="color:#6e7681;">// granular_region_id</span>
+    <span style="color:#a5f3fc;">"mean_delta_c"</span>:          <span style="color:#86efac;">0.31</span>,              <span style="color:#6e7681;">// arithmetic mean of qualifying left-right deltas (°C)</span>
+    <span style="color:#a5f3fc;">"sd_delta_c"</span>:            <span style="color:#86efac;">0.09</span>,              <span style="color:#6e7681;">// sample SD of those deltas</span>
+    <span style="color:#a5f3fc;">"qualifying_scan_count"</span>: <span style="color:#86efac;">12</span>,                <span style="color:#6e7681;">// n scans that passed all qualifying gates</span>
+    <span style="color:#a5f3fc;">"is_active"</span>:             <span style="color:#86efac;">true</span>               <span style="color:#6e7681;">// true when n ≥ 6; false = population fallback used</span>
+  },
+  <span style="color:#a5f3fc;">"7"</span>: {
+    <span style="color:#a5f3fc;">"mean_delta_c"</span>:          <span style="color:#86efac;">0.18</span>,
+    <span style="color:#a5f3fc;">"sd_delta_c"</span>:            <span style="color:#86efac;">0.06</span>,
+    <span style="color:#a5f3fc;">"qualifying_scan_count"</span>: <span style="color:#86efac;">8</span>,
+    <span style="color:#a5f3fc;">"is_active"</span>:             <span style="color:#86efac;">true</span>
+  },
+  <span style="color:#a5f3fc;">"15"</span>: {
+    <span style="color:#a5f3fc;">"mean_delta_c"</span>:          <span style="color:#86efac;">0.22</span>,
+    <span style="color:#a5f3fc;">"sd_delta_c"</span>:            <span style="color:#86efac;">0.11</span>,
+    <span style="color:#a5f3fc;">"qualifying_scan_count"</span>: <span style="color:#86efac;">4</span>,
+    <span style="color:#a5f3fc;">"is_active"</span>:             <span style="color:#86efac;">false</span>              <span style="color:#6e7681;">// n &lt; 6 — population fallback still applied for this region</span>
+  }
+  <span style="color:#6e7681;">/* ... one entry per region with ≥ 1 qualifying scan */</span>
+}</pre>
+  </div>
+
   <h4>At-Inference Lookup</h4>
-  <p style="font-size:14px;color:var(--text-muted);max-width:720px;">NURAI queries <code>tbscan.thermal_baselines WHERE is_active = true</code> for the user. Per scanned region: if an active baseline exists, apply the <strong>individual SD formula</strong> — <code>region_TAI_SD = (current_delta − mean_delta_c) / sd_delta_c</code>; otherwise apply the <strong>population fallback</strong> — <code>region_TAI_SD = current_delta_c / 0.27</code>. Then <code>TAI = max(all region_TAI_SD)</code> → <code>T = min(100, TAI / 3.0 × 100)</code>. Outputs are tagged <code>baseline_mode = 'individual_sd'</code> or <code>'population_fallback'</code>. Both scales share the same T&nbsp;=&nbsp;50 zone boundary (≈ 1.5 SD ≈ 0.4°C).</p>
+  <p style="font-size:14px;color:var(--text-muted);max-width:720px;">NURAI loads the single <code>tbscan.thermal_baselines</code> row for the user. Per scanned region: if the <code>granular_region_id</code> key exists in the <code>baseline</code> JSONB with <code>is_active = true</code>, apply the <strong>individual SD formula</strong> — <code>region_TAI_SD = (current_delta − mean_delta_c) / sd_delta_c</code>; otherwise apply the <strong>population fallback</strong> — <code>region_TAI_SD = current_delta_c / 0.27</code>. Then <code>TAI = max(all region_TAI_SD)</code> → <code>T = min(100, TAI / 3.0 × 100)</code>. Outputs are tagged <code>baseline_mode = 'individual_sd'</code> or <code>'population_fallback'</code>. Both scales share the same T&nbsp;=&nbsp;50 zone boundary (≈ 1.5 SD ≈ 0.4°C).</p>
 
   <div class="alert blue">
     <span class="alert-icon">&#8505;</span>
@@ -2160,7 +2598,8 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <tbody>
       <tr><td><code>/auth/</code></td><td><span class="badge badge-jwt">JWT / OTP</span></td><td>My NUR, NUR Teams</td><td>OTP request, OTP verify, token refresh, logout.</td></tr>
       <tr><td><code>/scan/</code></td><td><span class="badge badge-apikey">API Key</span> / <span class="badge badge-jwt">JWT</span></td><td>NUR Sensor, My NUR</td><td>Session creation, GCS upload URL issuance, session completion.</td></tr>
-      <tr><td><code>/results/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>COMPASS score retrieval, thermal measurements, readiness history.</td></tr>
+      <tr><td><code>/compass/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Flow B daily refresh (<code>/compass/refresh</code>) and eligibility check (<code>/compass/status</code>). Triggered by My NUR or NUR Teams — never by NUR Sensor.</td></tr>
+      <tr><td><code>/results/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>COMPASS score retrieval (reads from <code>daily_assessments</code> + <code>thermal_scans</code>), per-region measurements, readiness history.</td></tr>
       <tr><td><code>/wearables/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>OAuth connection management and metric sync for supported wearable platforms.</td></tr>
       <tr><td><code>/health/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Pain entry submission, health history updates, pre-scan questionnaire.</td></tr>
       <tr><td><code>/teams/</code></td><td><span class="badge badge-jwt">JWT</span> + <span class="badge badge-iam">IAM Roles</span></td><td>NUR Teams</td><td>Squad roster management, bulk readiness queries, coach assistant (GA).</td></tr>
@@ -2199,15 +2638,26 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     </tbody>
   </table>
 
+  <h4 class="endpoint-group">COMPASS Refresh</h4>
+  <table class="data-table">
+    <thead>
+      <tr><th>Method</th><th>Path</th><th>Auth</th><th>Consumer</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>POST</code></td><td><code>/compass/refresh</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Flow B daily refresh. Backend runs three gates (thermal scan age &le; 7 days, new wearable data available, not already computed today). If all pass, invokes NURAI <code>/infer/refresh</code>. <strong>Always returns latest <code>daily_assessments</code></strong> with a <code>refresh_status</code> field: <code>no_scan</code> / <code>stale_scan</code> / <code>cached</code> / <code>computed</code> / <code>inference_failed</code>. Body: <code>{ "user_id": "&lt;uuid&gt;", "force": false }</code>.</td></tr>
+      <tr><td><code>GET</code></td><td><code>/compass/status</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Lightweight eligibility check before calling <code>/compass/refresh</code>. Returns: <code>{ "latest_scan_age_days", "scan_eligible", "new_wearable_data", "today_computed", "last_daily_assessments" }</code>. No NURAI call made.</td></tr>
+    </tbody>
+  </table>
+
   <h4 class="endpoint-group">Results</h4>
   <table class="data-table">
     <thead>
       <tr><th>Method</th><th>Path</th><th>Auth</th><th>Consumer</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>GET</code></td><td><code>/results/latest</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Return the athlete's most recent COMPASS zone and score (0&ndash;100) with AI coach recommendations.</td></tr>
-      <tr><td><code>GET</code></td><td><code>/results/{session_id}</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Full COMPASS result for a specific session: zone, composite score, R score, TAI, per-region thermal measurements, and AI coach output.</td></tr>
-      <tr><td><code>GET</code></td><td><code>/results/history</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Paginated list of past scan sessions with summary scores. Query params: <code>limit</code>, <code>offset</code>, <code>from_date</code>, <code>to_date</code>.</td></tr>
+      <tr><td><code>GET</code></td><td><code>/results/latest</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Return the athlete's most recent <code>daily_assessments</code> record: COMPASS zone, score, AI coach response, trigger_type, and thermal scan date (so the app can display "based on scan from N days ago" when reusing).</td></tr>
+      <tr><td><code>GET</code></td><td><code>/results/{session_id}</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Full result for a specific session: reads <code>thermal_scans WHERE session_id = X</code> (per-region measurements, t_score, baseline_mode) joined to the corresponding <code>daily_assessments</code> row (COMPASS score, zone, AI coach output).</td></tr>
+      <tr><td><code>GET</code></td><td><code>/results/history</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Paginated list from <code>daily_assessments ORDER BY date DESC</code>. Each item includes <code>trigger_type</code>, <code>compass_zone</code>, <code>compass_score</code>, and <code>thermal_scan_generated_at</code> (so history clearly shows which days had a new scan vs. a wearable refresh). Query params: <code>limit</code>, <code>offset</code>, <code>from_date</code>, <code>to_date</code>.</td></tr>
     </tbody>
   </table>
 
@@ -2229,9 +2679,9 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><th>Method</th><th>Path</th><th>Auth</th><th>Consumer</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>POST</code></td><td><code>/health/pain</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Submit a pain entry. Body: <code>{ "region", "intensity" (0&ndash;10), "session_id" (optional) }</code>. Written to <code>pain_entries</code>; feeds AI Coach output only &mdash; does not affect R or T score.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/health/pain</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Submit a pain entry. Body: <code>{ "region", "intensity" (0&ndash;10), "recorded_at" (optional) }</code>. Written to <code>user_profile_history.pain_entries</code> (triggers new profile version insert). Feeds AI Coach output only &mdash; does not affect R or T score.</td></tr>
       <tr><td><code>GET</code></td><td><code>/health/history</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Return athlete health history: chronic conditions, past pain entries, pre-scan questionnaire responses.</td></tr>
-      <tr><td><code>PUT</code></td><td><code>/health/history</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Update athlete health profile: chronic conditions, injury history, baseline health flags. Writes to <code>users.health_history</code>.</td></tr>
+      <tr><td><code>PUT</code></td><td><code>/health/history</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Update member health profile: chronic conditions, injury history, activity level. Inserts a new versioned row into <code>tbscan.user_profile_history</code> (sets prior row <code>is_current = false</code>). Preserves full update history for AI Coach context.</td></tr>
     </tbody>
   </table>
 
