@@ -22,21 +22,21 @@ This is the most dangerous moment in sport: the athlete who appears ready but is
 
 ## How NUR Works
 
-NUR addresses this blind spot by fusing four independent signal classes into a single deterministic risk score:
+NUR addresses this blind spot by integrating four independent signal classes via the COMPASS framework — thermal imaging and wearable data driving the deterministic COMPASS score, with athlete demographics and health history enriching the personalised AI coaching layer:
 
 **1. Wearable Data (Body-Wide Recovery)**
 NUR pulls in the athlete's existing wearable data — sleep, heart rate, training load history — and uses it to assess their overall physical state. This tells us how the body as a whole is coping.
 
 **2. Thermal Scan (Tissue-Level Stress)**
-The athlete stands briefly in front of a NUR Sensor — a purpose-built thermal imaging device, similar to a smart mirror. The sensor captures the heat patterns on both sides of the body. Inflammation in a muscle or joint shows up as a temperature difference between the left and right side of the body. This asymmetry is the signal NUR uses to detect hidden tissue stress long before the athlete feels pain or shows visible symptoms.
+The athlete stands briefly in front of a NUR Sensor — a purpose-built thermal imaging device, deployed as a smart mirror or large-format tablet. The sensor captures the heat patterns on both sides of the body. Inflammation in a muscle or joint shows up as a temperature difference between the left and right side of the body. This asymmetry is the signal NUR uses to detect hidden tissue stress long before the athlete feels pain or shows visible symptoms.
 
 **3. Athlete Demographics**
-Age, sex, body composition, and positional profile all influence how an individual's thermal and physiological data should be interpreted. NUR accounts for these factors within the scoring model, avoiding one-size-fits-all conclusions.
+Age, sex, body composition, and positional profile all influence how an individual's thermal and physiological data should be interpreted. NUR accounts for these factors within the AI coaching layer, ensuring intervention plans are specific to each individual rather than one-size-fits-all.
 
 **4. Longitudinal Health History**
-Each athlete's previous injury episodes, rehabilitation history, and prior thermal patterns inform the current risk classification. An athlete with a prior hamstring strain is not assessed the same way as one with a clean record — and the system knows it.
+Each athlete's previous injury episodes and rehabilitation history inform NURAI's AI coaching layer. The athlete's longitudinal scan history also builds their individual thermal baseline — the reference that drives the COMPASS score. An athlete with a prior hamstring strain receives a different intervention plan and a different risk baseline than one with a clean record — and the system knows it.
 
-These four inputs are processed together to produce a single score — the COMPASS score — and place the athlete into one of four readiness zones.
+These inputs are processed by the COMPASS framework: thermal imaging and wearable data compute the deterministic COMPASS score and zone, while demographics and health history personalise the AI-generated intervention plan — all surfaced as a unified daily readiness assessment.
 
 ---
 
@@ -70,7 +70,7 @@ NUR addresses this with the same tools it uses for prevention.
 
 **How it works**
 
-When an athlete is confirmed injured, NUR shifts into monitoring mode. The thermal scan — which previously flagged hidden tissue stress — now tracks tissue healing. The same asymmetry that indicated risk before the injury now shows whether the injury site is recovering, plateauing, or being stressed by the current rehabilitation load. The wearable data continues to track how the athlete's body as a whole is coping with rehabilitation.
+When the clinical lead records an injury event in NUR, the platform activates monitoring mode and locks the athlete's pre-injury thermal baseline as the reference for all rehabilitation decisions. The thermal scan — which previously flagged hidden tissue stress — now tracks tissue healing. The same asymmetry that indicated risk before the injury now shows whether the injury site is recovering, plateauing, or being stressed by the current rehabilitation load. The wearable data continues to track how the athlete's body as a whole is coping with rehabilitation.
 
 Together, these two signals allow the clinical team to answer a question that has never had an objective answer before: is this athlete's tissue actually ready for the next increase in load?
 
@@ -82,6 +82,10 @@ NUR structures rehabilitation into four phases. An athlete does not progress fro
 - **Rehabilitation phase:** Progressive exercises begin. Each new exercise stimulus is followed by a scan. If thermal asymmetry at the injury site is declining, load can increase. If it is plateauing or rising, the current load is already at the ceiling of what the tissue can tolerate.
 - **Progressive loading phase:** Sport-specific movements reintroduced. Thermal asymmetry must be within the athlete's individual baseline range — not a population average, but their own pre-injury thermal norm — before higher intensities are permitted.
 - **Return to competition:** Clearance is not a single scan reading. It requires three consecutive scans showing thermal asymmetry within the athlete's baseline at progressive load. This confirmed trend — not a single pass — is the RTP gate.
+
+**RTP timeline estimator**
+
+NUR converts each athlete's thermal healing rate into a continuously-updated expected clearance date — recalculated on every scan. Rather than a generic time-based estimate ("hamstring grade II = 3–6 weeks"), the projection reflects how quickly this individual's tissue is actually recovering. Coaches and managers receive a data-backed planning window; clinical authority over the clearance decision remains with the physiotherapist.
 
 **Contralateral limb monitoring**
 
@@ -106,7 +110,7 @@ Each athlete has their own app on their phone. After a scan, they see their pers
 The physiotherapist or performance staff member who conducts the scan uses a dedicated app to guide the thermal imaging session. It takes only a few minutes. Images are automatically and securely sent for analysis — no manual uploads or data entry required.
 
 **For Coaches and Medical Staff — NUR Teams (Web Application)**
-The coaching and medical team views the full squad in one place. Every athlete's zone status is visible at a glance. High-risk athletes are flagged. The platform includes a natural language assistant — staff can type questions like "Which athletes are in Deceptive Readiness today?" and receive immediate answers. No spreadsheets, no manual collation.
+The coaching and medical team views the full squad in one place. Every athlete's zone status is visible at a glance. High-risk athletes are flagged. RTP rehabilitation tracking shows phase progression and clearance status per athlete. The platform includes a natural language assistant — staff can type questions like "Which athletes are in Deceptive Readiness today?" and receive immediate answers. No spreadsheets, no manual collation.
 
 ---
 
@@ -125,7 +129,7 @@ NURAI also generates a plain-language explanation for the athlete themselves, so
 Every sports technology platform on the market today monitors one or two dimensions of athlete readiness. NUR is architecturally distinct across four compounding dimensions — each a gap in the existing market, together forming a capability that cannot be replicated by adding a single feature to a single-modality platform.
 
 **1. Multimodal Injury Risk Modelling**
-NUR is the only platform that fuses four independent signal classes — thermal imaging, physiological wearables, athlete demographics, and longitudinal health history — into a single deterministic risk score. Competitors process one or two modalities in isolation, producing scores that are blind to the interactions between tissue stress, systemic fatigue, biological profile, and prior injury load.
+NUR is the only platform that integrates four independent signal classes — thermal imaging, physiological wearables, athlete demographics, and longitudinal health history — into a single unified assessment. Thermal and wearable data produce the deterministic COMPASS score; demographics and longitudinal history personalise the AI-generated intervention plan. Competitors process one or two modalities in isolation, missing the interactions between tissue stress, systemic fatigue, biological profile, and prior injury load.
 
 **2. Personalized Thermographic Baselines**
 Population-based thermal thresholds treat every athlete identically and produce high false-positive rates in naturally asymmetric individuals. NUR builds individual SD baselines from each athlete's longitudinal thermographic history, flagging deviations relative to their own normal — not a population mean. This is clinically superior for long-term monitoring and dramatically reduces alert fatigue in practice.

@@ -679,22 +679,30 @@
   <div class="nav-section">AI &amp; Intelligence</div>
   <a href="#s07"><span class="nav-num">07</span> AI / ML &amp; NURAI</a>
   <a href="#s07-flow-a" class="sub-link">7.1 Flow A — Full Pipeline</a>
+  <a href="#s07-score-examples" class="sub-link" style="padding-left:28px;">7.1.1 Score Fusion Examples</a>
   <a href="#s07-flow-b" class="sub-link">7.2 Flow B — Daily Refresh</a>
   <a href="#s07-baseline" class="sub-link">7.3 Baseline Update Module</a>
+  <a href="#s07-async-rtp" class="sub-link">7.4 Async Baseline + RTP</a>
 
   <div class="nav-section">Wearables</div>
   <a href="#s08"><span class="nav-num">08</span> Wearables Integration</a>
   <a href="#s08-4" class="sub-link">8.4 SPIKE Auth Flow</a>
   <a href="#s08-5" class="sub-link">8.5 Daily Pull &amp; Webhook Queue</a>
+  <a href="#s08-6" class="sub-link">8.6 On-Demand Spike Pull</a>
 
   <div class="nav-section">Components</div>
   <a href="#s-backend"><span class="nav-num">12</span> Backend Service</a>
   <a href="#s-mynur"><span class="nav-num">13</span> MY NUR</a>
   <a href="#s-sensor"><span class="nav-num">14</span> NUR Sensor</a>
+  <a href="#s14-3" class="sub-link">14.3 Anatomical Region Map</a>
   <a href="#s-teams"><span class="nav-num">15</span> NUR Teams</a>
+  <a href="#s-teams-screens" class="sub-link">15.4 Screens &amp; Flows</a>
 
   <div class="nav-section">Platform</div>
   <a href="#s09"><span class="nav-num">09</span> Notifications</a>
+
+  <div class="nav-section">Backend Modules</div>
+  <a href="#s10"><span class="nav-num">10</span> Alert Generation</a>
 </nav>
 
 <!-- ══════════════════════════════════════ MAIN ══════════════════════════════════════ -->
@@ -702,11 +710,11 @@
 
 <!-- Hero -->
 <div class="hero">
-  <div class="hero-badge">NUR Platform &middot; System Design &middot; BETA &middot; Confidential</div>
+  <div class="hero-badge">NUR Platform &middot; System Design &middot; BETA (incl. NUR Teams) &middot; Confidential</div>
   <h1>NUR Platform / <span>System Design</span><br>Document</h1>
   <p class="hero-sub">Architecture, component interactions, data lifecycle, authentication design, and key engineering decisions for the NUR platform at the BETA release milestone.</p>
   <div class="hero-meta">
-    <div class="hero-meta-item">&#128197; <strong>March 2026 &middot; BETA</strong></div>
+    <div class="hero-meta-item">&#128197; <strong>April 2026 &middot; BETA — NUR Teams included</strong></div>
   </div>
 </div>
 
@@ -723,6 +731,7 @@
     <li><div class="step-num">2</div><div><h4>COMPASS Scoring</h4><p>Compute thermal asymmetry metrics and COMPASS readiness scores via the NURAI inference service, combining thermographic signals with physiological recovery data into a single 0–100 zone classification.</p></div></li>
     <li><div class="step-num">3</div><div><h4>Wearables Integration</h4><p>Ingest recovery metrics from major wearable platforms to supply the systemic readiness axis of COMPASS, with a pull-queue architecture that degrades gracefully when wearable data is unavailable.</p></div></li>
     <li><div class="step-num">4</div><div><h4>Individual Readiness Insights</h4><p>Surface personalised readiness scores, scan history, trend visualisations, and AI coach recommendations to athletes through the My NUR mobile app.</p></div></li>
+    <li><div class="step-num">5</div><div><h4>Team-Level Intelligence</h4><p>Surface squad-level readiness analytics, thermal RTP monitoring, alert management, and clinical note authoring to coaching and clinical staff through the NUR Teams web portal.</p></div></li>
   </ul>
 
 </section>
@@ -765,6 +774,7 @@
    External:  FCM (push notifications)         Firebase RTDB (QR session push)
               Wearable APIs (data ingestion)
 </pre>
+  <p style="color:var(--text-dim);font-size:13px;margin-top:12px;max-width:860px;"><strong style="color:var(--text-muted);">Background Services (no client lane):</strong> Async Baseline + RTP Thread (spawned post-scan by Backend) &middot; Alert Generator (<code>POST /internal/cron/alert-generate</code>, Cloud Scheduler + event-driven) &middot; Daily Digest (<code>POST /internal/cron/daily-digest</code>, Cloud Scheduler 06:00 org TZ)</p>
 
 </section>
 
@@ -790,8 +800,8 @@
     <div class="card">
       <div class="card-icon">&#128421;</div>
       <h4>NUR Teams</h4>
-      <p>Web application for coaching staff providing squad-level analytics and a natural language coach assistant interface. Scoped to GA release &mdash; not included in BETA.</p>
-      <div class="card-tags"><span class="badge badge-ga">GA</span> <span class="badge badge-jwt">JWT</span> <a href="#s-teams" style="color:var(--accent);font-size:11px;font-weight:700;text-decoration:none;margin-left:4px;">See §15 →</a></div>
+      <p>Web application for coaching and clinical staff. Provides squad readiness monitoring, roster management, thermal RTP tracking, alert management, and clinical note authoring. Admin accounts only. Promoted to BETA release.</p>
+      <div class="card-tags"><span class="badge badge-beta">BETA</span> <span class="badge badge-jwt">JWT</span> <a href="#s-teams" style="color:var(--accent);font-size:11px;font-weight:700;text-decoration:none;margin-left:4px;">See §15 →</a></div>
     </div>
     <div class="card">
       <div class="card-icon">&#9881;</div>
@@ -1161,7 +1171,7 @@
       </div>
       <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:14px;">
         <code style="color:var(--danger);font-size:12px;text-decoration:line-through;">tbscan.thermal_measurements</code>
-        <p style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5;">Relational per-region measurement rows (one row per region per scan). Collapsed into <strong style="color:var(--text);">thermal_scans.measurements</strong> JSONB. All cross-scan per-region queries are handled by <code>thermal_baselines</code> (standalone pre-computed table).</p>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5;">Relational per-region measurement rows (one row per region per scan). Collapsed into <strong style="color:var(--text);">thermal_scans.measurements</strong> JSONB. Baseline stats (<code>baseline_mean_delta</code>, <code>baseline_sd</code>, <code>eligible_scan_count</code>, <code>baseline_mode</code>) are stored inline per region in the same JSONB, making each scan row self-contained and auditable without a separate lookup.</p>
       </div>
       <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:14px;">
         <code style="color:var(--danger);font-size:12px;text-decoration:line-through;">tbscan.pain_entries</code>
@@ -1198,13 +1208,13 @@
     <span style="display:inline-flex;align-items:center;gap:5px;margin-right:16px;"><span style="display:inline-block;width:12px;height:2px;background:#f59e0b;border-radius:1px;"></span><span style="font-size:11px;background:rgba(245,158,11,0.15);color:#f59e0b;padding:1px 5px;border-radius:3px;font-weight:700;">PK</span> Primary key</span>
     <span style="display:inline-flex;align-items:center;gap:5px;"><span style="font-size:11px;background:rgba(96,165,250,0.15);color:#60a5fa;padding:1px 5px;border-radius:3px;font-weight:700;">FK</span> Foreign key &nbsp;<span style="font-size:11px;background:rgba(147,197,253,0.12);color:#93c5fd;padding:1px 5px;border-radius:3px;font-weight:700;">FK?</span> Nullable FK</span>
   </p>
-  <svg viewBox="0 0 1060 555" width="100%" style="max-width:1060px;margin:8px 0 28px;display:block;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
+  <svg viewBox="0 0 1060 1040" width="100%" style="max-width:1060px;margin:8px 0 28px;display:block;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
     <defs>
       <marker id="erd-c" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6,3.5z" fill="#00c8ff"/></marker>
       <marker id="erd-g" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6,3.5z" fill="#4ade80"/></marker>
       <marker id="erd-p" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6,3.5z" fill="#a78bfa"/></marker>
     </defs>
-    <rect width="1060" height="555" rx="12" fill="#161b22"/>
+    <rect width="1060" height="1040" rx="12" fill="#161b22"/>
 
     <!-- ── Layer band annotations ── -->
     <text x="22" y="103" font-size="8.5" fill="#4ade80" opacity="0.55" letter-spacing="0.5">LAYER 1</text>
@@ -1334,22 +1344,6 @@
     <text x="225" y="468" text-anchor="end" font-size="9" fill="#4b5563">boolean</text>
     <text x="20" y="488" text-anchor="start" font-size="8.5" fill="#00c8ff" opacity="0.55">versioned · append-only</text>
 
-    <!-- ══ thermal_baselines (NEW) ══ -->
-    <rect x="262" y="355" width="230" height="108" rx="7" fill="#0e1e2a" stroke="#00c8ff" stroke-width="1.5"/>
-    <rect x="262" y="355" width="230" height="27" rx="7" fill="rgba(0,200,255,0.10)"/>
-    <rect x="262" y="370" width="230" height="12" fill="rgba(0,200,255,0.10)"/>
-    <text x="270" y="373" font-size="10" font-weight="700" fill="#00c8ff">thermal_baselines</text>
-    <rect x="432" y="360" width="30" height="13" rx="3" fill="rgba(0,200,255,0.18)" stroke="rgba(0,200,255,0.4)" stroke-width="0.5"/>
-    <text x="447" y="370" text-anchor="middle" font-size="7.5" fill="#00c8ff" font-weight="700">NEW</text>
-    <line x1="262" y1="382" x2="492" y2="382" stroke="#1d3444" stroke-width="1"/>
-    <text x="270" y="396"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="8" fill="#60a5fa" font-weight="700" dx="3">FK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">user_id</tspan></text>
-    <text x="490" y="396" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
-    <text x="278" y="414" font-size="9.5" fill="#c9d1d9">baseline</text>
-    <text x="490" y="414" text-anchor="end" font-size="9" fill="#4b5563">JSONB</text>
-    <text x="278" y="432" font-size="9.5" fill="#8b949e">last_updated_at</text>
-    <text x="490" y="432" text-anchor="end" font-size="9" fill="#4b5563">timestamptz</text>
-    <text x="270" y="452" text-anchor="start" font-size="8.5" fill="#00c8ff" opacity="0.55">one row per user · JSONB regions · nightly batch</text>
-
     <!-- ══ Connection Arrows ══ -->
 
     <!-- auth_user → sessions (dashed green) -->
@@ -1375,11 +1369,176 @@
     <line x1="792" y1="194" x2="842" y2="194" stroke="#a78bfa" stroke-width="1.5" fill="none" stroke-dasharray="5,2" marker-end="url(#erd-p)"/>
     <text x="817" y="188" text-anchor="middle" font-size="8" fill="#a78bfa">nullable</text>
 
-    <!-- thermal_scans bottom → thermal_baselines top (dashed, updates Flow A) -->
-    <line x1="377" y1="292" x2="377" y2="355" stroke="#00c8ff" stroke-width="1.2" stroke-dasharray="4,2" marker-end="url(#erd-c)"/>
-    <rect x="382" y="313" width="72" height="24" rx="3" fill="#161b22"/>
-    <text x="418" y="323" text-anchor="middle" font-size="8.5" fill="#6e7681">updates</text>
-    <text x="418" y="333" text-anchor="middle" font-size="7.5" fill="#6e7681">Flow A only</text>
+    <!-- ══ Section divider: new tables below ══ -->
+    <line x1="12" y1="510" x2="1048" y2="510" stroke="#21262d" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="22" y="508" font-size="8.5" fill="#4ade80" opacity="0.55" letter-spacing="0.5">ORG MANAGEMENT</text>
+    <text x="557" y="508" font-size="8.5" fill="#a78bfa" opacity="0.55" letter-spacing="0.5">WEARABLE</text>
+
+    <!-- ══ orgs (retained + merged settings) ══ -->
+    <rect x="12" y="520" width="225" height="144" rx="7" fill="#1a2618" stroke="#4ade80" stroke-width="1.5"/>
+    <rect x="12" y="520" width="225" height="27" rx="7" fill="rgba(74,222,128,0.10)"/>
+    <rect x="12" y="535" width="225" height="12" fill="rgba(74,222,128,0.10)"/>
+    <text x="20" y="538" font-size="10.5" font-weight="700" fill="#4ade80">tbscan.orgs</text>
+    <line x1="12" y1="547" x2="237" y2="547" stroke="#2d3741" stroke-width="1"/>
+    <text x="20" y="561"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">org_id</tspan></text>
+    <text x="235" y="561" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="28" y="579" font-size="9.5" fill="#8b949e">name</text>
+    <text x="235" y="579" text-anchor="end" font-size="9" fill="#4b5563">varchar(120)</text>
+    <text x="28" y="597" font-size="9.5" fill="#8b949e">slug</text>
+    <text x="235" y="597" text-anchor="end" font-size="9" fill="#4b5563">varchar(60)</text>
+    <text x="28" y="615" font-size="9.5" fill="#8b949e">timezone</text>
+    <text x="235" y="615" text-anchor="end" font-size="9" fill="#4b5563">varchar(60)</text>
+    <text x="28" y="633" font-size="9.5" fill="#8b949e">scan_frequency_days</text>
+    <text x="235" y="633" text-anchor="end" font-size="9" fill="#4b5563">integer</text>
+    <text x="28" y="651" font-size="9.5" fill="#8b949e">created_at</text>
+    <text x="235" y="651" text-anchor="end" font-size="9" fill="#4b5563">timestamptz</text>
+
+    <!-- ══ org_members (NEW) ══ -->
+    <rect x="257" y="520" width="270" height="144" rx="7" fill="#0e1e2a" stroke="#00c8ff" stroke-width="1.5"/>
+    <rect x="257" y="520" width="270" height="27" rx="7" fill="rgba(0,200,255,0.12)"/>
+    <rect x="257" y="535" width="270" height="12" fill="rgba(0,200,255,0.12)"/>
+    <text x="265" y="538" font-size="10.5" font-weight="700" fill="#00c8ff">tbscan.org_members</text>
+    <rect x="475" y="525" width="30" height="13" rx="3" fill="rgba(0,200,255,0.18)" stroke="rgba(0,200,255,0.4)" stroke-width="0.5"/>
+    <text x="490" y="535" text-anchor="middle" font-size="7.5" fill="#00c8ff" font-weight="700">NEW</text>
+    <line x1="257" y1="547" x2="527" y2="547" stroke="#1d3444" stroke-width="1"/>
+    <text x="265" y="561"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">member_id</tspan></text>
+    <text x="525" y="561" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="265" y="579"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">org_id</tspan></text>
+    <text x="525" y="579" text-anchor="end" font-size="9" fill="#4b5563">orgs</text>
+    <text x="265" y="597"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">user_id</tspan></text>
+    <text x="525" y="597" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="273" y="615" font-size="9.5" fill="#8b949e">role</text>
+    <text x="525" y="615" text-anchor="end" font-size="9" fill="#4b5563">varchar(30)</text>
+    <text x="273" y="633" font-size="9.5" fill="#8b949e">account_type</text>
+    <text x="525" y="633" text-anchor="end" font-size="9" fill="#4b5563">admin · regular</text>
+    <text x="273" y="651" font-size="9.5" fill="#8b949e">joined_at</text>
+    <text x="525" y="651" text-anchor="end" font-size="9" fill="#4b5563">timestamptz</text>
+
+    <!-- ══ wearable_connections (NEW) ══ -->
+    <rect x="547" y="520" width="255" height="126" rx="7" fill="#1a1528" stroke="#a78bfa" stroke-width="1.5"/>
+    <rect x="547" y="520" width="255" height="27" rx="7" fill="rgba(167,139,250,0.10)"/>
+    <rect x="547" y="535" width="255" height="12" fill="rgba(167,139,250,0.10)"/>
+    <text x="555" y="538" font-size="10.5" font-weight="700" fill="#a78bfa">wearable_connections</text>
+    <rect x="740" y="525" width="30" height="13" rx="3" fill="rgba(167,139,250,0.18)" stroke="rgba(167,139,250,0.4)" stroke-width="0.5"/>
+    <text x="755" y="535" text-anchor="middle" font-size="7.5" fill="#a78bfa" font-weight="700">NEW</text>
+    <line x1="547" y1="547" x2="802" y2="547" stroke="#2a2040" stroke-width="1"/>
+    <text x="555" y="561"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">connection_id</tspan></text>
+    <text x="800" y="561" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="555" y="579"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">user_id</tspan></text>
+    <text x="800" y="579" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="563" y="597" font-size="9.5" fill="#8b949e">provider</text>
+    <text x="800" y="597" text-anchor="end" font-size="9" fill="#4b5563">varchar(40)</text>
+    <text x="563" y="615" font-size="9.5" fill="#8b949e">status</text>
+    <text x="800" y="615" text-anchor="end" font-size="9" fill="#4b5563">varchar(20)</text>
+    <text x="563" y="633" font-size="9.5" fill="#8b949e">last_synced_at</text>
+    <text x="800" y="633" text-anchor="end" font-size="9" fill="#4b5563">timestamptz</text>
+
+    <!-- ══ Section divider: clinical + rtp workflow ══ -->
+    <line x1="12" y1="660" x2="1048" y2="660" stroke="#21262d" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="22" y="658" font-size="8.5" fill="#00c8ff" opacity="0.55" letter-spacing="0.5">CLINICAL MANAGEMENT</text>
+    <text x="565" y="658" font-size="8.5" fill="#00c8ff" opacity="0.55" letter-spacing="0.5">RTP WORKFLOW</text>
+
+    <!-- ══ alerts (NEW) ══ -->
+    <rect x="12" y="672" width="260" height="162" rx="7" fill="#0e1e2a" stroke="#00c8ff" stroke-width="1.5"/>
+    <rect x="12" y="672" width="260" height="27" rx="7" fill="rgba(0,200,255,0.12)"/>
+    <rect x="12" y="687" width="260" height="12" fill="rgba(0,200,255,0.12)"/>
+    <text x="20" y="690" font-size="10.5" font-weight="700" fill="#00c8ff">tbscan.alerts</text>
+    <rect x="228" y="677" width="30" height="13" rx="3" fill="rgba(0,200,255,0.18)" stroke="rgba(0,200,255,0.4)" stroke-width="0.5"/>
+    <text x="243" y="687" text-anchor="middle" font-size="7.5" fill="#00c8ff" font-weight="700">NEW</text>
+    <line x1="12" y1="699" x2="272" y2="699" stroke="#1d3444" stroke-width="1"/>
+    <text x="20" y="713"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">alert_id</tspan></text>
+    <text x="270" y="713" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="20" y="731"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">org_id</tspan></text>
+    <text x="270" y="731" text-anchor="end" font-size="9" fill="#4b5563">orgs</text>
+    <text x="20" y="749"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">user_id</tspan></text>
+    <text x="270" y="749" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="28" y="767" font-size="9.5" fill="#8b949e">alert_type</text>
+    <text x="270" y="767" text-anchor="end" font-size="9" fill="#4b5563">varchar(30)</text>
+    <text x="28" y="785" font-size="9.5" fill="#8b949e">metadata</text>
+    <text x="270" y="785" text-anchor="end" font-size="9" fill="#4b5563">JSONB</text>
+    <text x="28" y="803" font-size="9.5" fill="#8b949e">is_read</text>
+    <text x="270" y="803" text-anchor="end" font-size="9" fill="#4b5563">boolean</text>
+    <text x="28" y="821" font-size="9.5" fill="#8b949e">created_at</text>
+    <text x="270" y="821" text-anchor="end" font-size="9" fill="#4b5563">timestamptz</text>
+
+    <!-- ══ clinical_notes (NEW) ══ -->
+    <rect x="292" y="672" width="245" height="144" rx="7" fill="#0e1e2a" stroke="#00c8ff" stroke-width="1.5"/>
+    <rect x="292" y="672" width="245" height="27" rx="7" fill="rgba(0,200,255,0.12)"/>
+    <rect x="292" y="687" width="245" height="12" fill="rgba(0,200,255,0.12)"/>
+    <text x="300" y="690" font-size="10.5" font-weight="700" fill="#00c8ff">tbscan.clinical_notes</text>
+    <rect x="493" y="677" width="30" height="13" rx="3" fill="rgba(0,200,255,0.18)" stroke="rgba(0,200,255,0.4)" stroke-width="0.5"/>
+    <text x="508" y="687" text-anchor="middle" font-size="7.5" fill="#00c8ff" font-weight="700">NEW</text>
+    <line x1="292" y1="699" x2="537" y2="699" stroke="#1d3444" stroke-width="1"/>
+    <text x="300" y="713"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">note_id</tspan></text>
+    <text x="535" y="713" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="300" y="731"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">athlete_id</tspan></text>
+    <text x="535" y="731" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="300" y="749"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">author_id</tspan></text>
+    <text x="535" y="749" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="308" y="767" font-size="9.5" fill="#8b949e">note_type</text>
+    <text x="535" y="767" text-anchor="end" font-size="9" fill="#4b5563">varchar(40)</text>
+    <text x="308" y="785" font-size="9.5" fill="#8b949e">body</text>
+    <text x="535" y="785" text-anchor="end" font-size="9" fill="#4b5563">text</text>
+    <text x="308" y="803" font-size="9.5" fill="#8b949e">created_at</text>
+    <text x="535" y="803" text-anchor="end" font-size="9" fill="#4b5563">timestamptz</text>
+
+    <!-- ══ rtp_workflows (NEW, primary) ══ -->
+    <rect x="557" y="672" width="280" height="198" rx="7" fill="#0e1e2a" stroke="#00c8ff" stroke-width="2"/>
+    <rect x="557" y="672" width="280" height="27" rx="7" fill="rgba(0,200,255,0.12)"/>
+    <rect x="557" y="687" width="280" height="12" fill="rgba(0,200,255,0.12)"/>
+    <text x="565" y="690" font-size="10.5" font-weight="700" fill="#00c8ff">tbscan.rtp_workflows</text>
+    <rect x="793" y="677" width="30" height="13" rx="3" fill="rgba(0,200,255,0.18)" stroke="rgba(0,200,255,0.4)" stroke-width="0.5"/>
+    <text x="808" y="687" text-anchor="middle" font-size="7.5" fill="#00c8ff" font-weight="700">NEW</text>
+    <line x1="557" y1="699" x2="837" y2="699" stroke="#1d3444" stroke-width="1"/>
+    <text x="565" y="713"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">workflow_id</tspan></text>
+    <text x="835" y="713" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="565" y="731"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">athlete_id</tspan></text>
+    <text x="835" y="731" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="565" y="749"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">org_id</tspan></text>
+    <text x="835" y="749" text-anchor="end" font-size="9" fill="#4b5563">orgs</text>
+    <text x="565" y="767"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">initiated_by</tspan></text>
+    <text x="835" y="767" text-anchor="end" font-size="9" fill="#4b5563">auth_user</text>
+    <text x="565" y="785"><tspan font-size="8" fill="#93c5fd" font-weight="700">FK?</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="4">cleared_by</tspan></text>
+    <text x="835" y="785" text-anchor="end" font-size="9" fill="#4b5563">auth_user · null</text>
+    <text x="573" y="803" font-size="9.5" fill="#8b949e">injuries</text>
+    <text x="835" y="803" text-anchor="end" font-size="9" fill="#4b5563">JSONB</text>
+    <text x="573" y="821" font-size="9.5" fill="#8b949e">manual_clear</text>
+    <text x="835" y="821" text-anchor="end" font-size="9" fill="#4b5563">boolean</text>
+    <text x="573" y="839" font-size="9.5" fill="#8b949e">is_active</text>
+    <text x="835" y="839" text-anchor="end" font-size="9" fill="#4b5563">boolean</text>
+
+    <!-- ══ Section divider: rtp interventions ══ -->
+    <line x1="557" y1="884" x2="1048" y2="884" stroke="#21262d" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="565" y="882" font-size="8.5" fill="#00c8ff" opacity="0.55" letter-spacing="0.5">RTP INTERVENTIONS</text>
+
+    <!-- ══ rtp_interventions (NEW) ══ -->
+    <rect x="557" y="896" width="280" height="162" rx="7" fill="#0e1e2a" stroke="#00c8ff" stroke-width="1.5"/>
+    <rect x="557" y="896" width="280" height="27" rx="7" fill="rgba(0,200,255,0.12)"/>
+    <rect x="557" y="911" width="280" height="12" fill="rgba(0,200,255,0.12)"/>
+    <text x="565" y="914" font-size="10.5" font-weight="700" fill="#00c8ff">tbscan.rtp_interventions</text>
+    <rect x="793" y="901" width="30" height="13" rx="3" fill="rgba(0,200,255,0.18)" stroke="rgba(0,200,255,0.4)" stroke-width="0.5"/>
+    <text x="808" y="911" text-anchor="middle" font-size="7.5" fill="#00c8ff" font-weight="700">NEW</text>
+    <line x1="557" y1="923" x2="837" y2="923" stroke="#1d3444" stroke-width="1"/>
+    <text x="565" y="937"><tspan font-size="8" fill="#f59e0b" font-weight="700">PK</tspan><tspan font-size="9.5" fill="#e6edf3" dx="5">intervention_id</tspan></text>
+    <text x="835" y="937" text-anchor="end" font-size="9" fill="#4b5563">uuid</text>
+    <text x="565" y="955"><tspan font-size="8" fill="#60a5fa" font-weight="700">FK</tspan><tspan font-size="9.5" fill="#c9d1d9" dx="5">workflow_id</tspan></text>
+    <text x="835" y="955" text-anchor="end" font-size="9" fill="#4b5563">rtp_workflows</text>
+    <text x="573" y="973" font-size="9.5" fill="#8b949e">intervention_type</text>
+    <text x="835" y="973" text-anchor="end" font-size="9" fill="#4b5563">varchar(40)</text>
+    <text x="573" y="991" font-size="9.5" fill="#8b949e">session_date</text>
+    <text x="835" y="991" text-anchor="end" font-size="9" fill="#4b5563">date</text>
+    <text x="573" y="1009" font-size="9.5" fill="#8b949e">provider</text>
+    <text x="835" y="1009" text-anchor="end" font-size="9" fill="#4b5563">varchar(100)</text>
+    <text x="573" y="1027" font-size="9.5" fill="#8b949e">duration_mins</text>
+    <text x="835" y="1027" text-anchor="end" font-size="9" fill="#4b5563">integer</text>
+
+    <!-- ══ New Connection Arrows ══ -->
+
+    <!-- rtp_workflows → rtp_interventions (solid cyan, 1:N) -->
+    <line x1="697" y1="870" x2="697" y2="896" stroke="#00c8ff" stroke-width="1.5" marker-end="url(#erd-c)"/>
+    <rect x="702" y="876" width="28" height="14" rx="3" fill="#161b22"/>
+    <text x="716" y="887" text-anchor="middle" font-size="8" fill="#00c8ff" font-weight="700">1 : N</text>
+
   </svg>
 
   <h4 style="margin-top:28px;">New Tables (BETA)</h4>
@@ -1394,17 +1553,29 @@
       <tr><td><code>user_id</code></td><td>FK &rarr; auth_user</td><td>Denormalized from sessions for efficient gate queries (Flow B freshness check).</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Thermal Inference Outputs</td></tr>
       <tr><td><code>t_score</code></td><td>numeric(5,2), nullable</td><td>Normalised Thermal Asymmetry Score (0–100). NULL if inference failed.</td></tr>
-      <tr><td><code>measurements</code></td><td>JSONB, nullable</td><td>Per-region thermal data. Structure: <code>{"12": {"temp_left": 36.2, "temp_right": 35.8, "delta": 0.4, "affected_side": "left"}, ...}</code> — keyed by <code>granular_region_id</code> (<code>granular_anatomical_regions.granular_id</code>). Replaces both <code>asymmetry_scores</code> and the old <code>thermal_measurements</code> table.</td></tr>
+      <tr><td><code>measurements</code></td><td>JSONB, nullable</td><td>Per-region thermal measurements. Each key is a granular_region_id string.<br><br>
+        <strong>Synchronous fields</strong> (written by NURAI Module 1): temp_left, temp_right, delta, affected_side, severity_level.<br><br>
+        <strong>Async fields</strong> (written by Baseline + RTP thread): baseline_mean_delta, baseline_sd, eligible_scan_count, baseline_mode, rtp_clear.<br><br>
+        <code>eligible_scan_count</code> — number of qualifying historical scans used to compute this region's baseline. Each region accumulates its own count independently; a region with ≥ 6 eligible scans uses individual SD mode automatically while regions below that threshold remain on population fallback — no global switch, no manual intervention.<br><br>
+        <code>baseline_mode</code> (per-region) — <code>individual_sd</code> when eligible_scan_count ≥ 6 for this region; <code>population_fallback</code> otherwise. Stored inline so Module 2 reads the mode directly from the JSONB without re-evaluating the count at inference time.<br><br>
+        severity_level thresholds (bilateral delta °C): clear &lt; 0.3 · mild 0.3–0.5 · moderate 0.5–0.8 · elevated ≥ 0.8<br><br>
+        rtp_clear values: "N/A" (eligible_scan_count &lt; 2) · "YES" (region side ≠ affected_side — healthy contralateral, auto-clears) · "YES" (region side = affected_side AND severity_level was mild or clear for last 2 consecutive scans) · "NO" (affected side with ≥1 moderate/elevated reading in last 2 scans)<br><br>
+        Example: <code>{"12": {"temp_left": 36.2, "temp_right": 35.8, "delta": 0.4, "affected_side": "left", "severity_level": "mild", "baseline_mean_delta": 0.31, "baseline_sd": 0.08, "eligible_scan_count": 8, "baseline_mode": "individual_sd", "rtp_clear": "NO"}}</code></td></tr>
       <tr><td><code>detected_anatomical_ids</code></td><td>JSONB, nullable</td><td>List of anatomical region IDs the AI successfully detected in the thermogram.</td></tr>
       <tr><td><code>has_skin_mask</code></td><td>boolean, default false</td><td>Whether a skin segmentation mask was produced during inference.</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Baseline &amp; Validity</td></tr>
-      <tr><td><code>baseline_mode</code></td><td>varchar(30)</td><td><code>individual_sd</code> — athlete's own historical baseline used; <code>population_fallback</code> — population threshold applied.</td></tr>
+      <tr><td><code>baseline_mode</code></td><td>varchar(30)</td><td>Scan-level summary of per-region baseline modes. <code>individual_sd</code> — all detected regions use the individual SD formula; <code>population_fallback</code> — all regions use population threshold; <code>mixed</code> — some regions have sufficient history for individual SD while others remain on population fallback. Derived by the async thread from the per-region <code>baseline_mode</code> fields in <code>measurements</code> JSONB. Useful for quick scan-level filtering without JSONB inspection.</td></tr>
       <tr><td><code>is_valid</code></td><td>boolean, default true</td><td>Set to false if the scan is retrospectively invalidated (e.g. avoidance_flags trigger disqualification). Excluded from Flow B gate and baseline batch.</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Audit</td></tr>
       <tr><td><code>generated_at</code></td><td>timestamptz</td><td>When NURAI completed thermal inference for this scan.</td></tr>
+      <tr><td><code>segmentation_algorithm_version</code></td><td>varchar(20), NOT NULL</td><td>Version of the skin segmentation and thermal ROI extraction algorithm used in Module 1 (e.g. <code>v1</code>, <code>v2.0</code>). Written by the NURAI Cloud Run service at inference time. Allows scans produced by a specific CV pipeline version to be identified for reprocessing if the segmentation model is updated or rolled back.</td></tr>
+      <tr><td><code>metric_fusion_algorithm_version</code></td><td>varchar(20), NOT NULL</td><td>Version of the COMPASS score fusion formula applied in Module 2 (zone classification, R/T weighting, score computation) (e.g. <code>v1</code>, <code>v1.1</code>). Written by the NURAI Cloud Run service at inference time. Enables targeted re-scoring when weighting schemes or zone boundaries change — rows can be filtered by this version without re-running the thermal pipeline.</td></tr>
+      <tr><td><code>reasoning_model_version</code></td><td>varchar(20), NOT NULL</td><td>Version of the GenAI reasoning model used in Module 3 to produce zone rationale, intervention plans, and coach narratives (e.g. <code>v1</code>, <code>v2.1</code>). Written by the NURAI Cloud Run service at inference time. Enables per-scan audit trails, A/B analysis across model versions, and rollback: scans are queryable by the model that generated their <code>ai_coach_response</code> without re-processing thermal data.</td></tr>
+      <tr><td><code>rtp_regions_pending</code></td><td>smallint, nullable</td><td><code>NULL</code> = async Baseline + RTP thread not yet complete. <code>0</code> = all regions thermally cleared (eligible for staff review). <code>&gt;0</code> = count of regions where rtp_clear = "NO". Enables fast RTP Hub queries without JSONB scanning. A value of <code>0</code> combined with <code>compass_zone = 'safe'</code> on the latest <code>daily_assessments</code> surfaces the "Ready to Clear" prompt in NUR Teams — staff must still explicitly approve.</td></tr>
+      <tr><td><code>baseline_computed_at</code></td><td>timestamptz, nullable</td><td>Timestamp when the async Baseline + RTP thread last updated this scan row. <code>NULL</code> = computation pending.</td></tr>
     </tbody>
   </table>
-  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 12px;">Indexes: <code>idx_ts_session_id</code> (UNIQUE), <code>idx_ts_user_generated (user_id, generated_at DESC)</code>, <code>idx_ts_user_valid (user_id, generated_at DESC) WHERE is_valid = true</code> — hot path for Flow B gate check.</p>
+  <p style="font-size:12px;color:var(--text-dim);margin:8px 0 12px;">Indexes: <code>idx_ts_session_id</code> (UNIQUE), <code>idx_ts_user_generated (user_id, generated_at DESC)</code>, <code>idx_ts_user_valid (user_id, generated_at DESC) WHERE is_valid = true</code> — hot path for Flow B gate check · <code>idx_ts_segmentation_version (segmentation_algorithm_version, generated_at DESC)</code> · <code>idx_ts_fusion_version (metric_fusion_algorithm_version, generated_at DESC)</code> · <code>idx_ts_reasoning_version (reasoning_model_version, generated_at DESC)</code> — all three support version-filtered audit, A/B queries, and targeted reprocessing pipelines.</p>
 
   <div style="margin:0 0 28px;">
     <p style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">thermal_scans.measurements — JSONB schema</p>
@@ -1430,7 +1601,7 @@
   }
   <span style="color:#6e7681;">/* ... one entry per detected region */</span>
 }</pre>
-    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;">NURAI updates <code>thermal_baselines</code> incrementally after each Flow A scan using the <code>delta</code> values from this field. The <code>affected_side</code> field is computed by NURAI during inference (hotter side = affected).</p>
+    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;">The async Baseline + RTP Thread (§7.4) patches this JSONB after each Flow A scan with <code>baseline_mean_delta</code>, <code>baseline_sd</code>, <code>eligible_scan_count</code>, <code>baseline_mode</code>, and <code>rtp_clear</code> per region — each region computed independently from its own eligible scan history. The <code>affected_side</code> field is computed by NURAI during inference (hotter side = affected).</p>
   </div>
 
   <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.daily_assessments</code><span style="font-size:13px;color:var(--text-muted);"> — Layer 3: one authoritative COMPASS computation record per athlete per calendar date. Ties together the thermal scan used, the wearable record used, and the COMPASS outputs.</span></p>
@@ -1450,7 +1621,10 @@
       <tr><td><code>ai_coach_response</code></td><td>JSONB, nullable</td><td>Full structured AI Coach output: zone rationale, intervention plan, reassessment triggers, coach narrative.</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Pipeline Context</td></tr>
       <tr><td><code>profile_id</code></td><td>FK &rarr; user_profile_history, NOT NULL</td><td>The profile version active at computation time. Captures which pain entries, activity level, and health history the AI Coach used as context — enables exact replay of any assessment.</td></tr>
-      <tr><td><code>trigger_type</code></td><td>varchar(30), NOT NULL</td><td><code>new_thermal_scan</code> — triggered by NUR Sensor scan submission (Flow A); <code>wearable_refresh</code> — triggered by My NUR or NUR Teams daily refresh (Flow B).</td></tr>
+      <tr><td><code>trigger_type</code></td><td>varchar(30), NOT NULL</td><td>Enum — three valid values:<br><br>
+        <code>new_thermal_scan</code> — athlete-initiated scan via QR code (Flow A, individual mode). Set when NUR Sensor calls <code>POST /scan/sessions/complete</code> and NURAI <code>POST /infer</code> succeeds.<br><br>
+        <code>admin_scan</code> — operator-initiated scan via NUR Teams admin member-selection flow (Flow A, admin mode). Same NURAI pipeline as <code>new_thermal_scan</code>; <code>done_by</code> is always non-NULL when this value is set.<br><br>
+        <code>wearable_refresh</code> — wearable-only daily refresh triggered by My NUR or NUR Teams calling <code>POST /compass/refresh</code> (Flow B). No new thermogram — reuses the latest valid thermal scan within the 7-day window.</td></tr>
       <tr><td><code>done_by</code></td><td>FK &rarr; auth_user, nullable</td><td>Operator/coach user_id for admin-initiated computations. NULL for self-initiated or automated.</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Audit</td></tr>
       <tr><td><code>computed_at</code></td><td>timestamptz, NOT NULL</td><td>When NURAI completed this computation.</td></tr>
@@ -1492,7 +1666,7 @@
 
   <span style="color:#a5f3fc;">"generated_at"</span>: <span style="color:#fde68a;">"2026-04-05T08:30:00Z"</span>
 }</pre>
-    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;"><code>zone_rationale</code>, <code>coach_narrative</code>, and <code>intervention_plan</code> are the primary consumer-facing fields. <code>reassessment</code> drives next-scan cadence recommendations shown in My NUR.</p>
+    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;"><code>zone_rationale</code>, <code>coach_narrative</code>, and <code>intervention_plan</code> are the primary consumer-facing fields. <code>reassessment</code> drives next-scan cadence recommendations shown in My NUR. NURAI may return <code>protocol</code> (string) or <code>items</code> (array of strings) per phase. NUR Teams renders both. Example: <code>"phase_1": {"label": "Acute (Days 1–3)", "items": ["Cold therapy 15min", "Restrict hip flexion load"]}</code></p>
   </div>
 
   <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.user_profile_history</code><span style="font-size:13px;color:var(--text-muted);"> — versioned history of mutable member profile state. Append-only; <code>is_current = true</code> marks the active row. Replaces standalone <code>pain_entries</code> table — pain data is a profile attribute, not a scan artifact.</span></p>
@@ -1521,6 +1695,7 @@
     <span style="color:#a5f3fc;">"onset_range"</span>:     <span style="color:#fde68a;">"2-7_days"</span>,               <span style="color:#6e7681;">// "0-1_days" | "2-7_days" | "7+_days"</span>
     <span style="color:#a5f3fc;">"pain_level"</span>:      <span style="color:#fde68a;">"moderate"</span>,               <span style="color:#6e7681;">// "mild" | "moderate" | "severe"</span>
     <span style="color:#a5f3fc;">"pain_type"</span>:       <span style="color:#fde68a;">"soreness"</span>,               <span style="color:#6e7681;">// "soreness" | "sharp" | "stiffness" | "numbness"</span>
+    <span style="color:#a5f3fc;">"source"</span>:          <span style="color:#fde68a;">"staff"</span>,                  <span style="color:#6e7681;">// "athlete" | "staff" — who submitted this entry</span>
     <span style="color:#a5f3fc;">"recorded_at"</span>:     <span style="color:#fde68a;">"2026-04-03T10:00:00Z"</span>
   },
   {
@@ -1529,11 +1704,12 @@
     <span style="color:#a5f3fc;">"onset_range"</span>:     <span style="color:#fde68a;">"7+_days"</span>,
     <span style="color:#a5f3fc;">"pain_level"</span>:      <span style="color:#fde68a;">"mild"</span>,
     <span style="color:#a5f3fc;">"pain_type"</span>:       <span style="color:#fde68a;">"stiffness"</span>,
+    <span style="color:#a5f3fc;">"source"</span>:          <span style="color:#fde68a;">"athlete"</span>,
     <span style="color:#a5f3fc;">"recorded_at"</span>:     <span style="color:#fde68a;">"2026-03-28T09:15:00Z"</span>
   }
   <span style="color:#6e7681;">/* ... all current pain entries for this athlete at profile-update time */</span>
 ]</pre>
-    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;"><code>anatomical_ids</code> contains <code>granular_region_id</code> integer values from <code>granular_anatomical_regions.granular_id</code>. The baseline qualifying gate checks <code>pain_entries = []</code> (empty array) on the current profile version instead of the previously eliminated <code>COUNT(*) WHERE session_id = Y</code> query on <code>pain_entries</code>. NURAI reads the current profile snapshot at inference time via the <code>is_current = true</code> index.</p>
+    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;"><code>anatomical_ids</code> contains <code>granular_region_id</code> integer values from <code>granular_anatomical_regions.granular_id</code>. <code>source</code> distinguishes staff-entered pain (via NUR Teams <code>POST /teams/athletes/{id}/pain</code>) from athlete self-reported pain (via My NUR). The baseline qualifying gate checks <code>pain_entries = []</code> (empty array) on the current profile version instead of the previously eliminated <code>COUNT(*) WHERE session_id = Y</code> query on <code>pain_entries</code>. NURAI reads the current profile snapshot at inference time via the <code>is_current = true</code> index.</p>
   </div>
 
   <h4 style="margin-top:28px;">Modified Existing Tables</h4>
@@ -1581,6 +1757,10 @@
     <div><strong>Auth Migration Note</strong><p>The Alpha uses DRF's static <code>authtoken_token</code> for all API auth. For BETA: NUR Sensor migrates to a static API key; My NUR consumers migrate to JWT via email OTP; NUR Teams migrate to JWT via SMS/WhatsApp OTP. No Firebase Auth dependency exists in the BETA auth stack &mdash; Firebase is retained only for FCM push notifications and RTDB session signalling. <code>authtoken_token</code> is retained during BETA transition and deprecated post-BETA.</p></div>
   </div>
   <p style="margin-bottom:8px;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.session_qr_tokens</code><span style="font-size:13px;color:var(--text-muted);"> — single-use QR codes for individual scan initiation</span></p>
+  <div class="alert blue" style="margin-bottom:12px;">
+    <span class="alert-icon">&#8505;</span>
+    <div><strong>RTDB node lifetime — no backend cron required</strong><p>Each QR session writes an RTDB node at <code>/nur_sessions/{session_id}</code> with an <code>expires_at</code> epoch and a predefined TTL enforced by Firebase RTDB security rules. On the happy path (QR scanned and claimed), the Backend explicitly deletes the node after writing the user profile (§4.4 Step 9). On abandonment or timeout, the RTDB TTL rule blocks any further reads once the session window elapses — the node is auto-purged by Firebase without requiring a scheduled cleanup job. The <code>session_qr_tokens</code> PostgreSQL rows are logically expired via <code>expires_at</code> and <code>status = 'expired'</code>; no periodic delete cron is needed.</p></div>
+  </div>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -1719,7 +1899,7 @@
       <tr><td><code>sync_log_id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
       <tr><td><code>connection_id</code></td><td>FK &rarr; wearable_connections, CASCADE</td><td>Connection this sync was performed for.</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Sync Details</td></tr>
-      <tr><td><code>sync_type</code></td><td>varchar(20)</td><td><code>scheduled</code> — daily cron pull; <code>webhook_triggered</code> — initiated by a Spike webhook event.</td></tr>
+      <tr><td><code>sync_type</code></td><td>varchar(20)</td><td><code>scheduled</code> — daily cron pull (02:00 UTC); <code>webhook_triggered</code> — initiated by a Spike <code>record_change</code> webhook event; <code>on_demand</code> — triggered by <code>POST /wearables/sync-now</code> (athlete or coach request, rate-limited to 1/hour).</td></tr>
       <tr><td><code>status</code></td><td>varchar(10)</td><td><code>success</code> / <code>failed</code> / <code>partial</code>.</td></tr>
       <tr><td><code>started_at</code></td><td>timestamp</td><td>When the sync operation began.</td></tr>
       <tr><td><code>completed_at</code></td><td>timestamp, nullable</td><td>When the sync operation finished.</td></tr>
@@ -1770,12 +1950,183 @@
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Analysis</td></tr>
       <tr><td><code>thermal_baseline_method</code></td><td>varchar</td><td><code>auto</code> — platform selects method based on available data; <code>population_based</code> — use platform-wide reference norms; <code>individual_sd</code> — derive baseline from the athlete's own historical distribution (preferred for longitudinal monitoring).</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Reporting &amp; Branding</td></tr>
-      <tr><td><code>report_branding</code></td><td>JSONB, nullable</td><td>Report customisation: <code>{"logo_url": "...", "color_scheme": "..."}</code>. NULL uses NUR platform branding.</td></tr>
+      <tr><td><code>report_branding</code></td><td>JSONB, nullable</td><td>Report customisation: <code>{"logo_url": "gs://...", "color_scheme": "...", "org_name": "..."}</code>. NULL uses NUR platform branding.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">NUR Teams Configuration</td></tr>
+      <tr><td><code>scan_interval_days</code></td><td>smallint NOT NULL, default 7</td><td>Expected days between athlete scans. Drives <code>scan_overdue</code> alert threshold. Default: 7 days.</td></tr>
+      <tr><td><code>timezone</code></td><td>varchar(60) NOT NULL, default 'UTC'</td><td>IANA timezone string for the organisation (e.g. <code>Asia/Riyadh</code>). Used for daily digest scheduling.</td></tr>
+      <tr><td><code>alert_delivery_method</code></td><td>varchar(20) NOT NULL, default 'in_app'</td><td>How NUR Teams alerts are delivered to staff: <code>in_app</code> / <code>email</code> / <code>both</code>.</td></tr>
+      <tr><td><code>allow_athlete_pain_entry</code></td><td>boolean NOT NULL, default true</td><td>Whether athletes can submit pain entries via My NUR for this org. Staff-side entries via NUR Teams are always permitted.</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Audit</td></tr>
       <tr><td><code>updated_at</code></td><td>timestamp</td><td>Last modification time.</td></tr>
       <tr><td><code>updated_by</code></td><td>FK &rarr; auth_user</td><td>The <code>admin</code> who last modified these settings.</td></tr>
     </tbody>
   </table>
+
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.org_members</code><span style="font-size:13px;color:var(--text-muted);"> — org membership table; one row per user-org pair</span></p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
+      <tr><td><code>org_id</code></td><td>FK &rarr; orgs, NOT NULL</td><td>Organisation the member belongs to.</td></tr>
+      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, NOT NULL</td><td>The user (athlete or staff).</td></tr>
+      <tr><td><code>role</code></td><td>varchar(20) NOT NULL</td><td><code>admin</code> — full org access (NUR Teams); <code>member</code> — athlete/standard member (My NUR).</td></tr>
+      <tr><td><code>joined_at</code></td><td>timestamptz NOT NULL, default NOW()</td><td>When the member joined the org.</td></tr>
+      <tr><td><code>job_title</code></td><td>varchar(60), nullable</td><td>Display-only staff role label. Does not affect the <code>admin | member</code> permission system. Permitted values: Head Coach, Assistant Coach, Head Physiotherapist, Physiotherapist, S&amp;C Coach, Performance Director, Medical Officer, Sports Scientist.</td></tr>
+      <tr><td><code>my_nur_status</code></td><td>varchar(20) NOT NULL, default 'not_enrolled'</td><td>My NUR enrolment state for athlete members: <code>active</code> / <code>invite_pending</code> / <code>not_enrolled</code>.</td></tr>
+      <tr><td><code>invite_code</code></td><td>varchar(20), nullable</td><td>One-time offline join code, format <code>NUR-XXXXX</code>. Generated for athletes without email. Expires on use or after 30 days.</td></tr>
+    </tbody>
+  </table>
+
+  <h4 id="s06-alerts" style="margin-top:32px;"><code style="font-size:14px;">tbscan.alerts</code> <span class="badge badge-beta" style="margin-left:8px;vertical-align:middle;">BETA — New</span></h4>
+  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">System-generated alert events for NUR Teams coaching staff. One row per alert event. Acknowledged alerts are retained for audit.</p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>alert_id</code></td><td>UUID PK</td><td>Primary key.</td></tr>
+      <tr><td><code>org_id</code></td><td>FK → orgs NOT NULL</td><td>Organisation this alert belongs to.</td></tr>
+      <tr><td><code>athlete_id</code></td><td>FK → auth_user, nullable</td><td><code>NULL</code> for org-wide alerts (e.g. <code>daily_digest</code>).</td></tr>
+      <tr><td><code>alert_type</code></td><td>varchar(30) NOT NULL</td><td><code>zone_change</code> · <code>scan_overdue</code> · <code>wearable_sync</code> · <code>rtp_milestone</code> · <code>daily_digest</code><br><br><code>rtp_milestone</code> events: <code>workflow_initiated</code> · <code>injury_documented</code> · <code>eligible_for_clearance</code> (system-generated: Safe zone + 0 pending regions — staff review required) · <code>cleared</code> (staff-approved).</td></tr>
+      <tr><td><code>severity</code></td><td>varchar(10) NOT NULL</td><td><code>info</code> · <code>warning</code> · <code>critical</code></td></tr>
+      <tr><td><code>message</code></td><td>text NOT NULL</td><td>Human-readable alert message.</td></tr>
+      <tr><td><code>metadata</code></td><td>JSONB, nullable</td><td>Alert-type-specific data. For <code>zone_change</code>: <code>{"from_zone":"recovery","to_zone":"deceptive"}</code>. For <code>rtp_milestone</code>:<br>
+        <code>{"event":"workflow_initiated","workflow_id":"…"}</code><br>
+        <code>{"event":"injury_documented","workflow_id":"…"}</code><br>
+        <code>{"event":"eligible_for_clearance","workflow_id":"…","rtp_regions_pending":0,"compass_zone":"safe"}</code> — system-generated; prompts staff to review and approve<br>
+        <code>{"event":"cleared","workflow_id":"…","manual_clear":false}</code> — written after staff approve via <code>POST /teams/rtp/{id}/clear</code>; <code>manual_clear: true</code> when override path used.</td></tr>
+      <tr><td><code>acknowledged_by</code></td><td>FK → auth_user, nullable</td><td><code>NULL</code> = unread / unacknowledged.</td></tr>
+      <tr><td><code>acknowledged_at</code></td><td>timestamptz, nullable</td><td>When acknowledged. <code>NULL</code> = unread.</td></tr>
+      <tr><td><code>created_at</code></td><td>timestamptz NOT NULL, default NOW()</td><td></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--text-dim);">Indexes: <code>idx_alerts_org_ack (org_id, acknowledged_at) WHERE acknowledged_at IS NULL</code> — unread count query &middot; <code>idx_alerts_org_type (org_id, alert_type, created_at DESC)</code> &middot; <code>idx_alerts_athlete (athlete_id, created_at DESC)</code><br>
+  <strong style="color:var(--text-muted);">Deduplication rule:</strong> Before inserting <code>zone_change</code>, <code>scan_overdue</code>, or <code>wearable_sync</code>, check for an existing unacknowledged alert of the same type + athlete within the past 24 h — skip if found.</p>
+
+  <h4 id="s06-notes" style="margin-top:32px;"><code style="font-size:14px;">tbscan.clinical_notes</code> <span class="badge badge-beta" style="margin-left:8px;vertical-align:middle;">BETA — New</span></h4>
+  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">Staff-authored clinical notes per athlete. Append-only — rows are never updated. Supports SOAP note style; content is free-text.</p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>note_id</code></td><td>UUID PK</td><td>Primary key.</td></tr>
+      <tr><td><code>athlete_id</code></td><td>FK → auth_user NOT NULL</td><td>Athlete the note pertains to.</td></tr>
+      <tr><td><code>org_id</code></td><td>FK → orgs NOT NULL</td><td>Organisation (for access scoping).</td></tr>
+      <tr><td><code>author_id</code></td><td>FK → auth_user NOT NULL</td><td>Staff member who authored the note.</td></tr>
+      <tr><td><code>note_type</code></td><td>varchar(20) NOT NULL</td><td><code>soap</code> · <code>observation</code> · <code>assessment</code> · <code>general</code>. Default: <code>general</code>.</td></tr>
+      <tr><td><code>content</code></td><td>text NOT NULL</td><td>Note body. Plain text only — no HTML. Max 10,000 characters.</td></tr>
+      <tr><td><code>created_at</code></td><td>timestamptz NOT NULL, default NOW()</td><td>Append-only — no UPDATE permitted.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--text-dim);">Indexes: <code>idx_cn_athlete_date (athlete_id, created_at DESC)</code> — chronological note list per athlete &middot; <code>idx_cn_org_author (org_id, author_id)</code> — audit queries.</p>
+
+  <h4 id="s06-rtp-workflows" style="margin-top:32px;"><code style="font-size:14px;">tbscan.rtp_workflows</code> <span class="badge badge-beta" style="margin-left:8px;vertical-align:middle;">BETA — New</span></h4>
+  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">RTP workflow lifecycle record per athlete per injury incident. One active row per athlete at most (partial unique index). Injury details are stored inline as a JSONB object.</p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>workflow_id</code></td><td>UUID PK</td><td>Primary key.</td></tr>
+      <tr><td><code>athlete_id</code></td><td>FK → auth_user NOT NULL</td><td>Athlete undergoing the RTP workflow.</td></tr>
+      <tr><td><code>org_id</code></td><td>FK → orgs NOT NULL</td><td>Organisation (for access scoping).</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Initiation</td></tr>
+      <tr><td><code>initiated_at</code></td><td>timestamptz NOT NULL, default NOW()</td><td>Timestamp when the workflow was opened by staff.</td></tr>
+      <tr><td><code>initiated_by</code></td><td>FK → auth_user NOT NULL</td><td>Staff member who initiated the workflow.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Injury</td></tr>
+      <tr><td><code>injuries</code></td><td>JSONB, nullable</td><td>Injury documentation stored inline. Shape: <code>{"region_id": 12, "region_label": "L. Hamstring", "injury_type": "strain", "severity": "moderate", "injury_date": "2026-03-01", "notes": "…", "recorded_by": "&lt;uuid&gt;", "recorded_at": "…"}</code>. <code>NULL</code> until the Injury Documentation step is completed.</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Clearance</td></tr>
+      <tr><td><code>cleared_at</code></td><td>timestamptz, nullable</td><td><code>NULL</code> = workflow still active. Set only when a staff member explicitly approves clearance via <code>POST /teams/rtp/{id}/clear</code> — never set automatically by the system.</td></tr>
+      <tr><td><code>cleared_by</code></td><td>FK → auth_user, nullable</td><td>Staff member who approved clearance. Always non-NULL once cleared — there is no system-initiated clearance path.</td></tr>
+      <tr><td><code>manual_clear</code></td><td>boolean NOT NULL, default false</td><td>Distinguishes the two clearance paths, both of which require staff action:<br><code>false</code> — conditions-based clearance: system confirmed athlete is in Safe zone with <code>rtp_regions_pending = 0</code> and staff approved the presented "Ready to Clear" prompt.<br><code>true</code> — override clearance: staff approved clearance even though the thermal or zone conditions were not fully met (e.g. early return from injury with clinical justification).</td></tr>
+      <tr><td><code>is_active</code></td><td>boolean NOT NULL, default true</td><td><code>false</code> once cleared. Used in partial unique index.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--text-dim);">Indexes: <code>idx_rtp_wf_athlete (athlete_id, is_active)</code> — active workflow lookup &middot; <code>idx_rtp_wf_org (org_id, is_active, initiated_at DESC)</code> — org-level active workflow list.<br>
+  <strong style="color:var(--text-muted);">Constraint:</strong> <code>UNIQUE (athlete_id) WHERE is_active = true</code> — partial unique index prevents two simultaneous active workflows per athlete.</p>
+
+  <h4 id="s06-rtp-interventions" style="margin-top:32px;"><code style="font-size:14px;">tbscan.rtp_interventions</code> <span class="badge badge-beta" style="margin-left:8px;vertical-align:middle;">BETA — New</span></h4>
+  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">Therapeutic intervention sessions logged during an RTP workflow. Used for the intervention log and timeline visualisation in NUR Teams.</p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>intervention_id</code></td><td>UUID PK</td><td>Primary key.</td></tr>
+      <tr><td><code>workflow_id</code></td><td>FK → rtp_workflows NOT NULL</td><td>Parent workflow.</td></tr>
+      <tr><td><code>intervention_type</code></td><td>varchar(40) NOT NULL</td><td><code>physiotherapy</code> · <code>sports_massage</code> · <code>cryotherapy</code> · <code>heat_therapy</code> · <code>tens</code> · <code>ultrasound</code> · <code>exercise_therapy</code> · <code>hydrotherapy</code> · <code>dry_needling</code> · <code>taping</code> · <code>other</code>.</td></tr>
+      <tr><td><code>custom_intervention_type</code></td><td>varchar(100), nullable</td><td>Free-text description required when <code>intervention_type = 'other'</code>; NULL for all other types. Allows logging non-standard modalities without schema changes.</td></tr>
+      <tr><td><code>session_date</code></td><td>date NOT NULL</td><td>Date the therapeutic session took place.</td></tr>
+      <tr><td><code>provider</code></td><td>varchar(100), nullable</td><td>Name of the treating practitioner.</td></tr>
+      <tr><td><code>duration_mins</code></td><td>integer, nullable</td><td>Session duration in minutes.</td></tr>
+      <tr><td><code>notes</code></td><td>text, nullable</td><td>Session notes: athlete response, observations, next steps. Max 5,000 characters.</td></tr>
+      <tr><td><code>recorded_by</code></td><td>FK → auth_user NOT NULL</td><td>Staff member who logged the intervention.</td></tr>
+      <tr><td><code>recorded_at</code></td><td>timestamptz NOT NULL, default NOW()</td><td>When the intervention was entered into the system.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--text-dim);">Indexes: <code>idx_rtp_int_workflow (workflow_id, session_date DESC)</code> — chronological intervention list per workflow.</p>
+
+  <h3 id="s06-6">6.6 Named Query Patterns</h3>
+  <p class="section-intro" style="font-size:15px;">Derived read patterns used by NUR Teams API endpoints. No dedicated tables — all derived from existing schema.</p>
+
+  <h4>§6.6.1 — 30-Day COMPASS History</h4>
+  <p style="font-size:13.5px;color:var(--text-muted);">Used by <code>GET /teams/athletes/{id}/compass/history</code>. Index reuse: <code>idx_ud_user_date (user_id, date DESC)</code>.</p>
+  <pre style="font-size:12px;">SELECT date, compass_score, compass_zone, trigger_type
+FROM tbscan.daily_assessments
+WHERE user_id = :athlete_id
+ORDER BY date DESC LIMIT 30;</pre>
+
+  <h4>§6.6.2 — Contralateral Pair Deltas</h4>
+  <p style="font-size:13.5px;color:var(--text-muted);">Used by <code>GET /teams/athletes/{id}/thermal/contralateral</code>. Returns last 14 valid scans. Pairing: regions sharing a base label (e.g. "Thigh") are grouped as left/right contralateral pairs. <code>bilateral_diff = |left_delta − right_delta|</code>. Response shape: <code>{ pairs: [{ label, dates[], left_deltas[], right_deltas[], bilateral_diffs[] }] }</code>.</p>
+  <pre style="font-size:12px;">SELECT ts.generated_at,
+       ts.measurements->:left_region_id->>'delta'  AS left_delta,
+       ts.measurements->:right_region_id->>'delta' AS right_delta
+FROM tbscan.thermal_scans ts
+WHERE ts.user_id = :athlete_id AND ts.is_valid = true
+ORDER BY ts.generated_at DESC LIMIT 14;</pre>
+
+  <h4>§6.6.3 — Scan Overdue Detection</h4>
+  <p style="font-size:13.5px;color:var(--text-muted);">Used by the Alert Generator cron. Compares each athlete's last valid scan date against <code>org_settings.scan_interval_days</code>.</p>
+  <pre style="font-size:12px;">SELECT om.user_id FROM tbscan.org_members om
+LEFT JOIN (
+  SELECT user_id, MAX(generated_at) AS last_scan
+  FROM tbscan.thermal_scans WHERE is_valid = true GROUP BY user_id
+) ts ON ts.user_id = om.user_id
+JOIN tbscan.org_settings os ON os.org_id = om.org_id
+WHERE om.org_id = :org_id
+  AND (ts.last_scan IS NULL
+       OR ts.last_scan &lt; NOW() - INTERVAL '1 day' * os.scan_interval_days);</pre>
+
+  <h4>§6.6.4 — Wearable Gap Detection</h4>
+  <p style="font-size:13.5px;color:var(--text-muted);">Used by the Alert Generator cron. Flags active wearable connections that have not synced in over 48 hours.</p>
+  <pre style="font-size:12px;">SELECT wc.user_id FROM tbscan.wearable_connections wc
+JOIN tbscan.org_members om ON om.user_id = wc.user_id
+WHERE om.org_id = :org_id
+  AND wc.status = 'active'
+  AND wc.last_synced_at &lt; NOW() - INTERVAL '48 hours';</pre>
+
+  <h4>§6.6.5 — RTP Hub Query</h4>
+  <p style="font-size:13.5px;color:var(--text-muted);">Used by <code>GET /teams/rtp</code>. Uses the <code>rtp_regions_pending</code> integer column — no JSONB path scan required.</p>
+  <pre style="font-size:12px;">SELECT ts.user_id, ts.rtp_regions_pending
+FROM tbscan.thermal_scans ts
+WHERE ts.user_id IN (
+  SELECT user_id FROM tbscan.org_members WHERE org_id = :org_id
+)
+AND ts.is_current = true
+AND ts.rtp_regions_pending > 0;</pre>
+
+
+  <h4>§6.6.6 — RTP Workflow Fetch</h4>
+  <p style="font-size:13.5px;color:var(--text-muted);">Used by <code>GET /teams/rtp/{athleteId}/workflow</code>. Returns the active workflow with inline injury data and all intervention records in a single response. Interventions are ordered chronologically.</p>
+  <pre style="font-size:12px;">SELECT
+  w.workflow_id, w.initiated_at, w.initiated_by,
+  w.injuries,
+  w.cleared_at, w.cleared_by, w.manual_clear,
+  json_agg(jsonb_build_object(
+    'intervention_id',   iv.intervention_id,
+    'intervention_type', iv.intervention_type,
+    'session_date',      iv.session_date,
+    'provider',          iv.provider,
+    'duration_mins',     iv.duration_mins,
+    'notes',             iv.notes
+  ) ORDER BY iv.session_date) FILTER (WHERE iv.intervention_id IS NOT NULL) AS interventions
+FROM tbscan.rtp_workflows w
+LEFT JOIN tbscan.rtp_interventions iv ON iv.workflow_id = w.workflow_id
+WHERE w.athlete_id = :athlete_id AND w.is_active = true
+GROUP BY w.workflow_id;</pre>
 
 </section>
 
@@ -1840,7 +2191,7 @@
 
   <div id="s07-flow-a"></div>
   <h3>7.1 Flow A — Full Pipeline <span style="font-size:13px;font-weight:400;color:var(--text-muted);">triggered by NUR Sensor</span></h3>
-  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Runs when an athlete completes a physical scan at a smart mirror. Executes all three NURAI modules in sequence: <strong style="color:var(--text);">Computer Vision &amp; Thermal ROI → Metrics Pipeline → GenAI Reasoning</strong>. NUR Sensor uploads the thermogram <strong style="color:var(--text);">directly to GCS</strong> via signed URL — the binary never transits the Backend. The Backend then calls <code>POST /infer { session_id }</code> (API Key auth) to trigger NURAI.</p>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Runs when an athlete completes a physical scan at a smart mirror. Executes all three NURAI modules in sequence: <strong style="color:var(--text);">Computer Vision &amp; Thermal ROI → Metrics Pipeline → GenAI Reasoning</strong>. NUR Sensor uploads the thermogram <strong style="color:var(--text);">directly to GCS</strong> via signed URL — the binary never transits the Backend. The Backend then calls <code>POST /infer { session_id }</code> (API Key auth) to trigger NURAI. Once Module 1 completes and measurements are written to DB, the Backend immediately spawns the async <strong>Baseline + RTP Thread</strong> (§7.4) — passing the current scan's measurements as a direct input parameter alongside a <strong><code>zone_future</code></strong> (an unresolved Future/Promise). Module 2 resolves <code>zone_future</code> with the computed <code>compass_zone</code> as soon as Zone Classification finishes. The async thread's Steps 1–3 (baseline + RTP per-region) run freely without waiting; Step 4 (write-back + alert) awaits <code>zone_future</code> before the eligibility check, ensuring it always uses the current scan's zone — never the previous day's stale value from DB.</p>
 
   <div class="sc-pipeline">
     <div class="sc-stage">
@@ -1848,7 +2199,7 @@
       <div class="sc-row">
         <div class="sc-block" data-track="thermal">
           <div class="sc-block-title">ROI Extraction &amp; Measurements</div>
-          <div class="sc-block-body">NURAI fetches the thermogram from <code>sessions.gcs_path</code> (GCS). Runs region-of-interest extraction to compute per-region surface temperatures and left-right deltas. Results written to <code>thermal_scans.measurements</code> (JSONB) along with <code>t_score</code>, <code>baseline_mode</code>, and <code>has_skin_mask</code>.</div>
+          <div class="sc-block-body">NURAI fetches the thermogram from <code>sessions.gcs_path</code> (GCS). Runs region-of-interest extraction to compute per-region surface temperatures and left-right deltas. Results written to <code>thermal_scans.measurements</code> (JSONB) along with <code>t_score</code>, <code>baseline_mode</code>, and <code>has_skin_mask</code>. Outputs <code>severity_level</code> per region based on bilateral delta: <code>clear</code> (&lt;0.3°C) · <code>mild</code> (0.3–0.5°C) · <code>moderate</code> (0.5–0.8°C) · <code>elevated</code> (≥0.8°C). These synchronous fields are written to <code>thermal_scans.measurements</code> immediately. Once written, the Backend spawns the async <strong>Baseline + RTP Thread</strong> (§7.4) with two inputs: the current scan's measurements (direct in-memory, no DB re-read) and an unresolved <code>zone_future</code>. Modules 2 and 3 continue synchronously. Module 2 resolves <code>zone_future</code> with <code>compass_zone</code> immediately after Zone Classification — the async thread's Steps 1–3 run freely in parallel; Step 4 awaits this future before the RTP eligibility check. Baseline and RTP fields are written back to <code>thermal_scans.measurements</code> by the async thread upon completion.</div>
         </div>
         <div class="sc-block" data-track="wearable">
           <div class="sc-block-title">Wearable Data Read</div>
@@ -1871,6 +2222,7 @@
               <div class="sc-matrix-cell safe">Safe<div class="sc-matrix-sub">R &ge; 50, T &lt; 50</div></div>
               <div class="sc-matrix-cell rec">Recovery<div class="sc-matrix-sub">R &lt; 50, T &lt; 50</div></div>
             </div>
+            <p style="margin:10px 0 0;font-size:12px;color:var(--text-dim);">After zone is determined, Module 2 immediately resolves the <code>zone_future</code> passed to the async Baseline + RTP Thread — unblocking that thread's Step 4 eligibility check with the current scan's zone.</p>
           </div>
         </div>
         <div class="sc-block" data-track="fusion">
@@ -1903,15 +2255,123 @@
       <div class="sc-block--full" data-track="storage">
         <div class="sc-block-title">Database Writes + FCM Push</div>
         <div class="sc-block-body">
-          Writes <code>tbscan.thermal_scans</code> (t_score, measurements JSONB, baseline_mode, generated_at) and updates <code>tbscan.thermal_baselines</code> incrementally. Then upserts <code>tbscan.daily_assessments</code> (compass_score, compass_zone, ai_coach_response, metric_record_id, trigger_type = <code>new_thermal_scan</code>). Returns <code>200 OK</code> to the Backend, which dispatches the FCM push to the athlete.
+          Writes <code>tbscan.thermal_scans</code> (t_score, measurements JSONB, baseline_mode, generated_at). Then upserts <code>tbscan.daily_assessments</code> (compass_score, compass_zone, ai_coach_response, metric_record_id, trigger_type = <code>new_thermal_scan</code> or <code>admin_scan</code>). Returns <code>200 OK</code> to the Backend, which dispatches the FCM push to the athlete. The async Baseline + RTP Thread was already spawned after Module 1 completed — baseline and RTP enrichment of the scan row occurs independently in the background and does not delay result delivery.
         </div>
       </div>
     </div>
   </div>
 
+  <!-- ── Score Fusion Worked Examples ── -->
+  <div id="s07-score-examples"></div>
+  <h3 style="margin-top:40px;">7.1.1 Score Fusion — Worked Examples</h3>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px;">
+    Four concrete walkthroughs — one per COMPASS zone — showing how raw R and T scores map to a final COMPASS score via the two-weight regime. Weights are <strong style="color:var(--text);">equal (0.5 / 0.5)</strong> for Safe and Recovery, <strong style="color:var(--text);">thermal-heavy (0.3 / 0.7)</strong> for Deceptive Readiness and Danger.
+  </p>
+
+  <!-- Example grid -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;">
+
+    <!-- Safe -->
+    <div style="background:#0f1a14;border:1px solid rgba(16,185,129,0.35);border-radius:10px;padding:18px 20px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <span style="background:rgba(16,185,129,0.15);color:#10b981;font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:20px;text-transform:uppercase;">Safe</span>
+        <span style="font-size:12px;color:var(--text-muted);">Zone floor 76 · equal weights</span>
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;align-items:start;">
+        <span style="color:var(--text-muted);">Inputs</span>
+        <span style="color:var(--text);font-family:monospace;">R = 82, T = 18</span>
+        <span style="color:var(--text-muted);">Condition</span>
+        <span style="color:var(--text);font-family:monospace;">R ≥ 50 &amp; T &lt; 50 ✓</span>
+        <span style="color:var(--text-muted);">R_dist</span>
+        <span style="color:var(--text);font-family:monospace;">(82 − 50) / 50 = <strong style="color:#10b981;">0.64</strong></span>
+        <span style="color:var(--text-muted);">T_dist</span>
+        <span style="color:var(--text);font-family:monospace;">(50 − 18) / 50 = <strong style="color:#10b981;">0.64</strong></span>
+        <span style="color:var(--text-muted);">Weighted</span>
+        <span style="color:var(--text);font-family:monospace;">0.5×0.64 + 0.5×0.64 = <strong style="color:#10b981;">0.64</strong></span>
+        <span style="color:var(--text-muted);">Score</span>
+        <span style="color:var(--text);font-family:monospace;">76 + 24 × 0.64 = <strong style="color:#10b981;font-size:15px;">91</strong></span>
+      </div>
+    </div>
+
+    <!-- Recovery -->
+    <div style="background:#1a1505;border:1px solid rgba(245,158,11,0.35);border-radius:10px;padding:18px 20px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <span style="background:rgba(245,158,11,0.15);color:#f59e0b;font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:20px;text-transform:uppercase;">Recovery</span>
+        <span style="font-size:12px;color:var(--text-muted);">Zone floor 51 · equal weights</span>
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;align-items:start;">
+        <span style="color:var(--text-muted);">Inputs</span>
+        <span style="color:var(--text);font-family:monospace;">R = 31, T = 22</span>
+        <span style="color:var(--text-muted);">Condition</span>
+        <span style="color:var(--text);font-family:monospace;">R &lt; 50 &amp; T &lt; 50 ✓</span>
+        <span style="color:var(--text-muted);">R_dist</span>
+        <span style="color:var(--text);font-family:monospace;">31 / 50 = <strong style="color:#f59e0b;">0.62</strong></span>
+        <span style="color:var(--text-muted);">T_dist</span>
+        <span style="color:var(--text);font-family:monospace;">(50 − 22) / 50 = <strong style="color:#f59e0b;">0.56</strong></span>
+        <span style="color:var(--text-muted);">Weighted</span>
+        <span style="color:var(--text);font-family:monospace;">0.5×0.62 + 0.5×0.56 = <strong style="color:#f59e0b;">0.59</strong></span>
+        <span style="color:var(--text-muted);">Score</span>
+        <span style="color:var(--text);font-family:monospace;">51 + 24 × 0.59 = <strong style="color:#f59e0b;font-size:15px;">65</strong></span>
+      </div>
+    </div>
+
+    <!-- Deceptive Readiness -->
+    <div style="background:#1a0f05;border:1px solid rgba(249,115,22,0.35);border-radius:10px;padding:18px 20px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <span style="background:rgba(249,115,22,0.15);color:#f97316;font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:20px;text-transform:uppercase;">Deceptive Readiness</span>
+        <span style="font-size:12px;color:var(--text-muted);">Floor 26 · thermal-heavy</span>
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;align-items:start;">
+        <span style="color:var(--text-muted);">Inputs</span>
+        <span style="color:var(--text);font-family:monospace;">R = 80, T = 68</span>
+        <span style="color:var(--text-muted);">Condition</span>
+        <span style="color:var(--text);font-family:monospace;">R ≥ 50 &amp; T ≥ 50 ✓</span>
+        <span style="color:var(--text-muted);">R_dist</span>
+        <span style="color:var(--text);font-family:monospace;">(80 − 50) / 50 = <strong style="color:#f97316;">0.60</strong></span>
+        <span style="color:var(--text-muted);">T_dist</span>
+        <span style="color:var(--text);font-family:monospace;">(100 − 68) / 50 = <strong style="color:#f97316;">0.64</strong></span>
+        <span style="color:var(--text-muted);">Weighted</span>
+        <span style="color:var(--text);font-family:monospace;">0.3×0.60 + 0.7×0.64 = <strong style="color:#f97316;">0.628</strong></span>
+        <span style="color:var(--text-muted);">Score</span>
+        <span style="color:var(--text);font-family:monospace;">26 + 24 × 0.628 = <strong style="color:#f97316;font-size:15px;">41</strong></span>
+      </div>
+      <p style="margin:12px 0 0;font-size:12px;color:#f97316;background:rgba(249,115,22,0.08);border-radius:6px;padding:8px 10px;">
+        Athlete's R = 80 signals high systemic readiness, yet the thermal-heavy weighting drags the score to 41 — below what equal weighting would produce (≈ 49). This suppression is intentional: hidden tissue stress is the highest-priority injury signal.
+      </p>
+    </div>
+
+    <!-- Danger -->
+    <div style="background:#1a0505;border:1px solid rgba(239,68,68,0.35);border-radius:10px;padding:18px 20px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <span style="background:rgba(239,68,68,0.15);color:#ef4444;font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:20px;text-transform:uppercase;">Danger</span>
+        <span style="font-size:12px;color:var(--text-muted);">Zone floor 1 · thermal-heavy</span>
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;align-items:start;">
+        <span style="color:var(--text-muted);">Inputs</span>
+        <span style="color:var(--text);font-family:monospace;">R = 22, T = 86</span>
+        <span style="color:var(--text-muted);">Condition</span>
+        <span style="color:var(--text);font-family:monospace;">R &lt; 50 &amp; T ≥ 50 ✓</span>
+        <span style="color:var(--text-muted);">R_dist</span>
+        <span style="color:var(--text);font-family:monospace;">22 / 50 = <strong style="color:#ef4444;">0.44</strong></span>
+        <span style="color:var(--text-muted);">T_dist</span>
+        <span style="color:var(--text);font-family:monospace;">(100 − 86) / 50 = <strong style="color:#ef4444;">0.28</strong></span>
+        <span style="color:var(--text-muted);">Weighted</span>
+        <span style="color:var(--text);font-family:monospace;">0.3×0.44 + 0.7×0.28 = <strong style="color:#ef4444;">0.328</strong></span>
+        <span style="color:var(--text-muted);">Score</span>
+        <span style="color:var(--text);font-family:monospace;">1 + 24 × 0.328 = <strong style="color:#ef4444;font-size:15px;">9</strong></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Boundary note -->
+  <div style="background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.25);border-radius:8px;padding:14px 16px;margin-bottom:8px;font-size:13px;color:var(--text-muted);">
+    <strong style="color:var(--text);">Boundary behaviour:</strong> R = 50 is the systemic fault line (≥50 = systemically ready; &lt;50 = fatigued). T = 50 is the thermal fault line (≥50 = inflamed; &lt;50 = clear). Scores are always clamped to <code>[floor, 100]</code>; a perfectly-fit athlete (R=100, T=0) scores exactly 100; a worst-case athlete (R=0, T=100) scores exactly 1.
+  </div>
+
   <div id="s07-flow-b"></div>
   <h3 style="margin-top:40px;">7.2 Flow B — Daily Refresh <span style="font-size:13px;font-weight:400;color:var(--text-muted);">triggered by My NUR or NUR Teams</span></h3>
-  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Runs on days without a new thermal scan. Executes only the last two NURAI modules — <strong style="color:var(--text);">Metrics Pipeline → GenAI Reasoning</strong> — skipping Module 1 (Computer Vision &amp; Thermal ROI): no thermogram fetch, no ROI extraction, no writes to <code>thermal_scans</code> or <code>thermal_baselines</code>. Triggered by <code>POST /compass/refresh</code> (JWT auth). The Backend always returns the latest <code>daily_assessments</code> record — the gates below only determine whether NURAI is invoked, never whether data is returned.</p>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Runs on days without a new thermal scan. Always executes <strong style="color:var(--text);">Module 2 (Metrics Pipeline)</strong> to recompute zone and score from fresh wearable data. <strong style="color:var(--text);">Module 3 (GenAI Reasoning)</strong> is executed only if the resulting <code>compass_zone</code> differs from the most recent <code>daily_assessments</code> record — if the zone is unchanged, Module 3 is skipped and the existing <code>ai_coach_response</code> is reused, reducing LLM API calls for wearable fluctuations that do not shift clinical zone. Module 1 (Computer Vision &amp; Thermal ROI) is always skipped: no thermogram fetch, no ROI extraction, no writes to <code>thermal_scans</code>. Triggered by <code>POST /compass/refresh</code> (JWT auth). The Backend always returns the latest <code>daily_assessments</code> record — the gates below only determine whether NURAI is invoked, never whether data is returned.</p>
 
   <!-- ── Flow B Module Diagram ── -->
   <svg viewBox="0 0 500 160" width="100%" style="max-width:500px;display:block;margin:20px 0 28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
@@ -1940,7 +2400,7 @@
 
     <!-- Flow B bracket -->
     <line x1="0" y1="138" x2="500" y2="138" stroke="rgba(124,58,237,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
-    <text x="250" y="153" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(124,58,237,0.85)" letter-spacing="0.05em">FLOW B — runs modules 2 → 3 only</text>
+    <text x="250" y="153" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(124,58,237,0.85)" letter-spacing="0.05em">FLOW B — module 2 always · module 3 only if zone changed</text>
   </svg>
 
   <h4>Backend Gate Checks</h4>
@@ -1998,14 +2458,16 @@
     <rect x="130" y="294" width="300" height="24" rx="8" fill="rgba(245,158,11,0.10)"/>
     <rect x="130" y="306" width="300" height="12" fill="rgba(245,158,11,0.10)"/>
     <text x="280" y="311" text-anchor="middle" font-size="9.5" font-weight="700" fill="#f59e0b" letter-spacing="0.06em">GATE 3 — WEARABLE FRESHNESS</text>
-    <text x="280" y="332" text-anchor="middle" font-size="11" fill="#8b949e">daily_metrics newer than last computation</text>
-    <text x="280" y="356" text-anchor="middle" font-size="10.5" fill="#6e7681">daily_metrics vs daily_assessments.metric_record_id</text>
+    <text x="280" y="330" text-anchor="middle" font-size="11" fill="#8b949e">daily_metrics ≤ 2 days old</text>
+    <text x="280" y="344" text-anchor="middle" font-size="11" fill="#8b949e">AND newer than last computation</text>
+    <text x="280" y="360" text-anchor="middle" font-size="10.5" fill="#6e7681">daily_metrics vs daily_assessments.metric_record_id</text>
     <!-- Fail branch right -->
-    <line x1="430" y1="330" x2="490" y2="330" stroke="rgba(239,68,68,0.6)" stroke-width="1.5"/>
-    <polygon points="490,325 498,330 490,335" fill="rgba(239,68,68,0.6)"/>
-    <text x="462" y="324" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="700">FAIL</text>
-    <rect x="500" y="316" width="194" height="30" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
-    <text x="597" y="335" text-anchor="middle" font-size="10.5" fill="#fca5a5">refresh_status = "cached"</text>
+    <line x1="430" y1="335" x2="490" y2="335" stroke="rgba(239,68,68,0.6)" stroke-width="1.5"/>
+    <polygon points="490,330 498,335 490,340" fill="rgba(239,68,68,0.6)"/>
+    <text x="462" y="329" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="700">FAIL</text>
+    <rect x="500" y="316" width="194" height="40" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+    <text x="597" y="332" text-anchor="middle" font-size="10.5" fill="#fca5a5">stale_wearable (age &gt; 2 days)</text>
+    <text x="597" y="348" text-anchor="middle" font-size="10.5" fill="#fca5a5">cached (not newer)</text>
 
     <!-- Gate 3 → NURAI -->
     <line x1="360" y1="366" x2="360" y2="394" stroke="#30363d" stroke-width="1.5"/>
@@ -2017,8 +2479,8 @@
     <rect x="110" y="402" width="340" height="22" rx="8" fill="rgba(0,200,255,0.10)"/>
     <rect x="110" y="414" width="340" height="10" fill="rgba(0,200,255,0.10)"/>
     <text x="280" y="418" text-anchor="middle" font-size="9.5" font-weight="700" fill="#00c8ff" letter-spacing="0.06em">POST /infer/refresh → NURAI</text>
-    <text x="280" y="439" text-anchor="middle" font-size="11" fill="#8b949e">Modules 2 + 3 · upserts daily_assessments</text>
-    <text x="280" y="454" text-anchor="middle" font-size="10.5" fill="#6e7681">refresh_status = "computed" | "inference_failed"</text>
+    <text x="280" y="436" text-anchor="middle" font-size="11" fill="#8b949e">Module 2 always · Module 3 only if zone changed</text>
+    <text x="280" y="452" text-anchor="middle" font-size="10.5" fill="#6e7681">computed | zone_stable | inference_failed</text>
   </svg>
 
   <h4>Response — always HTTP 200, always includes latest daily_assessments</h4>
@@ -2027,21 +2489,22 @@
     <tbody>
       <tr><td><code>no_scan</code></td><td>No</td><td>Latest on record (may be null for new users)</td></tr>
       <tr><td><code>stale_scan</code></td><td>No</td><td>Latest on record</td></tr>
-      <tr><td><code>cached</code></td><td>No</td><td>Latest on record</td></tr>
-      <tr><td><code>computed</code></td><td>Yes</td><td>Newly written record for today</td></tr>
+      <tr><td><code>stale_wearable</code></td><td>No</td><td>Latest on record — wearable data exists but is older than 2 days; COMPASS scoring blocked until wearable is refreshed</td></tr>
+      <tr><td><code>cached</code></td><td>No</td><td>Latest on record — wearable data is fresh but unchanged since last computation</td></tr>
+      <tr><td><code>computed</code></td><td>Yes — Modules 2 + 3</td><td>Newly written record; zone changed → full GenAI re-generation</td></tr>
+      <tr><td><code>zone_stable</code></td><td>Yes — Module 2 only</td><td>Zone unchanged vs. previous record; Module 3 skipped; updated score written with existing <code>ai_coach_response</code> reused</td></tr>
       <tr><td><code>inference_failed</code></td><td>Yes (failed)</td><td>Latest on record before failure</td></tr>
     </tbody>
   </table>
 
+  <div class="insight" style="margin-top:16px;">
+    <p><strong>Asymmetric Sampling — Module 3 skip logic:</strong> After Module 2 computes the new zone, the Backend compares it against <code>daily_assessments.compass_zone</code> from the most recent record. If the zone is <strong>unchanged</strong>, the GenAI call is skipped — the existing <code>ai_coach_response</code> is copied forward and <code>refresh_status = 'zone_stable'</code>. The updated <code>compass_score</code> and <code>metric_record_id</code> are always written regardless. Zone is the correct gate because the GenAI narrative (rationale, intervention plan, coach text) is determined primarily by zone, not by point-level score fluctuations within a zone. A score change from 78 → 82 within Safe produces no clinically meaningful change in the narrative; a zone change from Safe → Recovery always requires fresh GenAI output.</p>
+  </div>
+
   <div id="s07-baseline"></div>
   <h3 style="margin-top:40px;">7.3 Thermal Baseline Update Module <span class="badge badge-beta" style="vertical-align:middle;margin-left:8px;">BETA</span></h3>
 
-  <p>Nightly batch that maintains per-region, per-athlete SD baselines (COMPASS §05B). Computes mean and sample SD of left-right temperature delta per body region from qualifying "healthy reference" scans. Stored in <code>tbscan.thermal_baselines</code>; consumed by NURAI at inference in preference to the population threshold.</p>
-
-  <div class="alert" style="background:rgba(255,165,0,0.12);border-left:4px solid #ffa500;margin-bottom:20px;">
-    <span class="alert-icon" style="color:#ffa500;">&#9888;</span>
-    <div><strong>Not Yet Implemented &mdash; Forward Spec</strong><p>This section is a forward-looking engineering specification. The <code>tbscan.thermal_baselines</code> table, the nightly batch job, and the at-inference lookup described below are not yet deployed. The current production pipeline uses the population threshold formula exclusively (<code>T = min(100, TAI°C / 1.0 × 100)</code>). This spec defines the target behaviour once the module is implemented.</p></div>
-  </div>
+  <p>Defines the qualifying scan criteria and per-region calculation used to build per-athlete SD baselines (COMPASS §05B). Baseline stats are no longer stored in a separate table — they are computed by the async Baseline + RTP Thread (§7.4) after each new scan and written directly into <code>thermal_scans.measurements</code> JSONB alongside the measurement values that used them. This makes each scan row self-contained and eliminates the need for a separate lookup at inference time.</p>
 
   <h4>Qualifying Scan Criteria</h4>
   <p>All three gates must pass. Failing sessions are silently excluded — no errors raised, existing baselines unaffected.</p>
@@ -2050,69 +2513,83 @@
       <tr><th>Gate</th><th>Condition</th><th>Source</th></tr>
     </thead>
     <tbody>
-      <tr><td><strong>No pain entry</strong></td><td>No pain entries recorded in <code>tbscan.user_profile_history.pain_entries</code> for this user at the time of the scan</td><td><code>user_profile_history.pain_entries</code></td></tr>
+      <tr><td><strong>Not within RTP injury window</strong></td><td>The scan date must not fall within any RTP workflow injury period for this athlete. For each <code>rtp_workflows</code> row where <code>injuries</code> is not NULL: <code>injuries.injury_date ≤ scan.generated_at::date ≤ COALESCE(cleared_at::date, CURRENT_DATE)</code>. Scans captured while a known injury was active are excluded from the personal baseline pool — they reflect a stressed state, not the athlete's normal thermal signature.</td><td><code>rtp_workflows.injuries</code> JSONB (<code>injury_date</code>) + <code>rtp_workflows.cleared_at</code></td></tr>
       <tr><td><strong>No major asymmetry</strong></td><td>All per-region temperature deltas &lt; <strong>1.0&deg;C</strong> (below COMPASS Severe tier boundary)</td><td><code>thermal_scans.measurements</code> (delta field per region)</td></tr>
       <tr><td><strong>Session complete</strong></td><td><code>tbscan.sessions.status = 'completed'</code> and no <code>avoidance_flags</code> indicating a compromised scan</td><td><code>tbscan.sessions</code></td></tr>
     </tbody>
   </table>
-  <p style="color:var(--text-dim);font-size:13px;margin-top:8px;">The 1.0°C gate maps to the population Severe tier boundary — scans at or above it indicate clear pathological asymmetry and must not anchor the personal normal.</p>
+  <p style="color:var(--text-dim);font-size:13px;margin-top:8px;">The RTP injury window gate uses clinician-recorded injury dates from <code>rtp_workflows</code> — objective, auditable timestamps — rather than subjective pain entries. The 1.0°C gate catches severe asymmetry not covered by an open RTP workflow (e.g., undiagnosed stress).</p>
 
-  <h4>Per-Region Calculation <span style="font-weight:400;color:var(--text-dim);font-size:13px;">— nightly full recompute per user; corrections to past scans propagate automatically</span></h4>
+  <h4>Per-Region Calculation <span style="font-weight:400;color:var(--text-dim);font-size:13px;">— event-driven: triggered per new scan; no nightly batch job</span></h4>
   <table class="data-table">
     <thead><tr><th>Step</th><th>Action</th><th>Condition / Output</th></tr></thead>
     <tbody>
-      <tr><td><strong>1 — Filter</strong></td><td>Collect sessions per user passing all three qualifying gates</td><td>Empty <code>pain_entries</code> + all deltas &lt; 1.0°C + <code>status='completed'</code></td></tr>
+      <tr><td><strong>1 — Filter</strong></td><td>Collect sessions per user passing all three qualifying gates</td><td>No active RTP injury window + all deltas &lt; 1.0°C + <code>status='completed'</code></td></tr>
       <tr><td><strong>2 — Extract</strong></td><td>Pull left-right delta per region from <code>tbscan.thermal_scans.measurements</code> JSONB (delta field)</td><td>Per-region delta list across qualifying sessions</td></tr>
-      <tr><td><strong>3 — Compute</strong></td><td>Arithmetic mean + sample SD per region</td><td>n &ge; 6 → <code>is_active = true</code>; n &lt; 6 → <code>is_active = false</code></td></tr>
-      <tr><td><strong>4 — Upsert</strong></td><td>Single row upsert per user in <code>tbscan.thermal_baselines</code> — full JSONB replace</td><td><code>baseline</code> JSONB keyed by <code>granular_region_id</code> (<code>granular_anatomical_regions.granular_id</code>); each value contains <code>mean_delta_c</code>, <code>sd_delta_c</code>, <code>qualifying_scan_count</code>, <code>is_active</code></td></tr>
+      <tr><td><strong>3 — Compute</strong></td><td>Arithmetic mean + sample SD per region from its own qualifying scan history</td><td>Per-region result — each region is computed independently regardless of other regions' counts</td></tr>
+      <tr><td><strong>4 — Patch</strong></td><td>Patch <code>thermal_scans.measurements</code> JSONB for the current scan row — write <code>baseline_mean_delta</code>, <code>baseline_sd</code>, <code>eligible_scan_count</code>, <code>baseline_mode</code> per region key. Update top-level <code>thermal_scans.baseline_mode</code> summary: <code>individual_sd</code> if all regions qualify, <code>population_fallback</code> if none qualify, <code>mixed</code> if some regions qualify and others do not.</td><td>No separate table write. Each region carries its own mode; Module 2 reads it directly from the JSONB at inference time.</td></tr>
     </tbody>
   </table>
-
-  <h4>tbscan.thermal_baselines Schema</h4>
-  <table class="data-table">
-    <thead>
-      <tr><th>Column</th><th>Type</th><th>Description</th></tr>
-    </thead>
-    <tbody>
-      <tr><td><code>user_id</code></td><td>PK, FK &rarr; auth_user</td><td>Athlete this baseline belongs to. One row per athlete.</td></tr>
-      <tr><td><code>baseline</code></td><td>JSONB</td><td>Per-region stats keyed by <code>granular_region_id</code> (<code>granular_anatomical_regions.granular_id</code>). Each entry: <code>{"mean_delta_c": 0.31, "sd_delta_c": 0.09, "qualifying_scan_count": 12, "is_active": true}</code>. Regions with fewer than 6 qualifying scans are present with <code>is_active: false</code>.</td></tr>
-      <tr><td><code>last_updated_at</code></td><td>timestamptz</td><td>Timestamp of last nightly batch run.</td></tr>
-    </tbody>
-  </table>
-
-  <div style="margin:0 0 28px;">
-    <p style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">thermal_baselines.baseline — JSONB schema</p>
-    <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">One key per region with at least one qualifying scan, keyed by <code>granular_region_id</code> (<code>granular_anatomical_regions.granular_id</code>). Written by the nightly batch; consumed by NURAI at inference time.</p>
-<pre style="margin:0;font-size:12px;line-height:1.7;color:#7dd3fc;">{
-  <span style="color:#a5f3fc;">"12"</span>: {                                        <span style="color:#6e7681;">// granular_region_id</span>
-    <span style="color:#a5f3fc;">"mean_delta_c"</span>:          <span style="color:#86efac;">0.31</span>,              <span style="color:#6e7681;">// arithmetic mean of qualifying left-right deltas (°C)</span>
-    <span style="color:#a5f3fc;">"sd_delta_c"</span>:            <span style="color:#86efac;">0.09</span>,              <span style="color:#6e7681;">// sample SD of those deltas</span>
-    <span style="color:#a5f3fc;">"qualifying_scan_count"</span>: <span style="color:#86efac;">12</span>,                <span style="color:#6e7681;">// n scans that passed all qualifying gates</span>
-    <span style="color:#a5f3fc;">"is_active"</span>:             <span style="color:#86efac;">true</span>               <span style="color:#6e7681;">// true when n ≥ 6; false = population fallback used</span>
-  },
-  <span style="color:#a5f3fc;">"7"</span>: {
-    <span style="color:#a5f3fc;">"mean_delta_c"</span>:          <span style="color:#86efac;">0.18</span>,
-    <span style="color:#a5f3fc;">"sd_delta_c"</span>:            <span style="color:#86efac;">0.06</span>,
-    <span style="color:#a5f3fc;">"qualifying_scan_count"</span>: <span style="color:#86efac;">8</span>,
-    <span style="color:#a5f3fc;">"is_active"</span>:             <span style="color:#86efac;">true</span>
-  },
-  <span style="color:#a5f3fc;">"15"</span>: {
-    <span style="color:#a5f3fc;">"mean_delta_c"</span>:          <span style="color:#86efac;">0.22</span>,
-    <span style="color:#a5f3fc;">"sd_delta_c"</span>:            <span style="color:#86efac;">0.11</span>,
-    <span style="color:#a5f3fc;">"qualifying_scan_count"</span>: <span style="color:#86efac;">4</span>,
-    <span style="color:#a5f3fc;">"is_active"</span>:             <span style="color:#86efac;">false</span>              <span style="color:#6e7681;">// n &lt; 6 — population fallback still applied for this region</span>
-  }
-  <span style="color:#6e7681;">/* ... one entry per region with ≥ 1 qualifying scan */</span>
-}</pre>
-  </div>
 
   <h4>At-Inference Lookup</h4>
-  <p style="font-size:14px;color:var(--text-muted);max-width:720px;">NURAI loads the single <code>tbscan.thermal_baselines</code> row for the user. Per scanned region: if the <code>granular_region_id</code> key exists in the <code>baseline</code> JSONB with <code>is_active = true</code>, apply the <strong>individual SD formula</strong> — <code>region_TAI_SD = (current_delta − mean_delta_c) / sd_delta_c</code>; otherwise apply the <strong>population fallback</strong> — <code>region_TAI_SD = current_delta_c / 0.27</code>. Then <code>TAI = max(all region_TAI_SD)</code> → <code>T = min(100, TAI / 3.0 × 100)</code>. Outputs are tagged <code>baseline_mode = 'individual_sd'</code> or <code>'population_fallback'</code>. Both scales share the same T&nbsp;=&nbsp;50 zone boundary (≈ 1.5 SD ≈ 0.4°C).</p>
+  <p style="font-size:14px;color:var(--text-muted);max-width:720px;">Module 2 reads the previous scan's <code>thermal_scans.measurements</code> JSONB to retrieve pre-computed baseline stats (written by the previous scan's async thread). For each region, the formula applied is determined by the region's own <code>baseline_mode</code> field stored in the JSONB — no threshold re-evaluation at inference time:<br><br>
+  <code>individual_sd</code> → <code>region_TAI_SD = (current_delta − baseline_mean_delta) / baseline_sd</code><br>
+  <code>population_fallback</code> → <code>region_TAI_SD = current_delta_°C / 0.27</code><br><br>
+  Regions on different modes within the same scan are handled independently. Then <code>TAI = max(all region_TAI_SD)</code> → <code>T = min(100, TAI / 3.0 × 100)</code>. Both formulas share the same T = 50 zone boundary (≈ 1.5 SD ≈ 0.4°C). Baseline stats are always current because they are recomputed event-driven on every new scan.</p>
 
   <div class="alert blue">
     <span class="alert-icon">&#8505;</span>
-    <div><strong>Population Fallback</strong><p>While a user has fewer than 6 qualifying scans for a given region, the population threshold formula is used for that region: <code>T = min(100, TAI°C / 1.0 × 100)</code> (COMPASS §05A). All outputs are tagged <code>baseline_mode = 'population_fallback'</code> until sufficient qualifying scans have been processed by the nightly batch. The fallback is removed automatically once the 6th qualifying scan is processed — no manual intervention is required.</p></div>
+    <div><strong>Per-Region Population Fallback</strong><p>Each body region accumulates its own baseline independently. Regions with sufficient eligible scan history use the individual SD formula; regions below the threshold use the population formula (<code>T = min(100, TAI°C / 1.0 × 100)</code> — COMPASS §05A). Both modes resolve to the same T = 50 zone boundary. The per-region <code>baseline_mode</code> field in the measurements JSONB records which formula was applied; the scan-level <code>thermal_scans.baseline_mode</code> summarises as <code>individual_sd</code>, <code>population_fallback</code>, or <code>mixed</code>. Regions transition automatically as their <code>eligible_scan_count</code> grows — no manual intervention or global scan counter required.</p></div>
   </div>
+
+  <h3 id="s07-async-rtp">7.4 Async Baseline + RTP Thread <span class="badge badge-beta" style="margin-left:8px;vertical-align:middle;">BETA</span></h3>
+  <p>Triggered by the Backend immediately after Module 1 completes and the current scan's measurements are written to DB — not after the full Flow A pipeline. Runs as an asynchronous background thread concurrent with Modules 2 and 3. Does not block scan result delivery to the athlete or operator. Receives the current scan's measurements as a direct in-memory input from Module 1; historical scans are fetched separately from DB.</p>
+
+  <div class="sc-pipeline" style="max-width:760px;">
+    <div class="sc-stage">
+      <div class="sc-row">
+        <div class="sc-block" data-track="thermal">
+          <div class="sc-block-title">1 — Receive Current Measurements + Read Historical Scans</div>
+          <div class="sc-block-body">Accepts the current scan's <code>measurements</code> JSONB as a direct input from Module 1 (already in memory — no DB read for the current scan). Separately queries all prior valid <code>thermal_scans.measurements</code> rows for the athlete from DB, ordered by <code>generated_at ASC</code>. Combines both into a complete per-region delta history including the current scan.</div>
+        </div>
+      </div>
+    </div>
+    <div class="sc-arrow"></div>
+    <div class="sc-stage">
+      <div class="sc-row">
+        <div class="sc-block" data-track="thermal">
+          <div class="sc-block-title">2 — Compute Baselines Per Region</div>
+          <div class="sc-block-body">For each region independently: compute rolling <code>baseline_mean_delta</code>, <code>baseline_sd</code>, and <code>eligible_scan_count</code> from that region's qualifying scan history (gates: §7.3). Assign per-region <code>baseline_mode</code>: <code>individual_sd</code> when the region has sufficient eligible scans, <code>population_fallback</code> otherwise. Regions on different modes within the same scan are handled independently — there is no global scan count threshold.</div>
+        </div>
+      </div>
+    </div>
+    <div class="sc-arrow"></div>
+    <div class="sc-stage">
+      <div class="sc-row">
+        <div class="sc-block" data-track="thermal">
+          <div class="sc-block-title">3 — Compute RTP Clearance Per Region</div>
+          <div class="sc-block-body">For each region, sets <code>rtp_clear</code>:
+            <br>• <strong>N/A</strong> — <code>eligible_scan_count &lt; 2</code> (insufficient history)
+            <br>• <strong>YES</strong> — region side ≠ <code>affected_side</code> (healthy contralateral — auto-clears)
+            <br>• <strong>YES</strong> — region side = <code>affected_side</code> AND <code>severity_level</code> was <code>mild</code> or <code>clear</code> for the last 2 consecutive scans
+            <br>• <strong>NO</strong> — affected side with ≥ 1 <code>moderate</code> or <code>elevated</code> reading in the last 2 scans
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sc-arrow"></div>
+    <div class="sc-stage">
+      <div class="sc-row">
+        <div class="sc-block" data-track="storage">
+          <div class="sc-block-title">4 — Write Back + Alert</div>
+          <div class="sc-block-body">Awaits <code>zone_future</code> (resolved by Module 2 immediately after Zone Classification — see §7.1). This guarantees the eligibility check uses the <em>current</em> scan's zone, not a stale value from DB. Once the zone is available: patches <code>measurements</code> JSONB with baseline + RTP fields per region · sets <code>rtp_regions_pending</code> (count of regions where <code>rtp_clear = "NO"</code>) · sets <code>baseline_computed_at = NOW()</code>. If <code>rtp_regions_pending = 0</code> AND <code>compass_zone = 'safe'</code>, fires an <code>rtp_milestone</code> alert with <code>event: "eligible_for_clearance"</code> via the Alert Generator (§10) — notifying staff the athlete is ready to be reviewed. Clearance is never applied automatically; it requires explicit staff approval via <code>POST /teams/rtp/{id}/clear</code>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert blue" style="margin-top:16px;"><div class="alert-icon">ℹ️</div><div><strong>Concurrency Model</strong><p>The async Baseline + RTP Thread runs concurrently with Modules 2 and 3. Steps 1–3 (baseline computation + per-region RTP) have no dependency on Module 2 and run freely. Step 4 (write-back + alert) awaits <code>zone_future</code>, which Module 2 resolves immediately after Zone Classification — typically within milliseconds, well before the async thread's Steps 1–3 complete. This eliminates the race condition where Step 4 might otherwise read the <em>previous</em> day's <code>compass_zone</code> from <code>daily_assessments</code> before Module 2 has written the new one. Module 2 also reads the baseline from the <em>previous</em> scan's <code>measurements</code> JSONB (written by the previous async thread, already settled) — the baseline write and the scoring read operate on different scan rows, so they never race.</p></div></div>
+
 </section>
 
 <!-- ══ 08: Wearables ══ -->
@@ -2449,6 +2926,38 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <li><div class="step-num">5</div><p><code>wearable_connections.last_synced_at</code> is updated to <code>NOW()</code> on success. The processed row in <code>spike_pull_queue</code> is marked <code>status = 'done'</code> (or deleted). On API error the row is marked <code>status = 'error'</code> and <code>wearable_connections.status</code> is set to <code>error</code> if auth-related.</p></li>
   </ul>
 
+  <div id="s08-6"></div>
+  <h3>8.6 On-Demand Spike Pull</h3>
+  <p>The daily cron pull (§8.5) runs at 02:00 UTC. Athletes who scan or check readiness earlier in the day may encounter a <code>stale_wearable</code> gate failure in Flow B if their wearable device synced data after the last cron run. The on-demand pull endpoint allows an athlete or coach to request an immediate Spike pull outside the cron schedule, making fresh wearable data available for the next <code>POST /compass/refresh</code> call.</p>
+
+  <h4>Rate Limiting</h4>
+  <p>To prevent Spike API exhaustion, pulls are capped at <strong>one successful pull per athlete per hour</strong>. The Backend enforces this using <code>wearable_connections.last_synced_at</code>. If a pull was completed within the last 60 minutes, the endpoint returns HTTP <code>429 Too Many Requests</code> with a <code>Retry-After</code> header indicating the seconds remaining before the next pull is permitted.</p>
+
+  <h4>Request / Response</h4>
+  <table class="data-table" style="max-width:720px;margin-bottom:20px;">
+    <thead><tr><th>Field</th><th>Direction</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>user_id</code></td><td>Request body (optional)</td><td>UUID</td><td>Target athlete. Required when called by a coach via NUR Teams; omitted when called by the athlete themselves (resolved from JWT).</td></tr>
+      <tr><td><code>last_synced_at</code></td><td>Response</td><td>timestamptz</td><td>Timestamp of the pull just completed.</td></tr>
+      <tr><td><code>new_data_available</code></td><td>Response</td><td>boolean</td><td><code>true</code> if Spike returned at least one metric row newer than the previous <code>daily_metrics</code> record for this athlete.</td></tr>
+      <tr><td><code>ready_for_compass_refresh</code></td><td>Response</td><td>boolean</td><td><code>true</code> if the freshly written <code>daily_metrics</code> row would now pass Gate 3 of Flow B (data ≤ 2 days old and newer than the last computation). Lets the client decide whether to immediately call <code>POST /compass/refresh</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Pull Flow</h4>
+  <ul class="step-list">
+    <li><div class="step-num">1</div><p>Client calls <code>POST /wearables/sync-now</code> with JWT. Backend resolves athlete from JWT (or from <code>user_id</code> body field for admin callers). Verifies <code>wearable_connections.status = 'active'</code> and <code>sync_enabled = true</code> — returns <code>409</code> if the connection is not active.</p></li>
+    <li><div class="step-num">2</div><p>Rate-limit check: if <code>NOW() - last_synced_at &lt; 1 hour</code>, return <code>429</code> with <code>Retry-After: &lt;seconds&gt;</code>.</p></li>
+    <li><div class="step-num">3</div><p>Backend calls the Spike Daily Statistics API using <code>wearable_connections.encrypted_access_token</code>, requesting today's date window. Same pull logic and upsert semantics as the daily cron job (§8.5 Steps 3–4) — idempotent on <code>(user_id, source_platform, metric_date, metric_type)</code>.</p></li>
+    <li><div class="step-num">4</div><p>On success: update <code>wearable_connections.last_synced_at = NOW()</code>. Write a row to <code>wearable_sync_logs</code> with <code>sync_type = 'on_demand'</code>. Return <code>200</code> with <code>{ last_synced_at, new_data_available, ready_for_compass_refresh }</code>.</p></li>
+    <li><div class="step-num">5</div><p>On Spike API error: return <code>502 Bad Gateway</code> with <code>{ error: "spike_pull_failed", detail: "&lt;spike_error&gt;" }</code>. <code>last_synced_at</code> is not updated — the rate-limit window is not consumed on failure, so the athlete can retry immediately.</p></li>
+  </ul>
+
+  <div class="alert blue">
+    <span class="alert-icon">ℹ️</span>
+    <div><strong>No automatic Flow B trigger</strong><p>The on-demand pull deliberately does not call <code>POST /infer/refresh</code> automatically. The client receives <code>ready_for_compass_refresh: true</code> and decides whether to follow up with <code>POST /compass/refresh</code>. This keeps the two operations independently retryable and avoids coupling a pull failure to a COMPASS score update failure.</p></div>
+  </div>
+
   <h4>Data Flow Diagram</h4>
 
   <svg viewBox="0 0 860 420" width="100%" style="max-width:860px;margin:16px 0 24px;display:block;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
@@ -2602,7 +3111,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><td><code>/results/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>COMPASS score retrieval (reads from <code>daily_assessments</code> + <code>thermal_scans</code>), per-region measurements, readiness history.</td></tr>
       <tr><td><code>/wearables/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>OAuth connection management and metric sync for supported wearable platforms.</td></tr>
       <tr><td><code>/health/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Pain entry submission, health history updates, pre-scan questionnaire.</td></tr>
-      <tr><td><code>/teams/</code></td><td><span class="badge badge-jwt">JWT</span> + <span class="badge badge-iam">IAM Roles</span></td><td>NUR Teams</td><td>Squad roster management, bulk readiness queries, coach assistant (GA).</td></tr>
+      <tr><td><code>/teams/</code></td><td><span class="badge badge-jwt">JWT</span> + <span class="badge badge-iam">IAM Roles</span></td><td>NUR Teams</td><td>Roster management (athletes + staff), bulk readiness queries, athlete detail (COMPASS history, thermal contralateral, RTP, clinical notes), staff-side activity and pain entry, alert management, org settings and logo upload, CSV/PDF export. Admin accounts only.</td></tr>
       <tr><td><code>/notifications/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>FCM device token registration, notification preference management.</td></tr>
     </tbody>
   </table>
@@ -2669,6 +3178,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <tbody>
       <tr><td><code>POST</code></td><td><code>/wearables/connect</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Initiate Spike SDK wearable connection. Backend generates HMAC-SHA256 signature (<code>user_id</code> + shared secret) and returns <code>{ spike_token, application_id }</code> for SDK initialisation.</td></tr>
       <tr><td><code>GET</code></td><td><code>/wearables/status</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Return current wearable connection status (<code>active</code> / <code>revoked</code> / <code>error</code>) and <code>last_synced_at</code> timestamp.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/wearables/sync-now</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>On-demand Spike pull outside the daily cron schedule. Rate-limited to 1 successful pull per athlete per hour — returns <code>429 Too Many Requests</code> with <code>Retry-After</code> header if within the window. Body (admin only): <code>{ "user_id": "&lt;uuid&gt;" }</code>. Response: <code>{ last_synced_at, new_data_available, ready_for_compass_refresh }</code>. Returns <code>502</code> on Spike API failure without consuming the rate-limit window. See §8.6.</td></tr>
       <tr><td><code>DELETE</code></td><td><code>/wearables/disconnect</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Revoke the wearable connection. Sets <code>wearable_connections.status</code> to <code>revoked</code> and stops daily Spike pull for this athlete.</td></tr>
     </tbody>
   </table>
@@ -2685,16 +3195,82 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     </tbody>
   </table>
 
-  <h4 class="endpoint-group">Teams</h4>
+  <h4 class="endpoint-group">Teams — Roster Management <span class="badge badge-beta" style="margin-left:6px;vertical-align:middle;">BETA · Admin Only</span></h4>
   <table class="data-table">
-    <thead>
-      <tr><th>Method</th><th>Path</th><th>Auth</th><th>Consumer</th><th>Description</th></tr>
-    </thead>
+    <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr></thead>
     <tbody>
-      <tr><td><code>GET</code></td><td><code>/teams/roster</code></td><td><span class="badge badge-jwt">JWT</span> + <span class="badge badge-iam">IAM Roles</span></td><td>NUR Teams</td><td>Return the full squad roster for the authenticated coach's team: athlete IDs, names, wearable connection status.</td></tr>
-      <tr><td><code>GET</code></td><td><code>/teams/readiness</code></td><td><span class="badge badge-jwt">JWT</span> + <span class="badge badge-iam">IAM Roles</span></td><td>NUR Teams</td><td>Bulk readiness query: latest COMPASS zone and score for every athlete on the roster. Query param: <code>date</code> (defaults to today).</td></tr>
-      <tr><td><code>GET</code></td><td><code>/teams/athletes/{athlete_id}/results</code></td><td><span class="badge badge-jwt">JWT</span> + <span class="badge badge-iam">IAM Roles</span></td><td>NUR Teams</td><td>Full result history for a specific athlete. Supports the same <code>limit</code> / <code>offset</code> / <code>from_date</code> / <code>to_date</code> params as <code>/results/history</code>.</td></tr>
-      <tr><td><code>POST</code></td><td><code>/teams/scan/initiate</code></td><td><span class="badge badge-jwt">JWT</span> + <span class="badge badge-iam">IAM Roles</span></td><td>NUR Teams</td><td>Admin initiates a scan session for a selected athlete (admin flow). Body: <code>{ "athlete_id", "device_id" }</code>. Returns <code>session_id</code> to hand off to NUR Sensor. See &sect;5.2.</td></tr>
+      <tr><td><strong>GET</strong></td><td><code>/teams/roster</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Full squad. Per athlete: <code>id, name, position, zone, compass_score, my_nur_status, wearable_status, last_scan_date, scan_overdue, rtp_regions_pending</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/roster/athletes</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Manually add athlete to org. Body: <code>{first_name, last_name, dob, position, position_group, chronic_conditions}</code>. Creates <code>auth_user</code> + <code>org_members</code> row with <code>my_nur_status=not_enrolled</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/roster/invite</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Send My NUR email invite to athlete. Body: <code>{email, first_name, last_name}</code>. Creates <code>org_members</code> row with <code>my_nur_status=invite_pending</code>.</td></tr>
+      <tr><td><strong>GET</strong></td><td><code>/teams/roster/requests</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>List pending join requests. Returns <code>[{request_id, name, email, invite_code, requested_at}]</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/roster/requests/{id}/respond</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Approve or deny a join request. Body: <code>{"action": "approve" | "deny"}</code>.</td></tr>
+      <tr><td><strong>GET</strong></td><td><code>/teams/roster/invite-code</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Generate one-time offline join code for athlete without email. Returns <code>{invite_code: "NUR-XXXXX", expires_at}</code>. Writes <code>org_members.invite_code</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h4 class="endpoint-group">Teams — Staff Management <span class="badge badge-beta" style="margin-left:6px;vertical-align:middle;">BETA · Admin Only</span></h4>
+  <table class="data-table">
+    <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>GET</strong></td><td><code>/teams/staff</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>List all staff members in the org. Returns <code>[{user_id, name, email, job_title, joined_at}]</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/staff/invite</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Invite a new staff member. Body: <code>{email, first_name, last_name, job_title}</code>. All staff invited via NUR Teams are created with <code>role = admin</code> — the only role that can access NUR Teams.</td></tr>
+    </tbody>
+  </table>
+
+  <h4 class="endpoint-group">Teams — Athlete Detail (Staff View) <span class="badge badge-beta" style="margin-left:6px;vertical-align:middle;">BETA</span></h4>
+  <table class="data-table">
+    <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>GET</strong></td><td><code>/teams/athletes/{id}/compass/history</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Last 30 days of COMPASS score and zone. Returns <code>[{date, compass_score, compass_zone, trigger_type}]</code>. Query: §6.6.1.</td></tr>
+      <tr><td><strong>GET</strong></td><td><code>/teams/athletes/{id}/thermal/contralateral</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Contralateral bilateral delta history. Returns <code>{pairs: [{label, dates[], left_deltas[], right_deltas[], bilateral_diffs[]}]}</code>. Query: §6.6.2.</td></tr>
+      <tr><td><strong>GET</strong></td><td><code>/teams/athletes/{id}/rtp</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>RTP status from latest scan. Returns <code>{rtp_regions_pending, baseline_computed_at, region_eligibility: [{region_id, label, delta, rtp_clear, eligible_scan_count}]}</code>. Reads <code>thermal_scans.measurements</code> directly — no separate computation at query time.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/athletes/{id}/notes</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Create clinical note. Body: <code>{content, note_type: "soap"|"observation"|"assessment"|"general"}</code>. Writes to <code>tbscan.clinical_notes</code>.</td></tr>
+      <tr><td><strong>GET</strong></td><td><code>/teams/athletes/{id}/notes</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>List clinical notes newest-first. Returns <code>[{note_id, author_name, note_type, content, created_at}]</code>.</td></tr>
+      <tr><td><strong>PUT</strong></td><td><code>/teams/athletes/{id}/activity</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Staff-side activity level update. Body: <code>{activity_level: "rest"|"light"|"moderate"|"high"|"max"}</code>. Creates new <code>user_profile_history</code> version row.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/athletes/{id}/pain</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Staff-side pain entry for athlete. Body: <code>{region_ids: [int], pain_level: "mild"|"moderate"|"severe", pain_type, onset_range}</code>. Creates new <code>user_profile_history</code> version row.</td></tr>
+    </tbody>
+  </table>
+
+  <h4 class="endpoint-group">Teams — Alerts <span class="badge badge-beta" style="margin-left:6px;vertical-align:middle;">BETA</span></h4>
+  <table class="data-table">
+    <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>GET</strong></td><td><code>/teams/alerts</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Paginated alert list for org. Query params: <code>type</code>, <code>severity</code>, <code>acknowledged</code> (bool), <code>limit</code> (default 50), <code>offset</code>. Returns <code>{alerts: […], total_unread}</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/alerts/{id}/acknowledge</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Acknowledge single alert. Sets <code>acknowledged_by = requesting_user_id</code>, <code>acknowledged_at = NOW()</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/alerts/acknowledge-all</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Acknowledge all unacknowledged alerts for org. Optional body: <code>{type: "…"}</code> to filter by type.</td></tr>
+    </tbody>
+  </table>
+
+  <h4 class="endpoint-group">Teams — Squad Level <span class="badge badge-beta" style="margin-left:6px;vertical-align:middle;">BETA</span></h4>
+  <table class="data-table">
+    <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>GET</strong></td><td><code>/teams/readiness</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Bulk COMPASS for all squad athletes. Returns <code>{zone_summary: {safe, recovery, deceptive, danger, pending}, athletes: [{id, name, zone, compass_score, wearable_status, last_scan_date, scan_overdue, rtp_regions_pending}]}</code>.</td></tr>
+      <tr><td><strong>GET</strong></td><td><code>/teams/rtp</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>RTP hub: athletes with <code>rtp_regions_pending &gt; 0</code>. Query: §6.6.5. Returns <code>{athletes: [{id, name, zone, compass_score, rtp_regions_pending, last_scan_date}]}</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/export/snapshot</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Trigger async CSV/PDF squad snapshot generation. Returns <code>{job_id, download_url, expires_at}</code>. File served via GCS signed URL.</td></tr>
+    </tbody>
+  </table>
+
+  <h4 class="endpoint-group">Teams — RTP Workflow Management <span class="badge badge-beta" style="margin-left:6px;vertical-align:middle;">BETA</span></h4>
+  <table class="data-table">
+    <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>POST</strong></td><td><code>/teams/rtp/{athleteId}/initiate</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Open a new RTP workflow for the athlete. Fails with <code>409 Conflict</code> if an active workflow already exists (partial unique index on <code>rtp_workflows</code>). Writes a <code>tbscan.rtp_workflows</code> row with <code>initiated_by = requesting_user_id</code>. Returns <code>{workflow_id, initiated_at}</code>.</td></tr>
+      <tr><td><strong>GET</strong></td><td><code>/teams/rtp/{athleteId}/workflow</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Full RTP workflow for the athlete. Returns <code>{workflow_id, initiated_at, initiated_by_name, cleared_at, cleared_by_name, manual_clear, injuries: […], interventions: […]}</code>. Query: §6.6.6. Returns <code>404</code> if no active workflow.</td></tr>
+      <tr><td><strong>PUT</strong></td><td><code>/teams/rtp/{athleteId}/injuries</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Set or replace the injury documentation for the active workflow. Body: <code>{region_id, region_label, injury_type, severity, injury_date, notes?}</code>. Writes to <code>rtp_workflows.injuries</code> JSONB. Returns <code>200 OK</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/rtp/{athleteId}/interventions</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Log a therapeutic intervention. Body: <code>{intervention_type, session_date, provider?, duration_mins?, notes?}</code>. Writes to <code>tbscan.rtp_interventions</code>. Returns <code>{intervention_id}</code>.</td></tr>
+      <tr><td><strong>DELETE</strong></td><td><code>/teams/rtp/{athleteId}/interventions/{interventionId}</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Remove an intervention record. Hard delete. Returns <code>204 No Content</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/rtp/{athleteId}/clear</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Staff clearance approval — the only path to closing an RTP workflow. Body: <code>{notes?}</code>. Backend checks current conditions at call time: if <code>rtp_regions_pending = 0</code> AND <code>compass_zone = 'safe'</code> on the latest <code>daily_assessments</code>, sets <code>manual_clear = false</code> (conditions-based approval); otherwise sets <code>manual_clear = true</code> (override). In both cases: sets <code>cleared_at = NOW()</code>, <code>cleared_by = requesting_user_id</code>, <code>is_active = false</code>. Fires an <code>rtp_milestone</code> alert with <code>event: "cleared"</code>. Returns <code>{cleared_at, workflow_id, manual_clear}</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h4 class="endpoint-group">Teams — Organisation Settings <span class="badge badge-beta" style="margin-left:6px;vertical-align:middle;">BETA · Admin Only</span></h4>
+  <table class="data-table">
+    <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>GET</strong></td><td><code>/teams/settings</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Return all org settings: <code>scan_interval_days</code>, <code>timezone</code>, <code>alert_delivery_method</code>, <code>allow_athlete_pain_entry</code>, <code>report_branding</code> (logo_url, color_scheme, org_name).</td></tr>
+      <tr><td><strong>PUT</strong></td><td><code>/teams/settings</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Partial update of org settings. Any subset of <code>org_settings</code> columns accepted in body.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/settings/logo</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Initiate org logo upload. Returns <code>{signed_url, gcs_path, expires_at}</code>. Client PUTs image binary directly to GCS. Caller then calls <code>PUT /teams/settings</code> with <code>{"report_branding": {"logo_url": gcs_path}}</code> to persist.</td></tr>
     </tbody>
   </table>
 
@@ -2772,49 +3348,133 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     </tbody>
   </table>
 
-  <div class="alert orange">
-    <span class="alert-icon">&#9888;</span>
-    <div><strong>Offline / Fallback Behaviour</strong><p>If NUR Sensor loses network connectivity during a session, the thermogram is queued locally and upload is retried on reconnection. The Backend API session will remain in <code>pending</code> state until the image arrives; COMPASS scoring is blocked until the GCS upload completes. No fallback score is generated from sensor-only data.</p></div>
+  <div class="alert blue">
+    <span class="alert-icon">&#127760;</span>
+    <div><strong>Online-Only Operation</strong><p>NUR Sensor requires a persistent network connection throughout the entire session. If connectivity is lost at any point — before or after thermogram capture — the session is immediately terminated with <code>status = 'error'</code> and the athlete must re-initiate a new session. There is no local image queuing, no retry on reconnection, and no offline fallback. NUR Sensor is deployed in controlled clinical environments under MDM; network reliability is a venue prerequisite, not an application concern.</p></div>
   </div>
 
   <p>For both scan entry paths (individual QR and admin member-selection), see <a href="#s05-2" style="color:var(--accent);">&sect;5.2 Admin / Team Scan Flow</a>.</p>
+
+  <h3 id="s14-3">14.3 Anatomical Region Map</h3>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">The NUR Sensor maps its thermogram ROI extraction to 34 fixed anatomical regions. Each region has a stable integer ID used in <code>thermal_scans.measurements</code> JSONB, RTP workflow region tracking, and the body map UI in My NUR and NUR Teams. Bilateral regions are paired by name convention (Right / Left prefix); unpaired regions (Head, Neck) are singular.</p>
+  <table class="data-table">
+    <thead>
+      <tr><th>ID</th><th>Region Name</th><th>Pair</th><th>Body Segment</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>1</code></td><td>Head</td><td>—</td><td>Head &amp; Neck</td></tr>
+      <tr><td><code>34</code></td><td>Neck</td><td>—</td><td>Head &amp; Neck</td></tr>
+      <tr><td><code>10</code></td><td>Right Chest</td><td rowspan="2" style="vertical-align:middle;">↔ 10/11</td><td rowspan="2" style="vertical-align:middle;">Torso</td></tr>
+      <tr><td><code>11</code></td><td>Left Chest</td></tr>
+      <tr><td><code>3</code></td><td>Right Upper Abdomen</td><td rowspan="2" style="vertical-align:middle;">↔ 3/7</td><td rowspan="2" style="vertical-align:middle;">Torso</td></tr>
+      <tr><td><code>7</code></td><td>Left Upper Abdomen</td></tr>
+      <tr><td><code>2</code></td><td>Right Lower Abdomen</td><td rowspan="2" style="vertical-align:middle;">↔ 2/6</td><td rowspan="2" style="vertical-align:middle;">Torso</td></tr>
+      <tr><td><code>6</code></td><td>Left Lower Abdomen</td></tr>
+      <tr><td><code>4</code></td><td>Right Pelvis</td><td rowspan="2" style="vertical-align:middle;">↔ 4/5</td><td rowspan="2" style="vertical-align:middle;">Pelvis &amp; Hip</td></tr>
+      <tr><td><code>5</code></td><td>Left Pelvis</td></tr>
+      <tr><td><code>8</code></td><td>Right Hip</td><td rowspan="2" style="vertical-align:middle;">↔ 8/9</td><td rowspan="2" style="vertical-align:middle;">Pelvis &amp; Hip</td></tr>
+      <tr><td><code>9</code></td><td>Left Hip</td></tr>
+      <tr><td><code>14</code></td><td>Right Shoulder</td><td rowspan="2" style="vertical-align:middle;">↔ 14/15</td><td rowspan="2" style="vertical-align:middle;">Upper Limb</td></tr>
+      <tr><td><code>15</code></td><td>Left Shoulder</td></tr>
+      <tr><td><code>12</code></td><td>Right Upper Arm</td><td rowspan="2" style="vertical-align:middle;">↔ 12/13</td><td rowspan="2" style="vertical-align:middle;">Upper Limb</td></tr>
+      <tr><td><code>13</code></td><td>Left Upper Arm</td></tr>
+      <tr><td><code>16</code></td><td>Right Elbow</td><td rowspan="2" style="vertical-align:middle;">↔ 16/17</td><td rowspan="2" style="vertical-align:middle;">Upper Limb</td></tr>
+      <tr><td><code>17</code></td><td>Left Elbow</td></tr>
+      <tr><td><code>18</code></td><td>Right Lower Arm</td><td rowspan="2" style="vertical-align:middle;">↔ 18/19</td><td rowspan="2" style="vertical-align:middle;">Upper Limb</td></tr>
+      <tr><td><code>19</code></td><td>Left Lower Arm</td></tr>
+      <tr><td><code>20</code></td><td>Right Hands</td><td rowspan="2" style="vertical-align:middle;">↔ 20/21</td><td rowspan="2" style="vertical-align:middle;">Upper Limb</td></tr>
+      <tr><td><code>21</code></td><td>Left Hands</td></tr>
+      <tr><td><code>28</code></td><td>Right Thigh</td><td rowspan="2" style="vertical-align:middle;">↔ 28/29</td><td rowspan="2" style="vertical-align:middle;">Lower Limb</td></tr>
+      <tr><td><code>29</code></td><td>Left Thigh</td></tr>
+      <tr><td><code>30</code></td><td>Right Inner Thigh</td><td rowspan="2" style="vertical-align:middle;">↔ 30/31</td><td rowspan="2" style="vertical-align:middle;">Lower Limb</td></tr>
+      <tr><td><code>31</code></td><td>Left Inner Thigh</td></tr>
+      <tr><td><code>32</code></td><td>Right Outer Thigh</td><td rowspan="2" style="vertical-align:middle;">↔ 32/33</td><td rowspan="2" style="vertical-align:middle;">Lower Limb</td></tr>
+      <tr><td><code>33</code></td><td>Left Outer Thigh</td></tr>
+      <tr><td><code>26</code></td><td>Right Knee</td><td rowspan="2" style="vertical-align:middle;">↔ 26/27</td><td rowspan="2" style="vertical-align:middle;">Lower Limb</td></tr>
+      <tr><td><code>27</code></td><td>Left Knee</td></tr>
+      <tr><td><code>24</code></td><td>Right Lower Leg</td><td rowspan="2" style="vertical-align:middle;">↔ 24/25</td><td rowspan="2" style="vertical-align:middle;">Lower Limb</td></tr>
+      <tr><td><code>25</code></td><td>Left Lower Leg</td></tr>
+      <tr><td><code>22</code></td><td>Right Foot</td><td rowspan="2" style="vertical-align:middle;">↔ 22/23</td><td rowspan="2" style="vertical-align:middle;">Lower Limb</td></tr>
+      <tr><td><code>23</code></td><td>Left Foot</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">32 bilateral regions (16 pairs) + 2 singular regions = 34 total. The ID values match the <code>region_id</code> keys in <code>thermal_scans.measurements.regions[]</code> and the <code>region_id</code> column in <code>rtp_workflows.injuries[]</code> JSONB.</p>
 </section>
 
 <!-- ══ 15: NUR Teams ══ -->
 <section id="s-teams">
   <div class="section-label">Section 15</div>
-  <h2>NUR Teams</h2>
-  <p class="section-intro">NUR Teams is the web-based coaching and administration portal that provides squad-level readiness analytics, roster management, and a natural language coach assistant interface. It is scoped to the GA release and not included in BETA.</p>
+  <h2>NUR Teams <span class="badge badge-beta" style="margin-left:10px;vertical-align:middle;font-size:16px;">BETA</span></h2>
+  <p class="section-intro">NUR Teams is the web portal for coaching and clinical staff. It provides squad-level readiness monitoring, roster management, thermal RTP tracking, alert management, and clinical note authoring. <strong>Access is restricted to admin accounts only</strong> — <code>org_members</code> with <code>role = member</code> cannot log in to NUR Teams.</p>
 
-  <h3>15.1 Authentication</h3>
-  <p>NUR Teams uses OTP-driven JWT, the same backend auth stack as MY NUR, with the addition of IAM role claims embedded in the token. Roles determine which data and actions each user can access. See <a href="#s04-3" style="color:var(--accent);">&sect;4.3 JWT Auth &mdash; NUR Teams</a>.</p>
+  <h3 id="s15-1">15.1 Authentication</h3>
+  <p>NUR Teams uses the same JWT authentication flow as My NUR (OTP → access token + refresh token). NUR Teams enforces <code>role = admin</code> at the JWT validation layer on every request. Any valid JWT belonging to a <code>member</code>-role account receives a <strong>403 Forbidden</strong> on all <code>/teams/</code> routes — there is no partial access for member accounts.</p>
 
-  <h3>15.2 Role Permission Matrix</h3>
-  <p style="font-size:14px;color:var(--text-muted);max-width:760px;margin-bottom:16px;">Each user within an organisation holds one of two roles (stored in <code>tbscan.org_members.role</code>). IAM role claims embedded in the JWT at login encode this value; the backend enforces access accordingly. See <a href="#s04-3" style="color:var(--accent);">&sect;4.3 JWT Auth &mdash; NUR Teams</a>.</p>
+  <h3 id="s15-2">15.2 Role Permission Matrix</h3>
+  <p>NUR Teams is admin-only. The <code>job_title</code> field on <code>org_members</code> is display-only and does not create permission sub-roles.</p>
+  <table class="data-table" style="max-width:520px;">
+    <thead><tr><th>Permission</th><th style="text-align:center;">Admin</th></tr></thead>
+    <tbody>
+      <tr><td>View squad readiness dashboard and athlete detail</td><td style="text-align:center;color:var(--safe);">✓</td></tr>
+      <tr><td>Add clinical notes, update activity level, enter pain data</td><td style="text-align:center;color:var(--safe);">✓</td></tr>
+      <tr><td>Acknowledge alerts, trigger snapshot export</td><td style="text-align:center;color:var(--safe);">✓</td></tr>
+      <tr><td>Manage roster (add athlete, send invite, approve join requests)</td><td style="text-align:center;color:var(--safe);">✓</td></tr>
+      <tr><td>Invite and manage staff members</td><td style="text-align:center;color:var(--safe);">✓</td></tr>
+      <tr><td>Update organisation settings and upload logo</td><td style="text-align:center;color:var(--safe);">✓</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="s15-3">15.3 Admin Scan Flow</h3>
+  <p>Coaching staff can initiate a scan session for a specific athlete directly from NUR Teams without requiring the athlete to be present with their phone. The admin selects the athlete from the roster and the NUR Sensor app receives the athlete's profile via Firebase RTDB, bypassing the QR code step. See <code>POST /teams/scan/initiate</code> in §12.2 for the endpoint detail.</p>
+
+  <h3 id="s-teams-screens">15.4 Key Screens and Data Flows</h3>
   <table class="data-table">
-    <thead>
-      <tr><th>Role</th><th>Permissions</th><th>Scope</th></tr>
-    </thead>
+    <thead><tr><th>Screen</th><th>Description</th><th>Primary API Calls</th></tr></thead>
     <tbody>
       <tr>
-        <td><strong>Admin</strong><br><span style="font-size:11px;color:var(--text-dim);">role = admin</span></td>
-        <td>Full roster CRUD, user provisioning (invite / remove org members), scan session initiation for any athlete, result export, org settings management (scan protocol, branding, data retention, wearable integration).</td>
-        <td>Organisation-wide</td>
+        <td><strong>Squad Hub</strong></td>
+        <td>Zone distribution summary bar (Safe / Recovery / Deceptive / Danger / Pending counts), priority banners for Deceptive and Danger athletes, full athlete grid with search, filter by zone/position, and sort by risk/score/name/scan date.</td>
+        <td><code>GET /teams/readiness</code><br><code>GET /teams/alerts</code> (unread count)</td>
       </tr>
       <tr>
-        <td><strong>Member</strong><br><span style="font-size:11px;color:var(--text-dim);">role = member</span></td>
-        <td>View squad readiness dashboard, individual athlete drill-down, coach assistant queries. Cannot modify roster, export raw data, or access org settings.</td>
-        <td>Organisation-wide (read)</td>
+        <td><strong>Athlete Detail</strong></td>
+        <td>Seven tabs: Overview (30-day COMPASS chart, systemic readiness), Thermal (body avatar + contralateral pair charts), Pain &amp; Activity (staff pain entry, activity level selector), NURAI (AI coach recommendation), Notes (SOAP clinical notes), Scan History (30-day chart + 7-scan table), RTP (two sub-tabs — <em>Thermal Eligibility</em>: contralateral delta chart + 34-region eligibility table; <em>Workflow</em>: injury summary, interventions log, timeline, clearance status + link to full workflow page).</td>
+        <td><code>GET /teams/athletes/{id}/compass/history</code><br><code>GET .../thermal/contralateral</code><br><code>GET .../rtp</code><br><code>GET .../rtp/workflow</code><br><code>GET .../notes</code><br><code>POST .../notes</code><br><code>POST .../pain</code><br><code>PUT .../activity</code></td>
+      </tr>
+      <tr>
+        <td><strong>RTP Hub</strong></td>
+        <td>Lists all athletes in Deceptive Readiness or Danger zone (<code>rtp_regions_pending &gt; 0</code>). Shows per-athlete: zone badge, COMPASS score, count of pending vs. cleared regions. Two actions: <em>Initiate RTP</em> (opens a new workflow) or <em>View Workflow</em> (links to the RTP Workflow page for athletes with an active workflow).</td>
+        <td><code>GET /teams/rtp</code><br><code>POST /teams/rtp/{id}/initiate</code></td>
+      </tr>
+      <tr>
+        <td><strong>RTP Workflow</strong></td>
+        <td>Dedicated per-athlete workflow management page (<code>/rtp/{id}</code>). Four sequential steps: (1) Injury Documentation — body avatar with 34 regions, injury type/severity/date/notes; (2) Interventions — therapeutic session log with type, date, provider, duration, notes; (3) Timeline — milestone visualisation (Initiated → Injury Documented → each Intervention → Clearance); (4) Clearance Decision — shows "Ready to Clear" button (enabled) when athlete is in Safe zone with <code>rtp_regions_pending = 0</code>, or "Override Clear" button (always available to admins) for early clearance. Both paths require explicit staff approval — the workflow is never closed automatically.</td>
+        <td><code>GET /teams/rtp/{id}/workflow</code><br><code>PUT .../injuries</code><br><code>POST .../interventions</code><br><code>DELETE .../interventions/{interventionId}</code><br><code>POST .../clear</code></td>
+      </tr>
+      <tr>
+        <td><strong>Alert Centre</strong></td>
+        <td>Paginated list of all org alerts with type badge, severity, athlete name, and timestamp. Acknowledge individual alerts or acknowledge-all. Unread count badge on sidebar.</td>
+        <td><code>GET /teams/alerts</code><br><code>POST /teams/alerts/{id}/acknowledge</code><br><code>POST /teams/alerts/acknowledge-all</code></td>
+      </tr>
+      <tr>
+        <td><strong>Roster</strong></td>
+        <td>Athlete list showing My NUR status, wearable status, zone, and COMPASS score. Actions: manual add, email invite, generate offline invite code, view and respond to pending join requests.</td>
+        <td><code>GET /teams/roster</code><br>Roster management endpoints</td>
+      </tr>
+      <tr>
+        <td><strong>Staff</strong></td>
+        <td>Directory of all admin staff members with job title. Invite new staff by email with job title selection.</td>
+        <td><code>GET /teams/staff</code><br><code>POST /teams/staff/invite</code></td>
+      </tr>
+      <tr>
+        <td><strong>Settings</strong></td>
+        <td>Organisation configuration: scan interval, timezone, alert delivery method, athlete pain entry toggle, logo upload, wearable device integration toggles, thermal baseline method display.</td>
+        <td><code>GET /teams/settings</code><br><code>PUT /teams/settings</code><br><code>POST /teams/settings/logo</code></td>
       </tr>
     </tbody>
   </table>
 
-  <h3>15.3 Admin Scan Flow &amp; QR Session</h3>
-  <p>Coaches initiate a scan session for a registered athlete directly from NUR Sensor — no athlete phone required. The coach authenticates on the device via email/username and OTP, then selects the target athlete from the fetched team member list. Pre-scan checks and pain entries are collected for the selected athlete via NUR Sensor before the scan begins. For QR-based session initiation (athlete-driven), see <a href="#s04-4" style="color:var(--accent);">&sect;4.4 QR Code Flow</a>. For the full admin scan lifecycle, see <a href="#s05-2" style="color:var(--accent);">&sect;5.2 Admin / Team Scan Flow</a>.</p>
-
-  <div class="insight">
-    <p><strong>Bulk Squad Monitoring:</strong> NUR Teams surfaces aggregated COMPASS zone distributions across the full squad, enabling coaching staff to identify clusters of athletes in Recovery or Danger zones before training sessions. The coach assistant (GA feature) accepts natural language queries against this squad-level dataset.</p>
-  </div>
+  <div class="alert blue" style="margin-top:16px;"><div class="alert-icon">ℹ️</div><div><strong>NURAI Coach Assistant — Deferred</strong><p>The natural language squad query interface (NURAI Coach Assistant) is deferred to post-BETA. The <code>POST /teams/nurai/query</code> endpoint and its backing NURAI squad query module are not included in the BETA release. The Athlete Detail NURAI tab displays the individual AI coach recommendation from <code>daily_assessments.ai_coach_response</code> (already available via existing Flow A / Flow B infrastructure).</p></div></div>
 </section>
 
 <!-- ══ 09: Notifications ══ -->
@@ -2832,6 +3492,8 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><td>Scan report generated</td><td><strong>Report ready</strong></td><td>Deep link to the specific report in My NUR</td></tr>
       <tr><td>Scheduled scan reminder</td><td><strong>Scan reminder</strong></td><td>Based on user's configured scan cadence or coach-defined schedule</td></tr>
       <tr><td>AI coach recommendation updated</td><td><strong>New recommendation available</strong></td><td>Personalised text based on the latest scan findings</td></tr>
+      <tr><td>Alert generated (NUR Teams)</td><td><strong>Alert notification</strong></td><td>Dispatched per org_settings.alert_delivery_method: in_app = FCM to staff devices · email = transactional email · both = FCM + email</td></tr>
+      <tr><td>Daily digest generated (06:00 org TZ)</td><td><strong>Morning squad summary</strong></td><td>Sent to all admin org members</td></tr>
     </tbody>
   </table>
 
@@ -2842,10 +3504,58 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <li><div class="step-num">3</div><p>The Django backend dispatches FCM payloads via the Firebase Admin SDK after the relevant events complete.</p></li>
   </ul>
 
-  <div class="alert yellow">
-    <span class="alert-icon">&#9888;</span>
-    <div><strong>TBD &mdash; Async Dispatch Mechanism</strong><p>Background queue vs. inline dispatch after report generation is not yet decided. See Section 11, Open Question #1.</p></div>
-  </div>
+  <div class="alert blue"><div class="alert-icon">ℹ️</div><div><strong>Dispatch Architecture — Resolved</strong><p>Alert generation (writes to <code>tbscan.alerts</code>) is decoupled from FCM dispatch. After writing the alert row, the Backend enqueues an FCM dispatch task that runs asynchronously — independent of the NURAI inference path. Staff-facing alerts respect <code>org_settings.alert_delivery_method</code>: <code>in_app</code> (FCM only) · <code>email</code> (transactional email only) · <code>both</code> (FCM + email). Athlete-facing events (scan ready, scan reminder) use FCM via Firebase Admin SDK as before.</p></div></div>
+</section>
+
+<!-- ══ 10: Alert Generation System ══ -->
+<section id="s10">
+  <div class="section-label">Section 10</div>
+  <h2>Alert Generation System <span class="badge badge-beta" style="margin-left:10px;vertical-align:middle;font-size:14px;">BETA</span></h2>
+  <p class="section-intro">Background module that detects conditions requiring coaching staff attention and writes rows to <code>tbscan.alerts</code>. Runs on Cloud Scheduler (daily cron at 06:00 org timezone) and on event-driven triggers after scan completion (Flow A) and after async Baseline + RTP thread completion.</p>
+
+  <h3>10.1 Alert Detection Logic</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>Alert Type</th><th>Severity</th><th>Trigger</th><th>Detection Logic</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>zone_change</code></td>
+        <td><code>warning</code> (→deceptive)<br><code>critical</code> (→danger)</td>
+        <td>Post Flow A</td>
+        <td>Compare today's vs. yesterday's <code>compass_zone</code> in <code>daily_assessments</code> for the athlete. If different, insert alert with <code>metadata: {"from_zone":…, "to_zone":…}</code>.</td>
+      </tr>
+      <tr>
+        <td><code>scan_overdue</code></td>
+        <td><code>warning</code></td>
+        <td>Daily cron</td>
+        <td>Query §6.6.3: athlete's last valid scan is older than <code>org_settings.scan_interval_days</code>.</td>
+      </tr>
+      <tr>
+        <td><code>wearable_sync</code></td>
+        <td><code>info</code></td>
+        <td>Daily cron</td>
+        <td>Query §6.6.4: <code>wearable_connections.last_synced_at</code> &gt; 48 hours ago for active connections.</td>
+      </tr>
+      <tr>
+        <td><code>rtp_milestone</code></td>
+        <td><code>info</code></td>
+        <td>RTP workflow events (Backend inline)</td>
+        <td>Fired on four events: (1) RTP workflow initiated (<code>POST /teams/rtp/{id}/initiate</code>), (2) first injury documented (<code>POST /teams/rtp/{id}/injuries</code>), (3) athlete thermally eligible — async Baseline + RTP Thread finds <code>rtp_regions_pending = 0</code> AND <code>compass_zone = 'safe'</code>; fires <code>event: "eligible_for_clearance"</code> to prompt staff review — no clearance is applied, (4) staff approves clearance via <code>POST /teams/rtp/{id}/clear</code>; fires <code>event: "cleared"</code> with <code>manual_clear: false</code> (conditions met) or <code>manual_clear: true</code> (override).</td></tr>
+      </tr>
+      <tr>
+        <td><code>daily_digest</code></td>
+        <td><code>info</code></td>
+        <td>Morning cron 06:00 org TZ</td>
+        <td>One alert per org summarising: zone distribution, overdue scan count, wearable gap count, RTP pending count. <code>athlete_id = NULL</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert blue"><div class="alert-icon">ℹ️</div><div><strong>Deduplication Rule</strong><p>Before inserting <code>zone_change</code>, <code>scan_overdue</code>, or <code>wearable_sync</code> alerts, the generator checks for an existing unacknowledged alert of the same type + athlete within the past 24 hours. If found, the new insertion is skipped to prevent alert flood.</p></div></div>
+
+  <h3>10.2 Internal Endpoint</h3>
+  <p><code>POST /internal/cron/alert-generate</code> — IAM service account authentication only. Same security pattern as <code>/internal/cron/spike-pull</code>. Called by Cloud Scheduler for the daily cron, and invoked inline by the Backend after Flow A and after the Baseline + RTP thread for event-driven alerts.</p>
 </section>
 
 

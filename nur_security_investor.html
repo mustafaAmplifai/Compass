@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUR Platform — Security &amp; Privacy Overview · Amplifai Health</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1e2630;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --accent: #00c8ff;
+    --accent2: #7c3aed;
+    --safe: #22c55e;
+    --recovery: #f59e0b;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 32px 80px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(0,200,255,0.08);
+    border: 1px solid rgba(0,200,255,0.2);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .header h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-sub {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 580px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+  }
+  .header-meta {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .header-meta span { display: flex; align-items: center; gap: 6px; }
+  .header-meta strong { color: var(--text-muted); }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 56px 0;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .section-sub {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 40px;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* ── Stats ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 20px;
+    text-align: center;
+  }
+  .stat-val {
+    font-size: 38px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    line-height: 1.4;
+  }
+
+  /* ── Pillars ── */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .pillar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    transition: border-color 0.2s;
+  }
+  .pillar:hover { border-color: rgba(0,200,255,0.3); }
+  .pillar-icon { font-size: 32px; margin-bottom: 16px; }
+  .pillar h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+  .pillar p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin: 0; }
+
+  /* ── Two-col ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+  .feature-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin: 0; }
+
+  /* ── Highlight card ── */
+  .highlight {
+    background: linear-gradient(135deg, rgba(0,200,255,0.06), rgba(124,58,237,0.08));
+    border: 1px solid rgba(0,200,255,0.2);
+    border-radius: var(--radius);
+    padding: 32px 36px;
+    margin: 40px 0;
+  }
+  .highlight h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .highlight p {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: none;
+    margin: 0;
+    line-height: 1.7;
+  }
+  .highlight strong { color: var(--accent); }
+
+  /* ── Checklist ── */
+  .checklist {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .checklist li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  .checklist li:nth-last-child(-n+2) { border-bottom: none; }
+  .checklist li::before {
+    content: '✓';
+    color: var(--safe);
+    font-weight: 800;
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── Framework chips ── */
+  .framework-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 32px 0;
+  }
+  .fw-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 22px;
+    text-align: center;
+    min-width: 140px;
+  }
+  .fw-chip .fw-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .fw-chip .fw-desc { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
+  .fw-chip .fw-status { font-size: 11px; color: var(--safe); font-weight: 700; margin-top: 6px; }
+
+  /* ── Flow diagram ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 36px 0;
+  }
+  .flow-node {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    text-align: center;
+    min-width: 130px;
+  }
+  .flow-node .fn-icon { font-size: 22px; margin-bottom: 6px; }
+  .flow-node .fn-label { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .flow-node .fn-sub { font-size: 11px; color: var(--text-dim); margin-top: 3px; }
+  .flow-arrow {
+    font-size: 20px;
+    color: var(--text-dim);
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+  .flow-node.purge {
+    border-color: rgba(239,68,68,0.35);
+    background: rgba(239,68,68,0.05);
+  }
+  .flow-node.purge .fn-label { color: #f87171; }
+  .flow-node.store {
+    border-color: rgba(34,197,94,0.35);
+    background: rgba(34,197,94,0.05);
+  }
+  .flow-node.store .fn-label { color: var(--safe); }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .footer strong { color: var(--text-muted); }
+
+  .logo-mark {
+    font-size: 20px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  @media (max-width: 700px) {
+    body { padding: 40px 20px 60px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .pillars { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .checklist { grid-template-columns: 1fr; }
+    .header h1 { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-badge">&#128274; Security &amp; Privacy</div>
+  <h1>Built for<br><span>Health-Grade Trust</span></h1>
+  <p class="header-sub">
+    NUR handles sensitive biometric data from day one. Security and privacy are architectural
+    decisions — not features added later.
+  </p>
+  <div class="header-meta">
+    <span>&#127775; <strong>Amplifai Health</strong></span>
+    <span>&#9729; <strong>Google Cloud Platform</strong></span>
+    <span>&#128197; <strong>Effective January 2026</strong></span>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-val">0</div>
+    <div class="stat-label">Visual images retained after scan</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">4</div>
+    <div class="stat-label">Independent security layers</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">TLS</div>
+    <div class="stat-label">Encryption on every endpoint</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">&#8800; sold</div>
+    <div class="stat-label">Health data never sold to advertisers</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Section: Privacy by Design -->
+<div class="section-label">Privacy</div>
+<div class="section-title">Privacy is Structural, Not a Setting</div>
+<div class="section-sub">
+  The most sensitive data NUR handles — visual images of users' bodies — is architecturally
+  impossible to retain. This is not a configurable policy. It is built into the system.
+</div>
+
+<div class="flow">
+  <div class="flow-node">
+    <div class="fn-icon">&#128247;</div>
+    <div class="fn-label">Capture<br>RGB Image</div>
+    <div class="fn-sub">In-memory only</div>
+  </div>
+  <div class="flow-arrow">&#8594;</div>
+  <div class="flow-node">
+    <div class="fn-icon">&#129468;</div>
+    <div class="fn-label">Body Contour<br>Mapping</div>
+    <div class="fn-sub">Computation input</div>
+  </div>
+  <div class="flow-arrow">&#8594;</div>
+  <div class="flow-node purge">
+    <div class="fn-icon">&#128465;</div>
+    <div class="fn-label">Image<br>Purged</div>
+    <div class="fn-sub">Immediate &amp; permanent</div>
+  </div>
+  <div class="flow-arrow">&#8594;</div>
+  <div class="flow-node store">
+    <div class="fn-icon">&#128200;</div>
+    <div class="fn-label">Thermal Data<br>Retained</div>
+    <div class="fn-sub">Encrypted · No photo</div>
+  </div>
+</div>
+
+<div class="two-col">
+  <div class="feature-card">
+    <h4>&#128274;&nbsp; Zero-Knowledge Token Design</h4>
+    <p>Login codes (OTPs) and session tokens are stored only as cryptographic hashes — never in plaintext. Even a full database exposure would yield nothing usable.</p>
+  </div>
+  <div class="feature-card">
+    <h4>&#128203;&nbsp; Versioned Consent Records</h4>
+    <p>Every user's acceptance of the Privacy Statement and Terms of Use is recorded with an exact version identifier and timestamp — creating a permanent, auditable consent trail.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Section: Security Architecture -->
+<div class="section-label">Security</div>
+<div class="section-title">Defence in Depth</div>
+<div class="section-sub">
+  Security is enforced at every layer independently. A failure at one layer does not cascade through the system.
+</div>
+
+<div class="pillars">
+  <div class="pillar">
+    <div class="pillar-icon">&#127968;</div>
+    <h3>Cloud-Native Infrastructure</h3>
+    <p>Hosted entirely on Google Cloud Platform. Stateless compute, managed database, IAM-controlled storage. No on-premise servers, no exposed admin consoles.</p>
+  </div>
+  <div class="pillar">
+    <div class="pillar-icon">&#128273;</div>
+    <h3>No Passwords, Ever</h3>
+    <p>Authentication uses one-time codes delivered to a verified phone or email — eliminating the largest class of credential attacks entirely. Short-lived tokens expire within the hour.</p>
+  </div>
+  <div class="pillar">
+    <div class="pillar-icon">&#127968;</div>
+    <h3>Strict Data Isolation</h3>
+    <p>Athletes see only their own data. Clinical staff see only their organisation's athletes. The AI inference engine is never reachable by any external client — only the backend can invoke it.</p>
+  </div>
+</div>
+
+<div class="highlight">
+  <h3>&#128247;&nbsp; Thermal images never travel through the API</h3>
+  <p>The NUR Sensor uploads infrared scans directly to Google Cloud Storage via a time-limited signed URL. The image binary <strong>never passes through the application server</strong> — eliminating an entire category of interception risk. The storage bucket has no public access; only IAM-bound service accounts may read it.</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- Section: Compliance -->
+<div class="section-label">Compliance</div>
+<div class="section-title">Aligned with Recognised Frameworks</div>
+<div class="section-sub">
+  NUR's controls map directly to the security and privacy principles organisations and regulators expect from health-grade software.
+</div>
+
+<div class="framework-row">
+  <div class="fw-chip">
+    <div class="fw-name">OWASP Top 10</div>
+    <div class="fw-desc">Web &amp; API security risks</div>
+    <div class="fw-status">&#10003; All 9 applicable risks addressed</div>
+  </div>
+  <div class="fw-chip">
+    <div class="fw-name">Privacy by Design</div>
+    <div class="fw-desc">Cavoukian 7 principles</div>
+    <div class="fw-status">&#10003; All 7 principles satisfied</div>
+  </div>
+  <div class="fw-chip">
+    <div class="fw-name">Health Data</div>
+    <div class="fw-desc">Stewardship best practices</div>
+    <div class="fw-status">&#10003; Full alignment</div>
+  </div>
+  <div class="fw-chip">
+    <div class="fw-name">Audit Trail</div>
+    <div class="fw-desc">Immutable, versioned logs</div>
+    <div class="fw-status">&#10003; All sensitive operations</div>
+  </div>
+</div>
+
+<ul class="checklist">
+  <li>Encrypted data at rest and in transit on all endpoints</li>
+  <li>No health or wearable data sold to advertisers — ever</li>
+  <li>Role-based access: athletes, staff, devices, and internal services fully separated</li>
+  <li>Wearable integration is opt-in, purpose-limited to wellness insights only</li>
+  <li>Clinical notes are append-only — retroactive alteration is structurally impossible</li>
+  <li>All AI recommendations carry a version stamp — enabling reproducibility audits</li>
+  <li>Consent re-prompted and re-recorded on every policy update</li>
+  <li>Third-party webhooks verified by HMAC cryptographic signature before processing</li>
+</ul>
+
+<div class="divider"></div>
+
+<!-- Closing statement -->
+<div class="highlight" style="text-align:center; padding: 40px;">
+  <h3 style="margin-bottom:14px;">&#9989;&nbsp; Security as a Competitive Moat</h3>
+  <p style="max-width: 580px; margin: 0 auto; font-size:16px;">
+    Health data regulation is tightening globally. NUR is built from the ground up to exceed
+    the baseline — making compliance <strong>a feature, not a retrofit</strong>, and giving
+    enterprise clients and regulators confidence before they are asked for it.
+  </p>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <div><span class="logo-mark">NUR</span> &nbsp;·&nbsp; <strong>Amplifai Health</strong></div>
+  <div>Security &amp; Privacy Overview · Investor Edition · April 2026</div>
+  <div>Confidential</div>
+</div>
+
+</body>
+</html>

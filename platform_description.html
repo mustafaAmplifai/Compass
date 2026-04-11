@@ -910,7 +910,7 @@
   <section id="how-it-works">
     <div class="section-label">Signal Architecture</div>
     <h2>How NUR Works</h2>
-    <p>NUR addresses this blind spot by fusing four independent signal classes into a single deterministic risk score via the COMPASS framework.</p>
+    <p>NUR addresses this blind spot by integrating four independent signal classes via the COMPASS framework — thermal imaging and wearable data driving the deterministic COMPASS score, with athlete demographics and health history enriching the personalised AI coaching layer.</p>
 
     <div class="signal-grid">
       <div class="signal-card">
@@ -926,12 +926,12 @@
       <div class="signal-card">
         <div class="signal-num">3</div>
         <h3>Athlete Demographics</h3>
-        <p>Age, sex, body composition, and positional profile all influence how thermal and physiological data should be interpreted. NUR accounts for these factors within the scoring model, avoiding one-size-fits-all conclusions.</p>
+        <p>Age, sex, body composition, and positional profile all influence how thermal and physiological data should be interpreted. NUR accounts for these factors within the AI coaching layer, ensuring intervention plans are specific to each individual rather than one-size-fits-all.</p>
       </div>
       <div class="signal-card">
         <div class="signal-num">4</div>
         <h3>Longitudinal Health History</h3>
-        <p>Each athlete's previous injury episodes, rehabilitation history, and prior thermal patterns inform the current risk classification. An athlete with a prior hamstring strain is not assessed the same way as one with a clean record.</p>
+        <p>Each athlete's previous injury episodes and rehabilitation history inform NURAI's AI coaching layer. The athlete's longitudinal scan history also builds their individual thermal baseline — the reference that drives the COMPASS score. An athlete with a prior hamstring strain receives a different intervention plan and a different risk baseline than one with a clean record.</p>
       </div>
     </div>
   </section>
@@ -1007,7 +1007,7 @@
       </div>
     </div>
 
-    <p>When an athlete is confirmed injured, NUR shifts into monitoring mode. The same asymmetry signal that flagged hidden risk now tracks tissue healing — and the wearable data continues to track how the athlete's body is coping with rehabilitation load. An athlete does not progress from one phase to the next based on time — they progress when the COMPASS data confirms it is safe to do so.</p>
+    <p>When the clinical lead records an injury event in NUR, the platform activates monitoring mode and locks the athlete's pre-injury thermal baseline as the reference for all rehabilitation decisions. The same asymmetry signal that flagged hidden risk now tracks tissue healing — and the wearable data continues to track how the athlete's body is coping with rehabilitation load. An athlete does not progress from one phase to the next based on time — they progress when the COMPASS data confirms it is safe to do so.</p>
 
     <div class="phase-list">
       <div class="phase-item">
@@ -1053,6 +1053,10 @@
     </div>
 
     <div class="callout">
+      <p><strong>RTP timeline estimator:</strong> NUR converts each athlete's thermal healing rate into a continuously-updated expected clearance date — recalculated on every scan. Rather than a generic time-based estimate ("hamstring grade II = 3–6 weeks"), the projection reflects how quickly this individual's tissue is actually recovering. Coaches and managers receive a data-backed planning window; clinical authority over the clearance decision remains with the physiotherapist.</p>
+    </div>
+
+    <div class="callout">
       <p><strong>Contralateral limb monitoring:</strong> Injured athletes compensate by placing more load on the healthy limb. NUR scans both sides of the body throughout rehabilitation and flags rising thermal stress on the uninjured side as a separate alert — preventing the secondary injury during rehabilitation.</p>
     </div>
   </section>
@@ -1080,7 +1084,7 @@
         <div class="product-icon">🖥</div>
         <div class="product-for">Coaches &amp; Medical Staff</div>
         <h3>NUR Teams — Web App</h3>
-        <p>Full squad zone status at a glance. High-risk athletes flagged. Natural language assistant — type "Which athletes are in Deceptive Readiness today?" and receive immediate answers. No spreadsheets.</p>
+        <p>Full squad zone status at a glance. High-risk athletes flagged. RTP rehabilitation tracking with phase progression and clearance status per athlete. Natural language assistant — type "Which athletes are in Deceptive Readiness today?" and receive immediate answers. No spreadsheets.</p>
       </div>
     </div>
   </section>
@@ -1116,7 +1120,7 @@
         <div class="diff-num">01</div>
         <div class="diff-content">
           <h3>Multimodal Injury Risk Modelling</h3>
-          <p>NUR is the only platform that fuses four independent signal classes — thermal imaging, physiological wearables, athlete demographics, and longitudinal health history — into a single deterministic risk score. Competitors process one or two modalities in isolation, producing scores that are blind to the interactions between tissue stress, systemic fatigue, biological profile, and prior injury load.</p>
+          <p>NUR is the only platform that integrates four independent signal classes — thermal imaging, physiological wearables, athlete demographics, and longitudinal health history — into a single unified assessment. Thermal and wearable data produce the deterministic COMPASS score; demographics and longitudinal history personalise the AI-generated intervention plan. Competitors process one or two modalities in isolation, missing the interactions between tissue stress, systemic fatigue, biological profile, and prior injury load.</p>
         </div>
       </div>
       <div class="diff-item">
@@ -1137,7 +1141,7 @@
         <div class="diff-num">04</div>
         <div class="diff-content">
           <h3>Tailored Intervention Plans</h3>
-          <p>NUR does not stop at risk classification. Each zone produces a deterministic intervention protocol derived from the athlete's specific thermal pattern, physiological state, and injury history — not a generic recommendation template. Clinicians receive a detailed, athlete-specific action plan covering training load modifications, physiotherapy referral triggers, and return-to-play criteria, closing the loop from detection to clinical decision.</p>
+          <p>NUR does not stop at risk classification. Each zone produces a mandatory, deterministic intervention protocol derived from the athlete's specific thermal pattern, physiological state, and injury history — not a generic recommendation template. Clinicians receive a detailed, athlete-specific action plan covering training load modifications, physiotherapy referral triggers, and return-to-play criteria, closing the loop from detection to clinical decision.</p>
         </div>
       </div>
     </div>

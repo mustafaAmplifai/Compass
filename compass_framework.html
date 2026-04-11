@@ -1067,8 +1067,8 @@
     <div style="background:rgba(249,115,22,0.06); border:1px solid rgba(249,115,22,0.2); border-radius:12px; padding:20px 22px;">
       <div style="font-size:10px; color:#f97316; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px;">Use Case 02</div>
       <div style="font-size:22px; margin-bottom:10px;">🔄</div>
-      <h3 style="font-size:15px; margin:0 0 10px; color:var(--text);">Injury Monitoring &amp; Return to Play</h3>
-      <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0;">For injured athletes, COMPASS transitions into Monitoring Mode. Thermal trajectory through each rehabilitation phase provides objective clearance gates — replacing time-based assumptions with data-driven, phase-gated return-to-play decisions.</p>
+      <h3 style="font-size:15px; margin:0 0 10px; color:var(--text);">Return to Play — Thermal Eligibility</h3>
+      <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0;">For athletes in Deceptive Readiness or Danger zone, COMPASS monitors all 34 body regions simultaneously. Each region is declared RTP-eligible when bilateral asymmetry normalises on two consecutive scans — providing anatomy-specific clearance evidence rather than a single composite score.</p>
     </div>
 
     <div style="background:rgba(168,85,247,0.06); border:1px solid rgba(168,85,247,0.2); border-radius:12px; padding:20px 22px;">
@@ -2291,200 +2291,280 @@
 <!-- ══ 7.4. Return to Play & Injury Monitoring ══ -->
 <section id="rtp-protocol">
   <div class="section-label">Section 7.4</div>
-  <h3>Return-to-Play &amp; Injury Monitoring Protocol</h3>
-  <p class="section-intro">COMPASS operates in two distinct clinical modes. <strong>Prevention mode</strong> (default) identifies hidden injury risk in active athletes. <strong>Monitoring mode</strong> activates after a confirmed injury: the same dual-signal architecture tracks tissue healing progress and loads tolerance through each rehabilitation phase, replacing subjective clinical feel with objective thermal-physiological gates.</p>
+  <h3>Return-to-Play: Thermal Eligibility Module</h3>
+  <p class="section-intro">COMPASS replaces time-based and subjective RTP decisions with a continuous, per-region thermal eligibility model. Every athlete in the Deceptive Readiness or Danger zone is monitored across all 34 COMPASS body regions. A region is declared RTP-eligible only when bilateral asymmetry has normalised on consecutive scans — providing objective, anatomy-specific clearance evidence rather than a single composite score.</p>
 
   <div class="alert" style="border-left-color:var(--accent);">
     <div>
-      <p style="margin:0;">The same thermal scan that detects hidden tissue stress before injury becomes the most objective tool available for governing the return-to-play decision. Individual baselines established during the prevention phase carry directly into monitoring mode — the data continuity is a core clinical advantage.</p>
+      <p style="margin:0;">The same thermal scan that detects hidden tissue stress before injury becomes the most objective tool available for governing the return-to-play decision. Individual baselines established during regular scanning carry directly into the eligibility assessment — an athlete's own thermal norm, not a population reference, defines when a region is cleared.</p>
     </div>
   </div>
 
+  <!-- RTP Protocol Diagram -->
+  <figure style="margin:40px 0 0; padding:0;">
+    <figcaption style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:16px;">Figure 7.4 — RTP Thermal Eligibility Protocol</figcaption>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:36px 28px;overflow-x:auto;">
+      <svg viewBox="0 0 640 580" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;max-width:640px;margin:0 auto;font-family:inherit;">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#6b7280"/>
+          </marker>
+          <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#34d399"/>
+          </marker>
+          <marker id="arr-r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#f87171"/>
+          </marker>
+        </defs>
+
+        <!-- ── TRIGGER ── -->
+        <rect x="195" y="12" width="250" height="44" rx="22" fill="#1e293b" stroke="#f97316" stroke-width="1.5"/>
+        <text x="320" y="30" text-anchor="middle" fill="#f97316" font-size="9" font-weight="700" letter-spacing="0.08em">COMPASS ZONE FLAG</text>
+        <text x="320" y="46" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="500">Deceptive Readiness or Danger</text>
+
+        <!-- arrow -->
+        <line x1="320" y1="56" x2="320" y2="86" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- ── SCAN ── -->
+        <rect x="195" y="87" width="250" height="44" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+        <text x="320" y="105" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="0.08em">FULL-BODY THERMAL SCAN</text>
+        <text x="320" y="121" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="500">Every 2 days · all 34 body regions</text>
+
+        <!-- arrow -->
+        <line x1="320" y1="131" x2="320" y2="161" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- ── BILATERAL ASYMMETRY ── -->
+        <rect x="195" y="162" width="250" height="44" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+        <text x="320" y="180" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="0.08em">BILATERAL ASYMMETRY MEASURED</text>
+        <text x="320" y="196" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="500">Left vs. right per region (°C)</text>
+
+        <!-- arrow -->
+        <line x1="320" y1="206" x2="320" y2="240" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- ── DECISION DIAMOND ── -->
+        <polygon points="320,242 390,276 320,310 250,276" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+        <text x="320" y="271" text-anchor="middle" fill="#e2e8f0" font-size="10.5" font-weight="600">Asymmetry</text>
+        <text x="320" y="286" text-anchor="middle" fill="#f97316" font-size="11" font-weight="700">≤ 0.5 °C?</text>
+
+        <!-- NO → right → loop back -->
+        <text x="438" y="272" text-anchor="middle" fill="#f87171" font-size="10" font-weight="700">NO</text>
+        <line x1="390" y1="276" x2="500" y2="276" stroke="#f87171" stroke-width="1.5"/>
+        <line x1="500" y1="276" x2="500" y2="122" stroke="#f87171" stroke-width="1.5"/>
+        <text x="524" y="208" text-anchor="start" fill="#f87171" font-size="9.5" font-style="italic">Next scan cycle</text>
+        <line x1="500" y1="109" x2="446" y2="109" stroke="#f87171" stroke-width="1.5" marker-end="url(#arr-r)"/>
+
+        <!-- YES → down -->
+        <text x="248" y="272" text-anchor="middle" fill="#34d399" font-size="10" font-weight="700">YES</text>
+        <line x1="320" y1="310" x2="320" y2="344" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-g)"/>
+
+        <!-- ── SECOND CONSECUTIVE CHECK ── -->
+        <polygon points="320,346 390,380 320,414 250,380" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+        <text x="320" y="374" text-anchor="middle" fill="#e2e8f0" font-size="10.5" font-weight="600">Previous scan</text>
+        <text x="320" y="389" text-anchor="middle" fill="#f97316" font-size="11" font-weight="700">also ≤ 0.5 °C?</text>
+
+        <!-- NO → left → loop back -->
+        <text x="200" y="376" text-anchor="middle" fill="#f87171" font-size="10" font-weight="700">NO</text>
+        <line x1="250" y1="380" x2="140" y2="380" stroke="#f87171" stroke-width="1.5"/>
+        <line x1="140" y1="380" x2="140" y2="122" stroke="#f87171" stroke-width="1.5"/>
+        <text x="16" y="208" text-anchor="start" fill="#f87171" font-size="9.5" font-style="italic">Next scan cycle</text>
+        <line x1="140" y1="109" x2="194" y2="109" stroke="#f87171" stroke-width="1.5" marker-end="url(#arr-r)"/>
+
+        <!-- YES → down -->
+        <text x="248" y="376" text-anchor="middle" fill="#34d399" font-size="10" font-weight="700">YES</text>
+        <line x1="320" y1="414" x2="320" y2="448" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-g)"/>
+
+        <!-- ── REGION CLEARED ── -->
+        <rect x="195" y="449" width="250" height="40" rx="8" fill="#052e16" stroke="#34d399" stroke-width="1.5"/>
+        <text x="320" y="466" text-anchor="middle" fill="#34d399" font-size="9" font-weight="700" letter-spacing="0.07em">REGION CLEARED</text>
+        <text x="320" y="481" text-anchor="middle" fill="#6ee7b7" font-size="11" font-weight="500">Bilateral symmetry confirmed</text>
+
+        <!-- arrow -->
+        <line x1="320" y1="489" x2="320" y2="519" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-g)"/>
+
+        <!-- ── ALL REGIONS CLEARED ── -->
+        <rect x="170" y="520" width="300" height="44" rx="22" fill="#052e16" stroke="#34d399" stroke-width="2"/>
+        <text x="320" y="537" text-anchor="middle" fill="#34d399" font-size="9" font-weight="700" letter-spacing="0.08em">ALL REGIONS CLEARED</text>
+        <text x="320" y="553" text-anchor="middle" fill="#6ee7b7" font-size="11" font-weight="600">Athlete RTP eligible</text>
+      </svg>
+    </div>
+  </figure>
+
   <div class="section-label" style="margin-top:40px;">Section 7.4.1</div>
-  <h4>Two Clinical Modes</h4>
+  <h4>The Eligibility Criterion — 0.5 °C Bilateral Symmetry Threshold</h4>
+  <p>A body region is classified as <strong>RTP-eligible</strong> when both of the two most recent scans show a bilateral asymmetry of <strong>≤ 0.5 °C</strong> at that region. A single normal reading is insufficient; two consecutive readings within threshold confirm that normalisation is stable, not a transient fluctuation.</p>
 
   <table class="data-table">
     <thead>
       <tr>
-        <th>Mode</th>
-        <th>Trigger</th>
-        <th>Primary Signal</th>
-        <th>Clinical Question</th>
+        <th>Condition</th>
+        <th>Last Scan</th>
+        <th>Scan Before Last</th>
+        <th>Eligibility</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Prevention</strong></td>
-        <td>Default — active, uninjured athlete</td>
-        <td>Thermal asymmetry as hidden-risk detector</td>
-        <td>Is this athlete about to get injured?</td>
+        <td>Both within threshold</td>
+        <td>≤ 0.5 °C</td>
+        <td>≤ 0.5 °C</td>
+        <td><span style="color:var(--safe);font-weight:600;">✓ Eligible</span></td>
       </tr>
       <tr>
-        <td><strong>Monitoring</strong></td>
-        <td>Confirmed injury entered by clinical lead</td>
-        <td>Thermal trajectory as tissue-healing tracker</td>
-        <td>Is this athlete's tissue ready for the next load increase?</td>
+        <td>Most recent normal, prior elevated</td>
+        <td>≤ 0.5 °C</td>
+        <td>&gt; 0.5 °C</td>
+        <td><span style="color:var(--danger);font-weight:600;">✗ Pending</span> — one more normal scan required</td>
+      </tr>
+      <tr>
+        <td>Most recent elevated</td>
+        <td>&gt; 0.5 °C</td>
+        <td>Any</td>
+        <td><span style="color:var(--danger);font-weight:600;">✗ Pending</span></td>
       </tr>
     </tbody>
   </table>
 
-  <div class="section-label" style="margin-top:40px;">Section 7.4.2</div>
-  <h4>The Four RTP Phases</h4>
-  <p>Monitoring mode maps athlete rehabilitation to four sequential phases. Progression between phases requires COMPASS gate criteria to be met — not a fixed number of days. This removes time-based assumptions from the RTP decision.</p>
-
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Phase</th>
-        <th>Description</th>
-        <th>COMPASS Gate to Progress</th>
-        <th>Expected Zone</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Phase 1</strong><br><span style="font-size:12px;color:var(--text-dim);">Acute</span></td>
-        <td>Active tissue damage; rest or passive treatment only; no structured load</td>
-        <td>Thermal asymmetry peak identified; T Score trending upward across ≥2 consecutive scans</td>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--danger)"></span>Danger (acceptable)</span></td>
-      </tr>
-      <tr>
-        <td><strong>Phase 2</strong><br><span style="font-size:12px;color:var(--text-dim);">Rehabilitation</span></td>
-        <td>Progressive rehabilitation exercises; controlled load introduction</td>
-        <td>Thermal asymmetry declining toward individual baseline; T Score improving each load increment</td>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--recovery)"></span>Recovery</span> or <span class="zone-dot"><span class="dot" style="background:var(--deceptive)"></span>Deceptive</span></td>
-      </tr>
-      <tr>
-        <td><strong>Phase 3</strong><br><span style="font-size:12px;color:var(--text-dim);">Progressive Loading</span></td>
-        <td>Sport-specific load reintroduction; functional movement patterns</td>
-        <td>Thermal asymmetry within 1.0 SD of individual baseline; COMPASS in Recovery or Safe zone</td>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--recovery)"></span>Recovery</span> or <span class="zone-dot"><span class="dot" style="background:var(--safe)"></span>Safe</span></td>
-      </tr>
-      <tr>
-        <td><strong>Phase 4</strong><br><span style="font-size:12px;color:var(--text-dim);">Return to Competition</span></td>
-        <td>Full training; medical clearance decision</td>
-        <td>Thermal asymmetry within 0.5 SD of individual baseline; Safe zone for ≥3 consecutive scans</td>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--safe)"></span>Safe ×3</span></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="insight">
-    <p><strong>Why Phase-Gating Removes Guesswork:</strong> The most common driver of re-injury is premature return — an athlete who feels ready, whose wearable looks normal, but whose tissue has not completed repair. This is the same Deceptive Readiness state that causes first injuries. Phase gates anchored to thermal trajectory and individual baseline make the progression decision objective and auditable.</p>
+  <div class="insight" style="margin-top:20px;">
+    <p><strong>Why 0.5 °C?</strong> The 0.5 °C bilateral asymmetry boundary is the established clinical standard for normal inter-limb thermal symmetry in musculoskeletal thermography (Hildebrandt et al.; IACT consensus guidelines). Values above this threshold indicate physiologically meaningful asymmetric tissue activity. Using an absolute °C value rather than a population SD preserves interpretability across all 34 body regions — a single threshold applies universally without per-region calibration tables.</p>
   </div>
 
-  <div class="section-label" style="margin-top:40px;">Section 7.4.3</div>
-  <h4>Thermal Trajectory as Objective Progression Gate</h4>
-  <p>In monitoring mode, the T Score is the primary gate for phase progression. A single reading is insufficient — what matters is the trajectory across successive scans under incrementally increasing load.</p>
+  <div class="section-label" style="margin-top:40px;">Section 7.4.2</div>
+  <h4>Full-Body Coverage — All 34 COMPASS Regions</h4>
+  <p>COMPASS tracks thermal eligibility across all 34 anatomically defined body regions simultaneously. This is distinct from injury-site-only monitoring: every region is evaluated on every scan cycle, regardless of the stated injury location. This catches two clinically important patterns:</p>
 
   <ul style="line-height:1.9; padding-left:20px; color:var(--text);">
-    <li><strong>Improving trajectory</strong> (T Score rising across scans): Load is within tissue repair capacity — safe to maintain or progress.</li>
-    <li><strong>Plateau</strong> (T Score stable across ≥2 scans at same load level): Tissue tolerance ceiling reached at current load — hold phase, do not progress.</li>
-    <li><strong>Worsening trajectory</strong> (T Score declining despite stable or reduced load): Current rehabilitation load is exceeding tissue repair capacity — regress one phase and reassess.</li>
-    <li><strong>RTP clearance</strong>: Not a single reading but a confirmed trend — thermal asymmetry within 0.5 SD of individual baseline across ≥3 consecutive scans with progressive load.</li>
+    <li><strong>Compensatory load stress</strong> — rising asymmetry in a region contralateral or adjacent to the injury site, signalling that the athlete is over-relying on compensating structures during rehabilitation.</li>
+    <li><strong>Undisclosed secondary involvement</strong> — elevated asymmetry at a region not identified in the original injury report, potentially representing a co-occurring or pre-existing stress load the athlete has not reported.</li>
   </ul>
 
-  <div class="section-label" style="margin-top:40px;">Section 7.4.4</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Region Group</th>
+        <th>Body Regions Tracked</th>
+        <th>Contralateral Pairs</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Upper Limb</td>
+        <td>Shoulder, Upper Arm, Elbow, Forearm, Wrist/Hand (bilateral)</td>
+        <td>5 pairs</td>
+      </tr>
+      <tr>
+        <td>Trunk</td>
+        <td>Upper Back, Mid Back, Lower Back, Abdomen (center/bilateral)</td>
+        <td>2 pairs + center regions</td>
+      </tr>
+      <tr>
+        <td>Hip &amp; Groin</td>
+        <td>Hip, Groin (bilateral)</td>
+        <td>2 pairs</td>
+      </tr>
+      <tr>
+        <td>Thigh</td>
+        <td>Thigh, Inner Thigh, Outer Thigh, Hamstring (bilateral)</td>
+        <td>4 pairs</td>
+      </tr>
+      <tr>
+        <td>Knee &amp; Lower Leg</td>
+        <td>Knee, Lower Leg, Calf (bilateral)</td>
+        <td>3 pairs</td>
+      </tr>
+      <tr>
+        <td>Foot &amp; Ankle</td>
+        <td>Ankle, Foot (bilateral)</td>
+        <td>2 pairs</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>34 regions</strong></td>
+        <td><strong>16 contralateral pairs + center regions</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-label" style="margin-top:40px;">Section 7.4.3</div>
   <h4>Contralateral Limb Monitoring</h4>
-  <p>Injured athletes compensate by redistributing load to the contralateral (uninjured) limb. COMPASS bilateral scanning tracks both limbs simultaneously throughout rehabilitation. The contralateral limb requires its own thermal trajectory assessment — independent of the injury site.</p>
+  <p>Injured athletes compensate by redistributing load to the contralateral limb. COMPASS bilateral scanning tracks both limbs simultaneously throughout rehabilitation. The contralateral limb is not a passive reference — it is an active monitoring target with its own independent eligibility status.</p>
+
+  <p style="margin-top:12px;">For each of the 16 bilateral region pairs, COMPASS computes the <strong>absolute delta</strong> between left and right asymmetry readings across every scan:</p>
+
+  <div style="background:var(--surface2);border-radius:8px;padding:14px 20px;margin:16px 0;font-family:monospace;font-size:13px;color:var(--text);">
+    delta[scan_n] = |left_region.asymmetry[n] &minus; right_region.asymmetry[n]|
+  </div>
+
+  <p>This per-pair time series reveals three clinically distinct patterns:</p>
+  <ul style="line-height:1.9; padding-left:20px; color:var(--text);">
+    <li><strong>Diverging delta</strong> — one limb improving, one worsening; classic compensatory load pattern requiring load redistribution.</li>
+    <li><strong>Converging delta</strong> — both limbs normalising simultaneously; bilateral symmetry restoring; RTP clearance approaching.</li>
+    <li><strong>Parallel elevation</strong> — both limbs elevated; systemic or bilateral stress, not a unilateral injury pattern.</li>
+  </ul>
 
   <div class="zone-grid" style="grid-template-columns:1fr 1fr; margin-top:16px;">
     <div class="zone-card deceptive">
       <h4>⚠️ Contralateral Alert</h4>
-      <p style="font-size:13.5px;margin:0 0 12px;">Rising thermal asymmetry on the healthy limb during rehabilitation signals compensatory overload. The contralateral limb is entering a Deceptive Readiness state — the athlete cannot perceive this stress.</p>
+      <p style="font-size:13.5px;margin:0 0 12px;">Rising asymmetry on the contralateral limb during rehabilitation signals compensatory overload. The athlete cannot perceive this stress — it is invisible until tissue failure occurs.</p>
       <div class="zone-signals">
         <span>Action: Load redistribution</span>
         <span>Physio: Mandatory</span>
       </div>
     </div>
     <div class="zone-card safe">
-      <h4>🟢 Bilateral Symmetry Restored</h4>
-      <p style="font-size:13.5px;margin:0 0 12px;">Both the injured site and the contralateral limb showing thermal asymmetry within 0.5 SD of individual baseline is the full-body clearance condition. Unilateral clearance alone is insufficient.</p>
+      <h4>✅ Bilateral Symmetry Restored</h4>
+      <p style="font-size:13.5px;margin:0 0 12px;">Both limbs of a contralateral pair showing ≤ 0.5 °C on two consecutive scans. Full bilateral clearance — the most reliable available signal that tissue has returned to pre-injury function.</p>
       <div class="zone-signals">
-        <span>Both limbs: ≤0.5 SD baseline</span>
+        <span>Both limbs: ≤ 0.5 °C ×2</span>
         <span>Status: RTP eligible</span>
       </div>
     </div>
   </div>
 
-  <div class="section-label" style="margin-top:40px;">Section 7.4.5</div>
-  <h4>Zone Reinterpretation in Monitoring Mode</h4>
-  <p>Zone labels remain the same in monitoring mode, but their clinical meaning shifts to reflect the rehabilitation context.</p>
-
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Zone</th>
-        <th>Prevention Meaning</th>
-        <th>Monitoring Mode Meaning</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--safe)"></span>Safe</span></td>
-        <td>Clear to train at full load</td>
-        <td>Tissue healing on track; current rehabilitation load can progress</td>
-      </tr>
-      <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--recovery)"></span>Recovery</span></td>
-        <td>Systemic fatigue; reduce training volume</td>
-        <td>Systemic fatigue from rehabilitation load; reduce intensity but maintain frequency</td>
-      </tr>
-      <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--deceptive)"></span>Deceptive Readiness</span></td>
-        <td>Hidden tissue stress; mandatory physio before load increase</td>
-        <td>Tissue stress accumulating under current rehab load; reduce load and reassess before progressing</td>
-      </tr>
-      <tr>
-        <td><span class="zone-dot"><span class="dot" style="background:var(--danger)"></span>Danger</span></td>
-        <td>Mandatory clinical stop; no load plan issued</td>
-        <td>Tissue not tolerating current rehabilitation load; regress to previous phase; urgent clinical review</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="section-label" style="margin-top:40px;">Section 7.4.6</div>
-  <h4>Scan Frequency During RTP Phases</h4>
-
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>RTP Phase</th>
-        <th>Scan Frequency</th>
-        <th>Rationale</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Phase 1 — Acute</td>
-        <td>Every 2–3 days</td>
-        <td>Track asymmetry peak and confirm thermal decline before load introduction <span style="font-size:10px; color:var(--accent);">[↗ Gómez-Carmona 2020 — daily scanning at peak risk]</span></td>
-      </tr>
-      <tr>
-        <td>Phase 2 — Rehabilitation</td>
-        <td>Twice weekly</td>
-        <td>Each new exercise stimulus requires a scan response before the next increment <span style="font-size:10px; color:var(--accent);">[↗ Arnaiz-Lastras 2019 — twice-weekly protocol]</span></td>
-      </tr>
-      <tr>
-        <td>Phase 3 — Progressive Loading</td>
-        <td>Twice weekly</td>
-        <td>Each load increase is an experiment; thermal response must confirm safety before progression</td>
-      </tr>
-      <tr>
-        <td>Phase 4 — Return to Competition</td>
-        <td>3 consecutive scans; then weekly</td>
-        <td>Clearance requires confirmed trend across multiple readings, not a single pass; weekly resumes on RTP</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="alert blue" style="margin-top:20px;">
-    <div class="alert-icon">📋</div>
-    <div>
-      <strong>Clinical Note — Monitoring Mode Activation</strong>
-      <p>Monitoring mode is activated by the clinical lead upon confirming an injury. The individual thermal baseline established during prevention-mode scanning is the reference point for all RTP phase gates. Baseline continuity — using the athlete's own pre-injury thermal norm — is what makes the 0.5 SD and 1.0 SD clearance thresholds meaningful. Population norms cannot serve this function. See Section 05B for the SD-based asymmetry classification method.</p>
-    </div>
+  <div class="insight" style="margin-top:24px;">
+    <p><strong>Why This Approach Is Clinically Unique:</strong> Existing AMS platforms (Catapult, Smartabase, Kitman Labs) report a single composite load or readiness score per athlete. COMPASS surfaces 34 independent eligibility decisions — one per anatomical region — giving clinicians the anatomical specificity to identify exactly which tissue site is still at risk, not just whether the athlete as a whole is "cleared". The contralateral delta chart makes compensatory overload visible scan-by-scan, before it causes a secondary injury.</p>
   </div>
+
+  <div class="section-label" style="margin-top:40px;">Section 7.4.4</div>
+  <h4>RTP Eligibility — Summary</h4>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Implementation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Eligibility rule</td>
+        <td>Last 2 consecutive scans both showing bilateral asymmetry ≤ 0.5 °C at the region</td>
+      </tr>
+      <tr>
+        <td>Threshold basis</td>
+        <td>0.5 °C absolute — established clinical bilateral symmetry standard (Hildebrandt et al., IACT guidelines)</td>
+      </tr>
+      <tr>
+        <td>Region coverage</td>
+        <td>All 34 COMPASS anatomical regions, every athlete, every scan cycle</td>
+      </tr>
+      <tr>
+        <td>Contralateral pairs</td>
+        <td>16 bilateral pairs tracked independently; absolute delta time series per pair</td>
+      </tr>
+      <tr>
+        <td>Squad filter</td>
+        <td>Deceptive Readiness + Danger zone athletes surfaced for active monitoring</td>
+      </tr>
+      <tr>
+        <td>Individual baselines</td>
+        <td>Per-athlete, per-region thermal baseline used as the reference for asymmetry calculation</td>
+      </tr>
+      <tr>
+        <td>Activation</td>
+        <td>Automatic — no injury event required; RTP tab always accessible from any athlete profile</td>
+      </tr>
+    </tbody>
+  </table>
 
 </section>
 

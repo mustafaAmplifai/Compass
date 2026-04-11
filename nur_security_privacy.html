@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUR Platform — Security &amp; Data Privacy · Amplifai Health</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1e2630;
+    --surface3: #252d38;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --accent: #00c8ff;
+    --accent2: #7c3aed;
+    --safe: #22c55e;
+    --recovery: #f59e0b;
+    --deceptive: #f97316;
+    --danger: #ef4444;
+    --safe-bg: rgba(34,197,94,0.12);
+    --recovery-bg: rgba(245,158,11,0.12);
+    --deceptive-bg: rgba(249,115,22,0.12);
+    --danger-bg: rgba(239,68,68,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ── */
+  nav {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    padding: 28px 0 40px;
+    z-index: 100;
+  }
+
+  .nav-logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .nav-logo .logo-mark {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-logo .logo-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 24px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13.5px;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+  nav a:hover {
+    color: var(--text);
+    background: var(--surface2);
+    border-left-color: var(--accent);
+  }
+  nav .nav-section {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    padding: 16px 24px 6px;
+    font-weight: 600;
+  }
+  nav a .nav-num {
+    font-size: 11px;
+    color: var(--text-dim);
+    min-width: 18px;
+  }
+  nav a.sub-link {
+    padding-left: 44px;
+    font-size: 12.5px;
+  }
+
+  /* ── Main ── */
+  main {
+    margin-left: 260px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #0d1f35 0%, #0d1117 50%, #1a0d2e 100%);
+    padding: 80px 60px 70px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,200,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 30%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(0,200,255,0.1);
+    border: 1px solid rgba(0,200,255,0.25);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 22px;
+  }
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 680px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .hero-meta-item {
+    font-size: 13px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .hero-meta-item strong { color: var(--text-muted); }
+
+  /* ── Section layout ── */
+  section {
+    padding: 64px 60px;
+    border-bottom: 1px solid var(--border);
+  }
+  section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+  h3 {
+    font-size: 19px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+    color: var(--text);
+  }
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 20px 0 8px;
+    color: var(--text);
+  }
+  p {
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    font-size: 15px;
+    max-width: 760px;
+  }
+  .section-intro {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 720px;
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+
+  /* ── Cards ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin: 28px 0;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #444d56; }
+  .card .card-icon { font-size: 28px; margin-bottom: 14px; }
+  .card h4 { margin-top: 0; font-size: 16px; }
+  .card p { font-size: 14px; max-width: none; margin-bottom: 0; }
+  .card .card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+
+  /* ── Insight box ── */
+  .insight {
+    background: linear-gradient(135deg, rgba(0,200,255,0.07), rgba(124,58,237,0.07));
+    border: 1px solid rgba(0,200,255,0.2);
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    margin: 24px 0;
+    max-width: 760px;
+    position: relative;
+  }
+  .insight::before {
+    content: '🔒';
+    position: absolute;
+    top: -12px; left: 20px;
+    font-size: 20px;
+    background: var(--bg);
+    padding: 0 6px;
+  }
+  .insight p { color: var(--text); font-size: 14.5px; margin: 0; max-width: none; font-style: italic; }
+  .insight strong { color: var(--accent); font-style: normal; }
+
+  /* ── Alert ── */
+  .alert {
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    max-width: 760px;
+  }
+  .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .alert p { margin: 0; max-width: none; color: var(--text-muted); font-size: 13.5px; }
+  .alert strong { color: var(--text); display: block; margin-bottom: 3px; font-size: 14px; }
+  .alert.blue { background: rgba(0,200,255,0.08); border-left: 3px solid var(--accent); }
+  .alert.orange { background: rgba(249,115,22,0.08); border-left: 3px solid var(--deceptive); }
+  .alert.yellow { background: rgba(245,158,11,0.08); border-left: 3px solid var(--recovery); }
+  .alert.green { background: rgba(34,197,94,0.08); border-left: 3px solid var(--safe); }
+
+  /* ── Data table ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 24px 0;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 11px 16px;
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--surface2); }
+  .data-table code {
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+    font-size: 12.5px;
+    background: var(--surface3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+  .data-table td strong { color: var(--text); }
+
+  /* ── Pre / sequence diagrams ── */
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    overflow-x: auto;
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #7dd3fc;
+    margin: 24px 0;
+    max-width: 900px;
+    white-space: pre;
+  }
+
+  /* ── Inline code ── */
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+    font-size: 13px;
+    background: var(--surface3);
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ── Badge tags ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 3px 9px;
+    border-radius: 4px;
+  }
+  .badge-pass { background: rgba(34,197,94,0.12); color: var(--safe); border: 1px solid rgba(34,197,94,0.25); }
+  .badge-high { background: rgba(239,68,68,0.12); color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
+  .badge-med  { background: rgba(245,158,11,0.12); color: var(--recovery); border: 1px solid rgba(245,158,11,0.25); }
+  .badge-info { background: rgba(0,200,255,0.12); color: var(--accent); border: 1px solid rgba(0,200,255,0.25); }
+
+  /* ── Compliance check row ── */
+  .check-pass { color: var(--safe); font-weight: 700; }
+  .check-partial { color: var(--recovery); font-weight: 700; }
+
+  /* ── Stat row ── */
+  .stat-row {
+    display: flex; flex-wrap: wrap; gap: 20px; margin: 28px 0;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 28px;
+    flex: 1; min-width: 160px;
+    text-align: center;
+  }
+  .stat-box .stat-val {
+    font-size: 34px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  .stat-box .stat-label {
+    font-size: 12px; color: var(--text-dim); margin-top: 6px;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+
+  /* ── Auth grid ── */
+  .auth-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+  .auth-card .auth-icon { font-size: 26px; margin-bottom: 12px; }
+  .auth-card h4 { margin: 0 0 6px; font-size: 15px; }
+  .auth-card p { font-size: 13px; margin-bottom: 0; }
+
+  /* ── Principle cards ── */
+  .principle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .principle-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+  .principle-card .p-num {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent); margin-bottom: 6px;
+  }
+  .principle-card h4 { margin: 0 0 8px; font-size: 15px; }
+  .principle-card p { font-size: 13px; margin: 0; max-width: none; }
+
+  /* ── Layer blocks ── */
+  .layer-pipeline {
+    margin: 32px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 860px;
+  }
+  .layer-block {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    background: var(--surface);
+    margin-bottom: 0;
+  }
+  .layer-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    color: var(--text-dim);
+    font-size: 20px;
+    position: relative;
+  }
+  .layer-connector::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: var(--border);
+    transform: translateX(-50%);
+    z-index: 0;
+  }
+  .layer-connector span {
+    background: var(--bg);
+    padding: 0 8px;
+    position: relative;
+    z-index: 1;
+    font-size: 18px;
+    color: var(--accent);
+  }
+  .layer-1 { border-color: rgba(0,200,255,0.3); }
+  .layer-1 .layer-title { color: var(--accent); }
+  .layer-2 { border-color: rgba(34,197,94,0.3); }
+  .layer-2 .layer-title { color: var(--safe); }
+  .layer-3 { border-color: rgba(245,158,11,0.3); }
+  .layer-3 .layer-title { color: var(--recovery); }
+  .layer-4 { border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.05); }
+  .layer-4 .layer-title { color: #a78bfa; }
+  .layer-tag {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--text-dim); font-weight: 700; margin-bottom: 6px;
+  }
+  .layer-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .layer-chips {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+  }
+  .layer-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 36px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  footer strong { color: var(--text-muted); }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { margin-left: 0; }
+    .hero { padding: 48px 24px 40px; }
+    section { padding: 40px 24px; }
+    footer { padding: 28px 24px; }
+  }
+
+  ul.check-list {
+    list-style: none;
+    margin: 16px 0;
+    padding: 0;
+  }
+  ul.check-list li {
+    padding: 6px 0;
+    font-size: 14.5px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  ul.check-list li::before {
+    content: '✓';
+    color: var(--safe);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ SIDEBAR ══════════════════════════════════════ -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-mark">NUR</div>
+    <div class="logo-sub">Security &amp; Privacy</div>
+  </div>
+
+  <div class="nav-section">Overview</div>
+  <a href="#s01"><span class="nav-num">01</span> Architecture Overview</a>
+  <a href="#s02"><span class="nav-num">02</span> Authentication &amp; Identity</a>
+  <a href="#s02-jwt" class="sub-link">2.1 JWT-OTP</a>
+  <a href="#s02-apikey" class="sub-link">2.2 API Key</a>
+  <a href="#s02-qr" class="sub-link">2.3 QR Session Flow</a>
+
+  <div class="nav-section">Data</div>
+  <a href="#s03"><span class="nav-num">03</span> Data Classification</a>
+  <a href="#s04"><span class="nav-num">04</span> Privacy by Design</a>
+  <a href="#s04-image" class="sub-link">4.1 Image Purge Model</a>
+  <a href="#s04-consent" class="sub-link">4.2 Consent Management</a>
+  <a href="#s05"><span class="nav-num">05</span> Encryption &amp; Keys</a>
+
+  <div class="nav-section">Controls</div>
+  <a href="#s06"><span class="nav-num">06</span> Access Control</a>
+  <a href="#s07"><span class="nav-num">07</span> Third-Party Security</a>
+  <a href="#s08"><span class="nav-num">08</span> Audit &amp; Immutability</a>
+  <a href="#s09"><span class="nav-num">09</span> Operational Security</a>
+
+  <div class="nav-section">Compliance</div>
+  <a href="#s10"><span class="nav-num">10</span> Best Practices Alignment</a>
+  <a href="#s10-owasp" class="sub-link">10.1 OWASP Top 10</a>
+  <a href="#s10-pbd" class="sub-link">10.2 Privacy by Design</a>
+  <a href="#s10-health" class="sub-link">10.3 Health Data</a>
+</nav>
+
+<!-- ══════════════════════════════════════ MAIN ══════════════════════════════════════ -->
+<main>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">&#128274; Security &amp; Data Privacy Reference</div>
+  <h1>NUR Platform<br><span>Security &amp; Privacy</span></h1>
+  <p class="hero-sub">
+    A comprehensive reference covering how the NUR Platform by Amplifai Health protects user data,
+    implements security controls, and conforms to recognised industry best practices for health-grade
+    software systems.
+  </p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">&#128197; <strong>Effective:</strong> January 7, 2026</div>
+    <div class="hero-meta-item">&#127775; <strong>Version:</strong> BETA — April 2026</div>
+    <div class="hero-meta-item">&#9729; <strong>Infrastructure:</strong> Google Cloud Platform</div>
+    <div class="hero-meta-item">&#128203; <strong>Audience:</strong> Clinical Staff, Operators, Compliance</div>
+  </div>
+</div>
+
+<!-- ── S01 Security Architecture ── -->
+<section id="s01">
+  <div class="section-label">Section 01</div>
+  <h2>Security Architecture Overview</h2>
+  <p class="section-intro">
+    NUR is a cloud-native platform hosted entirely on Google Cloud Platform (GCP). Security is implemented
+    as a layered, defence-in-depth model — no single point of trust. Each architectural tier enforces
+    its own controls independently so that a failure in one layer does not compromise the whole system.
+  </p>
+
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val">4</div>
+      <div class="stat-label">Security Layers</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">3</div>
+      <div class="stat-label">Auth Strategies</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">0</div>
+      <div class="stat-label">Visual Images Retained</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">TLS</div>
+      <div class="stat-label">All Endpoints</div>
+    </div>
+  </div>
+
+  <h3>Defence-in-Depth: Four Security Layers</h3>
+  <p>Each layer enforces independent controls. A breach at one layer is contained by the layers below.</p>
+
+  <div class="layer-pipeline">
+    <div class="layer-block layer-1">
+      <div class="layer-tag">Layer 1 — Perimeter</div>
+      <div class="layer-title">Network &amp; Transport Security</div>
+      <p style="margin:0;font-size:14px;color:var(--text-muted);">All communication between clients and the NUR backend is encrypted over TLS/HTTPS. No unencrypted endpoints are exposed. The NUR Sensor uploads thermal images directly to Google Cloud Storage via time-limited signed URLs — image binary data never traverses the API tier, minimising attack surface.</p>
+      <div class="layer-chips">
+        <span class="layer-chip">TLS/HTTPS — all endpoints</span>
+        <span class="layer-chip">GCS signed URLs — time-limited</span>
+        <span class="layer-chip">No public GCS bucket access</span>
+        <span class="layer-chip">Cloud Run stateless ingress</span>
+      </div>
+    </div>
+    <div class="layer-connector"><span>&#9660;</span></div>
+    <div class="layer-block layer-2">
+      <div class="layer-tag">Layer 2 — Identity &amp; Authentication</div>
+      <div class="layer-title">Authentication Architecture</div>
+      <p style="margin:0;font-size:14px;color:var(--text-muted);">Three distinct authentication strategies are assigned per client type. Consumers use short-lived JWT tokens issued after OTP verification. Devices use pre-provisioned API keys stored as hashed values in GCP Secret Manager. Internal services authenticate via Google IAM service accounts — no shared secrets.</p>
+      <div class="layer-chips">
+        <span class="layer-chip">JWT-OTP — 15–60 min TTL</span>
+        <span class="layer-chip">Hashed API keys — GCP Secret Manager</span>
+        <span class="layer-chip">IAM service accounts — internal</span>
+        <span class="layer-chip">SHA-256 QR token hashing</span>
+      </div>
+    </div>
+    <div class="layer-connector"><span>&#9660;</span></div>
+    <div class="layer-block layer-3">
+      <div class="layer-tag">Layer 3 — Authorisation &amp; Isolation</div>
+      <div class="layer-title">Role-Based Access &amp; Data Scoping</div>
+      <p style="margin:0;font-size:14px;color:var(--text-muted);">Every authenticated request is checked for authorisation. Athletes see only their own data. Staff see only their organisation's data via org membership enforcement. Admin-only endpoints reject member-role tokens. The NURAI AI service is never callable directly by any client — only the backend may invoke it.</p>
+      <div class="layer-chips">
+        <span class="layer-chip">RBAC — admin / member roles</span>
+        <span class="layer-chip">Org-scoped isolation</span>
+        <span class="layer-chip">NURAI — internal only</span>
+        <span class="layer-chip">Rate limiting per athlete</span>
+      </div>
+    </div>
+    <div class="layer-connector"><span>&#9660;</span></div>
+    <div class="layer-block layer-4">
+      <div class="layer-tag">Layer 4 — Data &amp; Application</div>
+      <div class="layer-title">Data Protection &amp; Privacy Controls</div>
+      <p style="margin:0;font-size:14px;color:var(--text-muted);">Health data is encrypted at rest in Cloud SQL. Visual images are purged immediately after analysis — they are never stored in any database or accessible after the session ends. Sensitive tokens (OTPs, QR codes, wearable JWTs) are stored only as hashes or encrypted values. All data flows are purpose-limited by design.</p>
+      <div class="layer-chips">
+        <span class="layer-chip">Cloud SQL — encrypted at rest</span>
+        <span class="layer-chip">Visual image purge — immediate</span>
+        <span class="layer-chip">Encrypted wearable tokens</span>
+        <span class="layer-chip">Hashed OTPs — never stored raw</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Infrastructure Components</h3>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Service</th>
+        <th>Security Control</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>API Backend</strong></td>
+        <td>GCP Cloud Run (stateless)</td>
+        <td>IAM auth for internal callers; JWT/API Key for clients</td>
+      </tr>
+      <tr>
+        <td><strong>Database</strong></td>
+        <td>Cloud SQL — PostgreSQL</td>
+        <td>Encrypted at rest; role-based access; no direct client access</td>
+      </tr>
+      <tr>
+        <td><strong>Thermal Image Storage</strong></td>
+        <td>Google Cloud Storage</td>
+        <td>IAM-bound service accounts only; signed URL upload; no public access</td>
+      </tr>
+      <tr>
+        <td><strong>Session Signalling</strong></td>
+        <td>Firebase RTDB</td>
+        <td>Security rules enforce TTL; nodes deleted immediately after claim</td>
+      </tr>
+      <tr>
+        <td><strong>AI Inference</strong></td>
+        <td>NURAI — Cloud Run</td>
+        <td>GCP IAM auth only; never exposed to clients; reads DB/GCS directly</td>
+      </tr>
+      <tr>
+        <td><strong>Secrets</strong></td>
+        <td>GCP Secret Manager</td>
+        <td>API keys, HMAC secrets, wearable keys stored encrypted; IAM-gated retrieval</td>
+      </tr>
+      <tr>
+        <td><strong>Scheduled Jobs</strong></td>
+        <td>Cloud Scheduler</td>
+        <td>IAM service account auth required; no public endpoint access</td>
+      </tr>
+      <tr>
+        <td><strong>Push Notifications</strong></td>
+        <td>Firebase Cloud Messaging</td>
+        <td>Firebase Admin SDK server-side dispatch; FCM tokens stored per user</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ── S02 Authentication ── -->
+<section id="s02">
+  <div class="section-label">Section 02</div>
+  <h2>Authentication &amp; Identity Management</h2>
+  <p class="section-intro">
+    NUR uses three distinct authentication mechanisms, each tailored to the trust model and threat
+    profile of its client type. No passwords are used — authentication relies on OTP verification
+    or pre-provisioned device credentials, eliminating credential-stuffing and password-reuse risks.
+  </p>
+
+  <div id="s02-jwt">
+    <h3>2.1 — JWT-OTP Authentication (My NUR &amp; NUR Teams)</h3>
+    <p>Consumer athletes (My NUR) and clinical staff (NUR Teams) authenticate via a two-step OTP flow. A one-time passcode is delivered via email, SMS, or WhatsApp. Upon verification, the backend issues a short-lived JWT access token and a long-lived refresh token.</p>
+
+    <div class="auth-grid">
+      <div class="auth-card">
+        <div class="auth-icon">&#128274;</div>
+        <h4>OTP Handling</h4>
+        <p>Raw OTP codes are <strong>never stored</strong> in the database. Only <code>otp_hash</code> (hashed value) is persisted, with a hard <code>expires_at</code> TTL. Verification is a hash-compare — the plaintext OTP is discarded immediately.</p>
+      </div>
+      <div class="auth-card">
+        <div class="auth-icon">&#128196;</div>
+        <h4>Token Lifetime</h4>
+        <p>Access tokens expire in <strong>15–60 minutes</strong>. Refresh tokens are long-lived but stored securely in GCP Secret Manager. This limits the exposure window if a token is ever intercepted.</p>
+      </div>
+      <div class="auth-card">
+        <div class="auth-icon">&#128100;</div>
+        <h4>No Passwords</h4>
+        <p>The system has no password fields, no password reset flows, and no credential stores. All session establishment requires a live OTP delivery to a verified contact method — eliminating credential-stuffing attacks entirely.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="s02-apikey">
+    <h3>2.2 — Static API Key Authentication (NUR Sensor)</h3>
+    <p>The NUR Sensor (smart mirror / operator tablet) uses a static API key pre-provisioned at device setup via MDM (Mobile Device Management). This key is never refreshed during normal operation and is validated server-side against a hashed value stored in GCP Secret Manager — the plaintext key is not stored anywhere in the database.</p>
+
+    <div class="alert blue">
+      <div class="alert-icon">&#128274;</div>
+      <div>
+        <strong>Hashed Validation</strong>
+        <p>The server stores only the hash of the API key — not the key itself. Validation is performed by hashing the incoming value and comparing it. Even if the Secret Manager entry were exposed, the raw key could not be recovered.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="s02-qr">
+    <h3>2.3 — QR Code Session Flow</h3>
+    <p>Individual athlete scan sessions are initiated via a one-time QR code. This is the most security-sensitive flow in the platform: it links an athlete's personal health profile to a physical mirror device. The design prevents replay attacks, race conditions, and token leakage through multiple independent controls.</p>
+
+<pre>
+  My NUR App              NUR Backend             Firebase RTDB        NUR Sensor
+      |                       |                        |                    |
+      |                       |  POST /sessions/generate (API Key auth)     |
+      |                       |&lt;--- NUR Sensor calls ----------------------|
+      |                       |                        |                    |
+      |                       |  Write empty RTDB node |                    |
+      |                       |------------------------&gt;|                    |
+      |                       |  Return { qr_payload, session_id, exp }    |
+      |                       |-----------------------------------------------&gt;|
+      |                       |                        |  Display QR on mirror |
+      |                       |                        |                    |
+      |  Scan QR code         |                        |                    |
+      |&lt;---------------------------------------------------------------------|
+      |                       |                        |                    |
+      |  CLIENT VALIDATION (offline):                  |                    |
+      |  ✓ Parse: iss, token, sid, exp                 |                    |
+      |  ✓ Verify iss = "nur-platform"                 |                    |
+      |  ✓ Verify exp &gt; device clock                   |                    |
+      |                       |                        |                    |
+      |  POST /sessions/claim { token, session_id, JWT }                    |
+      |----------------------&gt;|                        |                    |
+      |                       |  SERVER VALIDATION:    |                    |
+      |                       |  1. Verify JWT sig + expiry   → 401 if fail |
+      |                       |  2. SHA-256(token) lookup     → 404 if miss |
+      |                       |  3. expires_at check          → 410 if late |
+      |                       |  4. Atomic UPDATE status=pending → 409 race |
+      |                       |                        |                    |
+      |                       |  Write user profile to RTDB                 |
+      |                       |------------------------&gt;|                    |
+      |  HTTP 200 { session_id }                        |                    |
+      |&lt;----------------------|                        |                    |
+      |                       |                        |  RTDB fires profile |
+      |                       |                        |--------------------&gt;|
+      |                       |  DELETE RTDB node      |                    |
+      |                       |------------------------&gt;|                    |
+      |                       |                        |  Session active     |
+
+  KEY SECURITY PROPERTIES:
+  ─────────────────────────────────────────────────────────────────
+  • Raw QR token is NEVER stored in DB — only SHA-256(token) stored
+  • Atomic UPDATE WHERE status='pending' prevents double-claim race
+  • expires_at enforced server-side — not trusting client exp alone
+  • RTDB node deleted immediately — no persistent session signalling
+  • Four independent server-side validation gates before session granted
+</pre>
+
+    <div class="insight">
+      <p>The QR token design is <strong>zero-knowledge at rest</strong>: even if the database were fully dumped, no raw QR token could be extracted or replayed. SHA-256 is a one-way function — the hash cannot be reversed to produce a valid scan payload.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── S03 Data Classification ── -->
+<section id="s03">
+  <div class="section-label">Section 03</div>
+  <h2>Data Classification &amp; Handling</h2>
+  <p class="section-intro">
+    NUR collects multiple categories of health-related data, each governed by explicit handling policies
+    that reflect its sensitivity level. The table below documents where each data class is stored, how
+    it is protected, and how long it is retained.
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Data Class</th>
+        <th>Sensitivity</th>
+        <th>Storage Location</th>
+        <th>At-Rest Protection</th>
+        <th>Retention</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Identity &amp; Health Profile</strong><br><small>Name, DOB, sex, height, weight, chronic conditions</small></td>
+        <td><span class="badge badge-high">High</span></td>
+        <td>Cloud SQL (PostgreSQL)</td>
+        <td>GCP column encryption; encrypted at rest</td>
+        <td>User lifecycle</td>
+      </tr>
+      <tr>
+        <td><strong>Visual / RGB Images</strong><br><small>Body-contour mapping reference</small></td>
+        <td><span class="badge badge-high">Critical</span></td>
+        <td><strong>In-memory only</strong> — never written to disk or database</td>
+        <td>Never persisted — purged immediately post-analysis</td>
+        <td>0 seconds (session-scoped)</td>
+      </tr>
+      <tr>
+        <td><strong>Thermal Scan Data</strong><br><small>Per-region temperatures, asymmetry deltas, COMPASS scores</small></td>
+        <td><span class="badge badge-high">High</span></td>
+        <td>Cloud SQL JSONB (<code>thermal_scans.measurements</code>)</td>
+        <td>Cloud SQL encryption at rest; TLS in transit</td>
+        <td>Scan lifecycle</td>
+      </tr>
+      <tr>
+        <td><strong>Thermogram (IR Image)</strong><br><small>Raw infrared image file</small></td>
+        <td><span class="badge badge-high">High</span></td>
+        <td>Google Cloud Storage (GCS) — IAM-bound bucket</td>
+        <td>GCS server-side encryption; no public access; signed URL only</td>
+        <td>Scan lifecycle</td>
+      </tr>
+      <tr>
+        <td><strong>Wearable Metrics</strong><br><small>HRV, sleep, activity, HR, recovery scores</small></td>
+        <td><span class="badge badge-med">Medium</span></td>
+        <td>Cloud SQL (<code>daily_metrics</code>, <code>history_metrics</code>)</td>
+        <td>Cloud SQL encryption; wearable JWT stored encrypted</td>
+        <td>User lifecycle</td>
+      </tr>
+      <tr>
+        <td><strong>Pain &amp; Symptom Entries</strong><br><small>Body map pain locations, intensity, duration</small></td>
+        <td><span class="badge badge-high">High</span></td>
+        <td>Cloud SQL JSONB (<code>user_profile_history.pain_entries</code>)</td>
+        <td>Append-only versioning; no destructive update; org-scoped access</td>
+        <td>User lifecycle</td>
+      </tr>
+      <tr>
+        <td><strong>Clinical Notes</strong><br><small>Staff-authored SOAP notes, observations</small></td>
+        <td><span class="badge badge-high">High</span></td>
+        <td>Cloud SQL (<code>clinical_notes</code>)</td>
+        <td>Append-only (no UPDATE permitted); author + timestamp immutable</td>
+        <td>Org lifecycle</td>
+      </tr>
+      <tr>
+        <td><strong>OTP Codes</strong><br><small>One-time login passcodes</small></td>
+        <td><span class="badge badge-high">High</span></td>
+        <td>Cloud SQL (<code>otp_codes.otp_hash</code> only)</td>
+        <td>Stored as hash only; raw OTP never persisted; <code>expires_at</code> TTL enforced</td>
+        <td>Seconds (expires on use)</td>
+      </tr>
+      <tr>
+        <td><strong>QR Session Tokens</strong><br><small>Session initiation codes</small></td>
+        <td><span class="badge badge-med">Medium</span></td>
+        <td>Cloud SQL (<code>qr_payload_hash</code> only)</td>
+        <td>SHA-256 hash only; raw token never stored; atomic single-use claim</td>
+        <td>Minutes (expires_at enforced)</td>
+      </tr>
+      <tr>
+        <td><strong>Consent Records</strong><br><small>Privacy policy + terms acceptance</small></td>
+        <td><span class="badge badge-info">Compliance</span></td>
+        <td>Cloud SQL (<code>users</code> table)</td>
+        <td>Versioned — <code>privacy_policy_version</code>, <code>terms_version</code>, <code>consent_accepted_at</code></td>
+        <td>Permanent (compliance requirement)</td>
+      </tr>
+      <tr>
+        <td><strong>Wearable OAuth Tokens</strong><br><small>Spike platform JWT</small></td>
+        <td><span class="badge badge-high">High</span></td>
+        <td>Cloud SQL (<code>wearable_connections.encrypted_access_token</code>)</td>
+        <td>Stored encrypted; decrypted only at point of use</td>
+        <td>Until revoked or connection deleted</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ── S04 Privacy by Design ── -->
+<section id="s04">
+  <div class="section-label">Section 04</div>
+  <h2>Privacy by Design</h2>
+  <p class="section-intro">
+    Privacy is not bolted on after the fact — it is built into the data flows of the NUR platform
+    at the architectural level. The most sensitive data the platform handles (visual images of users'
+    bodies) is never stored. Data collection is minimised to what is strictly necessary for wellness
+    analysis.
+  </p>
+
+  <div id="s04-image">
+    <h3>4.1 — Processing-Only Visual Data Model</h3>
+    <p>The NUR Smart Mirror captures standard RGB (visual) images solely to perform body-contour mapping — ensuring thermal data is correctly aligned with the user's anatomy. This is a computation input, not an output to retain.</p>
+
+<pre>
+  ┌──────────────────────────────────────────────────────────┐
+  │              NUR SENSOR — SCAN SESSION                   │
+  │                                                          │
+  │  1. Capture RGB image (in-memory)                        │
+  │         │                                                │
+  │         ▼                                                │
+  │  2. Body-contour mapping computation                     │
+  │         │                                                │
+  │         ▼                                                │
+  │  3. Align thermal data to anatomy                        │
+  │         │                                                │
+  │         ▼                                                │
+  │  4. ✗ RGB image PURGED — immediately &amp; permanently      │
+  │                                                          │
+  │  5. Thermal measurements written to DB                   │
+  │         │                                                │
+  │         ▼                                                │
+  │  6. Infrared thermogram → GCS (IAM-bound bucket)         │
+  │         │                                                │
+  │         ▼                                                │
+  │  7. NURAI reads from DB + GCS — infers COMPASS score     │
+  └──────────────────────────────────────────────────────────┘
+
+  PRIVACY GUARANTEES:
+  ─────────────────────────────────────────────────────────────
+  • RGB image: never written to GCS, DB, or any persistent store
+  • RGB image: not accessible to Amplifai Health staff — ever
+  • RGB image: cannot be retrieved after session ends
+  • Image binary: never transits the API tier (direct GCS PUT)
+  • GCS bucket: IAM-bound — no public URL, no unauthenticated access
+</pre>
+
+    <div class="alert green">
+      <div class="alert-icon">&#9989;</div>
+      <div>
+        <strong>Zero Stored Visual Data</strong>
+        <p>At no point in the system does a visual photograph of the user exist outside of the scan session memory. This is a deliberate architectural choice — not a configuration option. It cannot be disabled.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="s04-consent">
+    <h3>4.2 — Consent Management</h3>
+    <p>User consent is versioned and timestamped at the database level. Every time a user accepts updated terms or a new privacy policy, the acceptance is recorded with the specific version identifier and an exact timestamp.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>DB Field</th>
+          <th>Purpose</th>
+          <th>Example Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>privacy_policy_version</code></td>
+          <td>Tracks which version of the Privacy Statement was accepted</td>
+          <td><code>"pp-2026-01"</code></td>
+        </tr>
+        <tr>
+          <td><code>terms_version</code></td>
+          <td>Tracks which version of the Terms of Use was accepted</td>
+          <td><code>"tou-2026-01"</code></td>
+        </tr>
+        <tr>
+          <td><code>consent_accepted_at</code></td>
+          <td>Exact timestamp of most recent consent acceptance</td>
+          <td><code>2026-01-07T09:15:00Z</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>When platform documents are updated, users are prompted to re-accept. The prior acceptance record is preserved — providing a full, auditable consent timeline for each user.</p>
+
+    <h3>4.3 — Data Minimisation Controls</h3>
+    <ul class="check-list">
+      <li>Wearable integration is <strong>optional</strong> — the platform operates fully without it</li>
+      <li>Wearable data is used solely to enhance wellness insights — never for advertising or marketing profiling</li>
+      <li>Pain entry can be restricted per-organisation via <code>org_settings.allow_athlete_pain_entry</code></li>
+      <li>NURAI reads only what is needed for inference — it does not call upstream wearable APIs directly</li>
+      <li>The <code>source</code> field on pain entries distinguishes athlete self-report from staff entry</li>
+      <li>User profile history is append-only — prior profile states are preserved, not overwritten</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── S05 Encryption ── -->
+<section id="s05">
+  <div class="section-label">Section 05</div>
+  <h2>Encryption &amp; Key Management</h2>
+  <p class="section-intro">
+    NUR applies encryption at every boundary: data in transit is protected by TLS, data at rest is
+    encrypted by GCP's storage services, and sensitive tokens are hashed or encrypted before storage.
+    All cryptographic secrets are managed exclusively through GCP Secret Manager.
+  </p>
+
+  <h3>Data in Transit</h3>
+  <p>All communication between NUR clients (My NUR app, NUR Sensor, NUR Teams web portal) and the backend API is exclusively over HTTPS/TLS. There are no plaintext HTTP endpoints. The Spike webhook integration uses HMAC-SHA256 body-signature verification in addition to TLS.</p>
+
+  <h3>Data at Rest — Encryption Matrix</h3>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Data / Secret</th>
+        <th>Storage</th>
+        <th>Encryption Method</th>
+        <th>Transit Protection</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Health &amp; thermal data</strong></td>
+        <td>Cloud SQL (PostgreSQL)</td>
+        <td>GCP Cloud SQL encryption at rest (AES-256)</td>
+        <td>TLS</td>
+      </tr>
+      <tr>
+        <td><strong>Infrared thermograms</strong></td>
+        <td>Google Cloud Storage</td>
+        <td>GCS server-side encryption (AES-256) — default</td>
+        <td>TLS + signed URL</td>
+      </tr>
+      <tr>
+        <td><strong>Wearable OAuth JWT</strong></td>
+        <td><code>wearable_connections.encrypted_access_token</code></td>
+        <td>Application-level encryption before DB write</td>
+        <td>TLS</td>
+      </tr>
+      <tr>
+        <td><strong>OTP codes</strong></td>
+        <td><code>otp_codes.otp_hash</code></td>
+        <td>One-way hash — raw OTP never stored</td>
+        <td>Delivered via email/SMS/WhatsApp over secure channels</td>
+      </tr>
+      <tr>
+        <td><strong>QR session tokens</strong></td>
+        <td><code>session_qr_tokens.qr_payload_hash</code></td>
+        <td>SHA-256 one-way hash — raw token never stored</td>
+        <td>TLS (QR payload transmitted by app)</td>
+      </tr>
+      <tr>
+        <td><strong>Device API keys</strong></td>
+        <td>GCP Secret Manager</td>
+        <td>Secret Manager AES-256 encryption at rest</td>
+        <td>IAM-gated retrieval over TLS</td>
+      </tr>
+      <tr>
+        <td><strong>HMAC webhook secret</strong></td>
+        <td>GCP Secret Manager</td>
+        <td>Secret Manager AES-256 encryption at rest</td>
+        <td>IAM-gated retrieval; never exposed to clients</td>
+      </tr>
+      <tr>
+        <td><strong>Spike HMAC signing key</strong></td>
+        <td>GCP Secret Manager</td>
+        <td>Secret Manager AES-256 encryption at rest</td>
+        <td>IAM-gated; used only server-side to generate HMAC signatures</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <p><strong>Secret Manager as single source of truth:</strong> All cryptographic secrets — API keys, HMAC keys, wearable tokens — are stored exclusively in GCP Secret Manager. Application code retrieves them at runtime via IAM-authenticated API calls. No secrets are hardcoded in source code, environment files, or container images.</p>
+  </div>
+</section>
+
+<!-- ── S06 Access Control ── -->
+<section id="s06">
+  <div class="section-label">Section 06</div>
+  <h2>Access Control &amp; Authorisation</h2>
+  <p class="section-intro">
+    Authentication establishes identity. Authorisation determines what that identity may do.
+    NUR enforces authorisation at multiple levels: role, organisation membership, and resource ownership.
+  </p>
+
+  <h3>Role-Based Access Control (RBAC)</h3>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Role</th>
+        <th>Client</th>
+        <th>Capabilities</th>
+        <th>Restrictions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Athlete</strong></td>
+        <td>My NUR (app)</td>
+        <td>View own scan reports, AI coach, connect wearable, submit pain entries, initiate scan via QR</td>
+        <td>Cannot view other athletes' data; cannot access NUR Teams portal</td>
+      </tr>
+      <tr>
+        <td><strong>Staff — Member</strong></td>
+        <td>NUR Teams (web)</td>
+        <td>View squad dashboard, athlete detail, alerts, RTP workflows within own org</td>
+        <td><strong>Cannot log into NUR Teams</strong> — admin role required. Member role is for roster management only.</td>
+      </tr>
+      <tr>
+        <td><strong>Staff — Admin</strong></td>
+        <td>NUR Teams (web)</td>
+        <td>All member capabilities + roster management, org settings, scan initiation, clearance decisions</td>
+        <td>Scoped to own organisation; cannot view other orgs' data</td>
+      </tr>
+      <tr>
+        <td><strong>Operator (Device)</strong></td>
+        <td>NUR Sensor</td>
+        <td>Generate sessions, upload thermograms, initiate admin scans for org members</td>
+        <td>API Key auth only; cannot read health data; cannot invoke NURAI directly</td>
+      </tr>
+      <tr>
+        <td><strong>Internal Service</strong></td>
+        <td>Cloud Scheduler, NURAI</td>
+        <td>Execute scheduled jobs, run inference pipelines</td>
+        <td>IAM service account auth only; no JWT/API Key pathway; not reachable by clients</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Organisational Data Isolation</h3>
+  <p>Every staff request is validated against the <code>org_members</code> table. A staff member can only access athletes who belong to their organisation. RTP workflows, clinical notes, alerts, and settings are all scoped to <code>org_id</code>. There is no cross-organisation data visibility by design.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">&#127968;</div>
+      <h4>Org-Scoped Data Access</h4>
+      <p>All staff API endpoints validate org membership before returning data. A staff member from Organisation A cannot query athletes belonging to Organisation B, regardless of their role.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#9881;</div>
+      <h4>Internal Endpoint Lockdown</h4>
+      <p>Cron endpoints (<code>/internal/cron/*</code>) are protected by GCP IAM service account authentication. Cloud Scheduler presents a valid service account identity with each call. Requests without a valid IAM token are rejected before reaching application code.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#128203;</div>
+      <h4>NURAI Isolation</h4>
+      <p>The NURAI inference service is never exposed to any client. It is only invocable by the backend via GCP IAM. This ensures that AI inference cannot be triggered directly or manipulated from outside the authorised backend flow.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#8987;</div>
+      <h4>Rate Limiting</h4>
+      <p>Wearable on-demand sync is limited to one successful pull per athlete per hour. On Spike API error, the rate-limit window is not consumed — enabling immediate retry without penalty.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── S07 Third-Party Security ── -->
+<section id="s07">
+  <div class="section-label">Section 07</div>
+  <h2>Third-Party Integration Security</h2>
+  <p class="section-intro">
+    NUR integrates with Spike (wearable data aggregator) for optional wellness metrics. This integration
+    is built with multiple security layers: HMAC webhook authentication, encrypted token storage,
+    idempotent data writes, and graceful degradation when the third-party service is unavailable.
+  </p>
+
+  <h3>Spike Webhook Verification</h3>
+  <p>All inbound webhooks from Spike are authenticated via HMAC-SHA256 body signature. The shared secret is stored in GCP Secret Manager and never exposed outside the backend service. No webhook event is processed without a valid signature.</p>
+
+<pre>
+  Spike Platform                  NUR Backend                    Database
+       |                               |                              |
+       |  POST /webhooks/spike         |                              |
+       |  Headers: X-Body-Signature    |                              |
+       |  Body: { event_type, metrics }|                              |
+       |------------------------------&gt;|                              |
+       |                               |                              |
+       |                               |  1. Retrieve HMAC secret     |
+       |                               |     from GCP Secret Manager  |
+       |                               |                              |
+       |                               |  2. Compute HMAC-SHA256      |
+       |                               |     of raw request body      |
+       |                               |                              |
+       |                               |  3. Compare to              |
+       |                               |     X-Body-Signature header  |
+       |                               |     → 401 if mismatch        |
+       |                               |                              |
+       |  HTTP 200 (immediate)         |  4. Route by event_type      |
+       |&lt;------------------------------|     async queue              |
+       |                               |                              |
+       |                               |  5. Idempotent UPSERT        |
+       |                               |  UNIQUE(user_id,             |
+       |                               |    source_platform,          |
+       |                               |    metric_date, metric_type) |
+       |                               |-----------------------------&gt;|
+       |                               |                              |
+  RETRY SCHEDULE (on delivery failure):
+  ─────────────────────────────────────────────────────────────────
+  5s → 2min → 30min → 2h → every 12h — max 10 attempts
+  Idempotency key prevents duplicate records on retry
+</pre>
+
+  <h3>Wearable OAuth Token Security</h3>
+  <ul class="check-list">
+    <li>Spike JWT stored as <code>encrypted_access_token</code> — application-level encryption before DB write</li>
+    <li>Token decrypted only at the point of a Spike API call — never cached in memory beyond the request</li>
+    <li>Connection status tracked: <code>pending → connected → active → revoked → expired</code></li>
+    <li>On <code>provider_integration_deleted</code> webhook: connection marked revoked, user dequeued from sync</li>
+    <li>HMAC signature regenerated if token becomes invalid — no stale credential persists</li>
+  </ul>
+
+  <h3>No Data Resale Commitment</h3>
+  <div class="alert green">
+    <div class="alert-icon">&#9989;</div>
+    <div>
+      <strong>Wearable data is never sold or used for advertising</strong>
+      <p>Per the NUR Privacy Statement (effective January 7, 2026): wearable data collected through integrations is used solely to enhance wellness insights, correlate physiological signals with thermal analysis results, and generate wellness indicators within the NUR platform. It is not used for advertising, marketing profiling, or resale.</p>
+    </div>
+  </div>
+
+  <h3>Graceful Degradation</h3>
+  <p>If wearable data is unavailable or has a gap greater than 2 days, NURAI automatically falls back to thermal-only COMPASS scoring. There is no error state — the platform continues to deliver value with reduced inputs. A <code>NULL</code> in <code>metric_record_id</code> signals a thermal-only computation without requiring a separate mode flag.</p>
+</section>
+
+<!-- ── S08 Audit Trail ── -->
+<section id="s08">
+  <div class="section-label">Section 08</div>
+  <h2>Audit Trail &amp; Immutability</h2>
+  <p class="section-intro">
+    NUR maintains a comprehensive, append-only audit record across its most sensitive operations:
+    AI inference, clinical documentation, wearable data sync, return-to-play workflows, and user
+    consent. Immutability is enforced at the data model level — not as a policy that can be bypassed.
+  </p>
+
+  <h3>AI Algorithm Versioning</h3>
+  <p>Every thermal scan record stores the exact version of each AI/ML component that produced it. This enables full reproducibility audits and version-based investigation if algorithm behaviour needs to be reviewed retrospectively.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Table</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>segmentation_algorithm_version</code></td>
+        <td><code>thermal_scans</code></td>
+        <td>Computer vision pipeline version used for body-region extraction</td>
+      </tr>
+      <tr>
+        <td><code>metric_fusion_algorithm_version</code></td>
+        <td><code>thermal_scans</code></td>
+        <td>COMPASS score fusion formula version (thermal + wearable weighting)</td>
+      </tr>
+      <tr>
+        <td><code>reasoning_model_version</code></td>
+        <td><code>thermal_scans</code></td>
+        <td>GenAI model version used for AI coach narrative generation</td>
+      </tr>
+      <tr>
+        <td><code>baseline_computed_at</code></td>
+        <td><code>thermal_scans</code></td>
+        <td>Timestamp when async baseline computation thread completed</td>
+      </tr>
+      <tr>
+        <td><code>generated_at</code></td>
+        <td><code>daily_assessments.ai_coach_response</code> (JSONB)</td>
+        <td>Exact time of GenAI response generation — embedded in the response itself</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Clinical Notes — Append-Only Immutability</h3>
+  <p>Clinical notes authored by staff are stored with a strict append-only constraint at the database level. No <code>UPDATE</code> operation is permitted on the <code>clinical_notes</code> table. Every note permanently records its author, timestamp, and note type. This ensures that clinical documentation cannot be altered retroactively.</p>
+
+  <h3>Return-to-Play Workflow Audit</h3>
+  <p>The RTP workflow captures a full chain of custody for injury management decisions:</p>
+  <ul class="check-list">
+    <li><code>initiated_by</code> — staff member who opened the workflow</li>
+    <li><code>initiated_at</code> — exact timestamp of workflow creation</li>
+    <li><code>cleared_by</code> — staff member who authorised return to play</li>
+    <li><code>cleared_at</code> — exact timestamp of clearance</li>
+    <li><code>manual_clear</code> — boolean flag distinguishing manual override from algorithm-guided clearance</li>
+    <li>Full intervention log in <code>rtp_interventions</code> — session date, provider, duration, notes, <code>recorded_by</code></li>
+  </ul>
+
+  <h3>Wearable Sync Audit Log</h3>
+  <p>Every Spike data pull — whether scheduled, webhook-triggered, or on-demand — is recorded in the <code>sync_logs</code> table. This provides a complete history of all wearable data ingestion events.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>sync_type</code></td>
+        <td>scheduled | webhook_triggered | on_demand</td>
+      </tr>
+      <tr>
+        <td><code>status</code></td>
+        <td>success | failed | partial</td>
+      </tr>
+      <tr>
+        <td><code>records_synced</code></td>
+        <td>Count of metric records written in this pull</td>
+      </tr>
+      <tr>
+        <td><code>started_at</code> / <code>completed_at</code></td>
+        <td>Exact pull duration timestamps</td>
+      </tr>
+      <tr>
+        <td><code>error_message</code></td>
+        <td>Failure reason when status = failed or partial</td>
+      </tr>
+      <tr>
+        <td><code>spike_response</code> (JSONB)</td>
+        <td>Full raw Spike API response — preserved for debugging and compliance</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Profile History Versioning</h3>
+  <p>The <code>user_profile_history</code> table is append-only: when a user's profile changes (pain entries, activity level, health history), a new row is written and <code>is_current</code> is toggled. Prior versions are preserved permanently. Each <code>daily_assessment</code> records a <code>profile_id</code> FK — capturing exactly which profile version was active at the time of computation, enabling full reproducibility of historical COMPASS scores.</p>
+</section>
+
+<!-- ── S09 Operational Security ── -->
+<section id="s09">
+  <div class="section-label">Section 09</div>
+  <h2>Operational Security</h2>
+  <p class="section-intro">
+    Security extends beyond software controls into operational procedures: how devices operate,
+    how sessions are managed, and how the system protects against real-world misuse scenarios.
+  </p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">&#128247;</div>
+      <h4>Online-Only Device Operation</h4>
+      <p>The NUR Sensor has no offline fallback and performs no local image queuing. If network connectivity is lost, scanning stops. This eliminates the risk of sensitive health data accumulating on a physical device outside of a secure network context.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#128721;</div>
+      <h4>Single-Use QR Tokens</h4>
+      <p>Session QR codes are single-use — they are atomically marked as claimed on first use. A second claim attempt returns HTTP 409. Expired tokens return HTTP 410. This prevents replay attacks even if a QR code is photographed or intercepted.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#128293;</div>
+      <h4>Firebase RTDB Ephemeral Nodes</h4>
+      <p>The RTDB node used to signal session readiness to the NUR Sensor is deleted by the backend immediately after the athlete's profile has been delivered. RTDB security rules enforce TTL independently. No persistent session state remains in Firebase after scan initiation.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#127959;</div>
+      <h4>MDM Device Provisioning</h4>
+      <p>NUR Sensor API keys are pre-provisioned at device setup through MDM (Mobile Device Management). This ensures keys are managed through an enterprise device management system rather than entered manually, reducing the risk of key exposure during provisioning.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#128276;</div>
+      <h4>Alert Deduplication</h4>
+      <p>The alert system suppresses duplicate alerts of the same type for the same athlete within a 24-hour window. This prevents notification fatigue without suppressing genuinely new clinical events.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#128681;</div>
+      <h4>Avoidance Flags</h4>
+      <p>Sessions carry <code>avoidance_flags</code> to signal known scan quality issues (e.g. inadequate acclimatisation, environmental interference). Flagged sessions can be retrospectively invalidated via <code>thermal_scans.is_valid = false</code> without deletion, preserving the audit record.</p>
+    </div>
+  </div>
+
+  <h3>Scan Environment Controls</h3>
+  <p>The Terms of Use impose procedural controls that complement technical security measures:</p>
+  <ul class="check-list">
+    <li>Scans must be conducted only in designated private, enclosed rooms — reducing ambient thermal interference and protecting user privacy</li>
+    <li>Mandatory acclimatisation period enforced by the app before scanning begins — protecting data accuracy</li>
+    <li>Users are responsible for not sharing their Session ID or account credentials — preventing session hijacking</li>
+  </ul>
+</section>
+
+<!-- ── S10 Compliance ── -->
+<section id="s10">
+  <div class="section-label">Section 10</div>
+  <h2>Best Practices Alignment</h2>
+  <p class="section-intro">
+    This section maps NUR's implemented security and privacy controls to recognised industry frameworks
+    and principles, demonstrating systematic conformance to best practices for health-grade software.
+  </p>
+
+  <div id="s10-owasp">
+    <h3>10.1 — OWASP Top 10 Alignment</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>OWASP Risk</th>
+          <th>NUR Control</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A01 — Broken Access Control</strong></td>
+          <td>RBAC (admin/member), org-scoped isolation, athlete self-scoping, NURAI internal-only, IAM-only internal endpoints</td>
+          <td><span class="check-pass">&#10003; Addressed</span></td>
+        </tr>
+        <tr>
+          <td><strong>A02 — Cryptographic Failures</strong></td>
+          <td>TLS on all endpoints; Cloud SQL + GCS AES-256 at rest; SHA-256 token hashing; encrypted wearable JWTs; GCP Secret Manager for key storage</td>
+          <td><span class="check-pass">&#10003; Addressed</span></td>
+        </tr>
+        <tr>
+          <td><strong>A03 — Injection</strong></td>
+          <td>Django ORM with parameterised queries throughout; JSONB schema validation on measurements; no dynamic SQL string construction</td>
+          <td><span class="check-pass">&#10003; Addressed</span></td>
+        </tr>
+        <tr>
+          <td><strong>A04 — Insecure Design</strong></td>
+          <td>Privacy-by-design image purge; zero raw token storage; append-only clinical records; atomic single-use QR claims; threat-model-specific auth per client type</td>
+          <td><span class="check-pass">&#10003; Addressed</span></td>
+        </tr>
+        <tr>
+          <td><strong>A05 — Security Misconfiguration</strong></td>
+          <td>No public GCS bucket; stateless Cloud Run with no exposed debug endpoints; GCP Secret Manager for all secrets; no hardcoded credentials</td>
+          <td><span class="check-pass">&#10003; Addressed</span></td>
+        </tr>
+        <tr>
+          <td><strong>A07 — Identification &amp; Authentication Failures</strong></td>
+          <td>OTP-based MFA (no passwords); short-lived JWTs (15–60 min); SHA-256 OTP hashing; atomic QR claim; refresh token rotation via Secret Manager</td>
+          <td><span class="check-pass">&#10003; Addressed</span></td>
+        </tr>
+        <tr>
+          <td><strong>A08 — Software &amp; Data Integrity Failures</strong></td>
+          <td>HMAC-SHA256 Spike webhook verification; algorithm versioning on every scan; idempotent upserts with UNIQUE constraints; append-only clinical notes</td>
+          <td><span class="check-pass">&#10003; Addressed</span></td>
+        </tr>
+        <tr>
+          <td><strong>A09 — Security Logging &amp; Monitoring Failures</strong></td>
+          <td>sync_logs audit table; algorithm version tracking; RTP chain-of-custody fields; consent version timestamps; alert generation with severity classification</td>
+          <td><span class="check-pass">&#10003; Addressed</span></td>
+        </tr>
+        <tr>
+          <td><strong>A10 — Server-Side Request Forgery</strong></td>
+          <td>NURAI reads only from internal DB and GCS (no outbound client-controlled URLs); Spike API calls made server-side with fixed endpoint; no user-supplied URL parameters processed</td>
+          <td><span class="check-pass">&#10003; Addressed</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="s10-pbd">
+    <h3>10.2 — Privacy by Design (Cavoukian's 7 Foundational Principles)</h3>
+
+    <div class="principle-grid">
+      <div class="principle-card">
+        <div class="p-num">Principle 1</div>
+        <h4>Proactive, Not Reactive</h4>
+        <p>Visual image purging is an architectural decision, not a reactive deletion policy. It is impossible for images to accumulate — they are never written to persistent storage in the first place.</p>
+      </div>
+      <div class="principle-card">
+        <div class="p-num">Principle 2</div>
+        <h4>Privacy as the Default Setting</h4>
+        <p>Wearable integration is opt-in. Athlete pain entry can be disabled per-org by default. No data collection occurs beyond what is required for the session. Users must actively consent before any health profile is linked to a device.</p>
+      </div>
+      <div class="principle-card">
+        <div class="p-num">Principle 3</div>
+        <h4>Privacy Embedded into Design</h4>
+        <p>The data model enforces privacy structurally: OTPs stored as hashes, QR tokens stored as hashes, clinical notes append-only, profile history versioned. Privacy cannot be disabled by configuration.</p>
+      </div>
+      <div class="principle-card">
+        <div class="p-num">Principle 4</div>
+        <h4>Full Functionality — Positive-Sum</h4>
+        <p>Privacy controls do not degrade platform capability. Thermal-only scoring functions when wearable data is absent. The platform delivers full wellness insights with zero retained visual imagery.</p>
+      </div>
+      <div class="principle-card">
+        <div class="p-num">Principle 5</div>
+        <h4>End-to-End Lifecycle Security</h4>
+        <p>Data is protected from collection (TLS, signed URLs) through processing (in-memory image purge, IAM-bound GCS) to storage (encrypted DB) through audit (append-only logs) and eventual deletion (status lifecycle tracking).</p>
+      </div>
+      <div class="principle-card">
+        <div class="p-num">Principle 6</div>
+        <h4>Visibility &amp; Transparency</h4>
+        <p>Consent is versioned and timestamped. Users are informed at point of use exactly what data is collected and for what purpose. The Privacy Statement explicitly documents the image purge policy, data sharing scope, and wearable data usage limits.</p>
+      </div>
+      <div class="principle-card">
+        <div class="p-num">Principle 7</div>
+        <h4>Respect for User Privacy</h4>
+        <p>Personal health data is never sold to advertisers. Wearable data is used solely for wellness insights. Users can control pain entry permissions. Consent can be re-granted per updated version.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="s10-health">
+    <h3>10.3 — Health Data Stewardship Standards</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Principle</th>
+          <th>NUR Implementation</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Data Minimisation</strong></td>
+          <td>Visual images purged immediately; wearable integration optional; NURAI reads only what is required for inference</td>
+          <td><span class="check-pass">&#10003; Implemented</span></td>
+        </tr>
+        <tr>
+          <td><strong>Purpose Limitation</strong></td>
+          <td>All collected data used solely for wellness analysis; no advertising, marketing profiling, or resale of any health or wearable data</td>
+          <td><span class="check-pass">&#10003; Implemented</span></td>
+        </tr>
+        <tr>
+          <td><strong>Storage Limitation</strong></td>
+          <td>Visual images: zero retention (in-memory only); OTPs: TTL-bound; QR tokens: single-use; data scoped to lifecycle of user/org relationship</td>
+          <td><span class="check-pass">&#10003; Implemented</span></td>
+        </tr>
+        <tr>
+          <td><strong>Explicit Informed Consent</strong></td>
+          <td>Versioned consent recorded at DB level; per-data-type consent (thermal scan, biometric sync, wearable); re-consent on policy updates</td>
+          <td><span class="check-pass">&#10003; Implemented</span></td>
+        </tr>
+        <tr>
+          <td><strong>Data Accuracy</strong></td>
+          <td>Profile history versioning ensures latest state is always known; <code>is_valid</code> flag allows scan invalidation without deletion; user responsible for questionnaire accuracy (stated in ToU)</td>
+          <td><span class="check-pass">&#10003; Implemented</span></td>
+        </tr>
+        <tr>
+          <td><strong>Integrity &amp; Confidentiality</strong></td>
+          <td>TLS for transit; AES-256 at rest; hashed credentials; RBAC; org isolation; append-only clinical records; audit trail on all sensitive operations</td>
+          <td><span class="check-pass">&#10003; Implemented</span></td>
+        </tr>
+        <tr>
+          <td><strong>Accountability</strong></td>
+          <td>All scan, sync, clinical, RTP, and consent events carry identity and timestamp. Algorithm versioning enables retrospective accountability for AI-generated recommendations.</td>
+          <td><span class="check-pass">&#10003; Implemented</span></td>
+        </tr>
+        <tr>
+          <td><strong>No Medical Diagnosis Claims</strong></td>
+          <td>NUR is explicitly classified as a wellness monitoring tool, not a medical device. Outputs are wellness insights, not clinical diagnoses. Terms of Use require users to consult healthcare professionals for medical concerns.</td>
+          <td><span class="check-pass">&#10003; Implemented</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert blue">
+      <div class="alert-icon">&#128221;</div>
+      <div>
+        <strong>Scope Boundary</strong>
+        <p>NUR is designed as a wellness monitoring platform, not a regulated medical device. The security and privacy controls documented here reflect best practices for health-grade software handling sensitive biometric data. Where regulatory requirements (e.g. HIPAA, GDPR, ISO 27001) apply to specific deployment contexts, the existing controls provide a strong foundational baseline that can be extended with jurisdiction-specific compliance overlays.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div>
+    <strong>NUR Platform — Security &amp; Data Privacy</strong><br>
+    Amplifai Health · Effective January 7, 2026 · BETA Release — April 2026
+  </div>
+  <div>
+    Confidential · For authorised clinical, operational, and compliance review only
+  </div>
+</footer>
+
+</main>
+</body>
+</html>

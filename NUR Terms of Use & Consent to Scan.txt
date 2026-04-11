@@ -1,0 +1,121 @@
+﻿# NUR Terms of Use & Consent to Scan
+
+
+## 1. Nature of Service
+The NUR Smart Mirror by Amplifai Health is a wellness monitoring tool designed to provide thermal symmetry analysis and temperature gradient data.
+
+
+The NUR system is not a medical device, and its outputs do not constitute a medical diagnosis, clinical opinion, or a substitute for professional healthcare advice.
+
+
+Users should consult a qualified healthcare professional for medical concerns.
+
+
+---
+
+
+## 2. Consent to Thermal Scanning & Image Processing
+By using the NUR Smart Mirror, you explicitly consent to the following:
+
+
+Image Capture:  
+You authorize the device to capture visual and thermal images of your body for the purpose of wellness analysis.
+
+
+Privacy-by-Design Processing:  
+You understand and agree that standard visual images are captured solely to process thermal results. These images are automatically purged upon completion of the analysis and will not be accessible to you or Amplifai Health after the session ends.
+
+
+Biometric Syncing:  
+You consent to the syncing of your health questionnaire data from your mobile device to the NUR Smart Mirror via a Session ID or QR code.
+
+
+Wearable Data Integration (Optional):  
+If you choose to connect a compatible wearable device, you authorize Amplifai Health to retrieve and process wellness data from that device through authorized third-party integration services.
+
+
+This data may be used to enhance the analysis and insights provided by the NUR platform.
+
+
+You acknowledge that:
+
+
+- wearable data accuracy depends on the device manufacturer and associated services  
+- Amplifai Health does not guarantee the accuracy or completeness of wearable data  
+- interruptions or changes in third-party wearable services may affect data availability
+
+
+---
+
+
+## 3. Operational Requirements & Environment
+To ensure scan accuracy and user privacy, you agree to follow the operational requirements below.
+
+
+Private Environment:  
+Scans must be conducted only in designated private, enclosed rooms provided by the facility or in a secure home setting.
+
+
+Clothing Protocol:  
+For accurate thermal readings, users must undress to their underwear during the scanning process.
+
+
+Acclimatization:  
+Users must follow the mandatory acclimatization period indicated by the app to allow skin temperature to stabilize before scanning begins.
+
+
+---
+
+
+## 4. User Responsibility
+You are responsible for providing accurate information in your health questionnaire.
+
+
+You agree not to share your unique Session ID or account credentials with others, as these link your personal health data to the physical mirror instance.
+
+
+Improper use of the system or failure to follow operational instructions may affect the accuracy of results.
+
+
+---
+
+
+## 5. Third-Party Wearable Services
+NUR may integrate with third-party wearable platforms and APIs to enable the synchronization of personal wellness metrics.
+
+
+By enabling wearable integration you acknowledge and agree that:
+
+
+- wearable data is provided by third-party services and devices not controlled by Amplifai Health  
+- Amplifai Health is not responsible for errors, interruptions, or inaccuracies originating from wearable devices or their associated services  
+- changes, outages, or discontinuation of third-party wearable services may affect the availability of integrated data within NUR
+
+
+Amplifai Health reserves the right to modify or discontinue specific wearable integrations if required due to changes in third-party services.
+
+
+---
+
+
+## 6. Wearable Data for Informational Purposes
+Data obtained from wearable devices is provided for wellness and informational purposes only.
+
+
+Wearable data should not be relied upon for medical diagnosis, treatment decisions, or clinical evaluation.
+
+
+Users should consult qualified healthcare professionals before making health-related decisions based on wearable or thermal data.
+
+
+---
+
+
+## 7. Limitation of Liability
+Amplifai Health is not liable for any injury, misinterpretation of data, or failure to detect underlying medical conditions.
+
+
+Use of the NUR Smart Mirror and related services is at your own risk and subject to adherence to the scanning protocols and operational requirements provided in the application.
+
+
+Amplifai Health is also not responsible for inaccuracies, interruptions, or failures resulting from third-party wearable devices, platforms, or integrations.
