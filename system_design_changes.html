@@ -246,7 +246,7 @@
   <div class="nav-section">New Sections</div>
   <a href="#ch-s10"><span class="nav-num">10</span> Alert Generation</a>
   <a href="#ch-teams-api"><span class="nav-num">12</span> Teams API Endpoints</a>
-  <a href="#ch-s15"><span class="nav-num">15</span> NUR Teams</a>
+  <a href="#ch-s15"><span class="nav-num">15</span> NUR HUB</a>
 
   <div class="nav-section">Minor Updates</div>
   <a href="#ch-minor">Goals · Architecture · Notifications</a>
@@ -259,7 +259,7 @@
 <div class="hero">
   <div class="hero-badge">NUR Platform &middot; System Design &middot; Change Log &middot; April 2026</div>
   <h1>System Design<br><span>Change Document</span></h1>
-  <p class="hero-sub">Documents every addition and modification made to <code>system_design.html</code> to incorporate the NUR Teams BETA feature set. All changes are anchored to the section they affect in the main document.</p>
+  <p class="hero-sub">Documents every addition and modification made to <code>system_design.html</code> to incorporate the NUR HUB BETA feature set. All changes are anchored to the section they affect in the main document.</p>
   <div class="hero-meta">
     <div class="hero-meta-item">&#128197; <strong>April 2026</strong></div>
     <div class="hero-meta-item">&#128196; <strong>Source:</strong> system_design.html</div>
@@ -271,25 +271,25 @@
 <section id="ch-overview">
   <div class="section-label">Summary</div>
   <h2>Change Overview</h2>
-  <p class="section-intro">NUR Teams has been promoted from GA-deferred to BETA release. This document records every change made to the system design to reflect the NUR Teams feature set and the associated schema, NURAI, and API additions.</p>
+  <p class="section-intro">NUR HUB has been promoted from GA-deferred to BETA release. This document records every change made to the system design to reflect the NUR HUB feature set and the associated schema, NURAI, and API additions.</p>
 
   <table class="data-table" style="max-width:760px;">
     <thead><tr><th>Area</th><th>Change Type</th><th>Summary</th></tr></thead>
     <tbody>
-      <tr><td><strong>NUR Teams scope</strong></td><td><span class="diff-changed">Changed</span></td><td>Promoted from GA to BETA release. Admin-only access. NURAI Coach Assistant deferred to post-BETA.</td></tr>
+      <tr><td><strong>NUR HUB scope</strong></td><td><span class="diff-changed">Changed</span></td><td>Promoted from GA to BETA release. Admin-only access. NURAI Coach Assistant deferred to post-BETA.</td></tr>
       <tr><td><strong>thermal_baselines table</strong></td><td><span class="diff-removed">Removed</span></td><td>Retired. Baseline stats merged into <code>thermal_scans.measurements</code> JSONB per region.</td></tr>
       <tr><td><strong>thermal_scans table</strong></td><td><span class="diff-changed">Modified</span></td><td><code>measurements</code> JSONB extended with severity, baseline, and RTP fields. Five new columns: <code>max_asymmetry</code>, <code>has_asymmetry</code>, <code>rtp_cleared</code>, <code>rtp_regions_pending</code>, <code>baseline_computed_at</code>.</td></tr>
-      <tr><td><strong>org_settings table</strong></td><td><span class="diff-changed">Modified</span></td><td>4 new columns for NUR Teams configuration.</td></tr>
+      <tr><td><strong>org_settings table</strong></td><td><span class="diff-changed">Modified</span></td><td>4 new columns for NUR HUB configuration.</td></tr>
       <tr><td><strong>org_members table</strong></td><td><span class="diff-changed">Modified</span></td><td>3 new columns: <code>job_title</code>, <code>my_nur_status</code>, <code>invite_code</code>.</td></tr>
-      <tr><td><strong>tbscan.alerts</strong></td><td><span class="diff-added">New</span></td><td>New table for NUR Teams alert events.</td></tr>
+      <tr><td><strong>tbscan.alerts</strong></td><td><span class="diff-added">New</span></td><td>New table for NUR HUB alert events.</td></tr>
       <tr><td><strong>tbscan.clinical_notes</strong></td><td><span class="diff-added">New</span></td><td>New table for staff-authored clinical notes per athlete.</td></tr>
-      <tr><td><strong>§6.6 Named Query Patterns</strong></td><td><span class="diff-added">New</span></td><td>5 SQL query patterns used by NUR Teams API endpoints.</td></tr>
+      <tr><td><strong>§6.6 Named Query Patterns</strong></td><td><span class="diff-added">New</span></td><td>5 SQL query patterns used by NUR HUB API endpoints.</td></tr>
       <tr><td><strong>NURAI Module 1</strong></td><td><span class="diff-changed">Modified</span></td><td>Now outputs <code>severity_level</code> per region alongside thermal measurements.</td></tr>
       <tr><td><strong>§7.3 Baseline Module</strong></td><td><span class="diff-changed">Modified</span></td><td>Individual SD baseline promoted from forward-spec to BETA production. <code>thermal_baselines</code> table retired.</td></tr>
       <tr><td><strong>§7.4 Async Baseline + RTP Thread</strong></td><td><span class="diff-added">New</span></td><td>New async module that computes baselines and RTP clearance per region after each scan.</td></tr>
       <tr><td><strong>§10 Alert Generation System</strong></td><td><span class="diff-added">New</span></td><td>New section documenting the background alert generation module.</td></tr>
       <tr><td><strong>§12 Teams API</strong></td><td><span class="diff-added">New</span></td><td>Full Teams endpoint set replacing 4-row stub: 22 endpoints across 6 groups.</td></tr>
-      <tr><td><strong>§15 NUR Teams</strong></td><td><span class="diff-changed">Replaced</span></td><td>Section fully rewritten. Authentication, admin-only permissions, admin scan flow, 7 key screens.</td></tr>
+      <tr><td><strong>§15 NUR HUB</strong></td><td><span class="diff-changed">Replaced</span></td><td>Section fully rewritten. Authentication, admin-only permissions, admin scan flow, 7 key screens.</td></tr>
       <tr><td><strong>§09 Notifications</strong></td><td><span class="diff-changed">Modified</span></td><td>2 new notification rows. TBD dispatch architecture resolved.</td></tr>
     </tbody>
   </table>
@@ -362,14 +362,14 @@
 <section id="ch-org-settings">
   <div class="change-label">Schema Change · tbscan.org_settings</div>
   <h2>org_settings — New Columns</h2>
-  <p class="section-intro">4 new columns added to support NUR Teams configuration.</p>
+  <p class="section-intro">4 new columns added to support NUR HUB configuration.</p>
   <table class="data-table" style="max-width:820px;">
     <thead><tr><th>Column</th><th>Type &amp; Default</th><th>Description</th></tr></thead>
     <tbody>
       <tr class="row-new"><td><code>scan_interval_days</code></td><td>smallint NOT NULL, default 7</td><td>Expected days between athlete scans. Drives the <code>scan_overdue</code> alert threshold. Default: 7 days.</td></tr>
       <tr class="row-new"><td><code>timezone</code></td><td>varchar(60) NOT NULL, default 'UTC'</td><td>IANA timezone string for the organisation (e.g. <code>Asia/Riyadh</code>). Used for daily digest scheduling at 06:00 org time.</td></tr>
-      <tr class="row-new"><td><code>alert_delivery_method</code></td><td>varchar(20) NOT NULL, default 'in_app'</td><td>How NUR Teams alerts are delivered to staff: <code>in_app</code> (FCM only) · <code>email</code> (transactional email only) · <code>both</code>.</td></tr>
-      <tr class="row-new"><td><code>allow_athlete_pain_entry</code></td><td>boolean NOT NULL, default true</td><td>Whether athletes can submit pain entries via My NUR for this org. Staff-side entries via NUR Teams are always permitted regardless of this flag.</td></tr>
+      <tr class="row-new"><td><code>alert_delivery_method</code></td><td>varchar(20) NOT NULL, default 'in_app'</td><td>How NUR HUB alerts are delivered to staff: <code>in_app</code> (FCM only) · <code>email</code> (transactional email only) · <code>both</code>.</td></tr>
+      <tr class="row-new"><td><code>allow_athlete_pain_entry</code></td><td>boolean NOT NULL, default true</td><td>Whether athletes can submit pain entries via My NUR for this org. Staff-side entries via NUR HUB are always permitted regardless of this flag.</td></tr>
     </tbody>
   </table>
   <p style="font-size:13px;color:var(--text-dim);margin-top:4px;">Also updated: <code>report_branding</code> JSONB description now explicitly includes <code>org_name</code> key — <code>{"logo_url": "gs://…", "color_scheme": "…", "org_name": "…"}</code>.</p>
@@ -379,12 +379,12 @@
 <section id="ch-org-members">
   <div class="change-label">Schema Change · tbscan.org_members</div>
   <h2>org_members — New Columns</h2>
-  <p class="section-intro">3 new columns to support roster management and staff directory features in NUR Teams.</p>
+  <p class="section-intro">3 new columns to support roster management and staff directory features in NUR HUB.</p>
   <table class="data-table" style="max-width:820px;">
     <thead><tr><th>Column</th><th>Type &amp; Default</th><th>Description</th></tr></thead>
     <tbody>
       <tr class="row-new"><td><code>job_title</code></td><td>varchar(60), nullable</td><td>Display-only staff role label. Does not affect the <code>admin | member</code> permission system. Permitted values: Head Coach · Assistant Coach · Head Physiotherapist · Physiotherapist · S&amp;C Coach · Performance Director · Medical Officer · Sports Scientist.</td></tr>
-      <tr class="row-new"><td><code>my_nur_status</code></td><td>varchar(20) NOT NULL, default 'not_enrolled'</td><td>My NUR enrolment state for athlete members: <code>active</code> · <code>invite_pending</code> · <code>not_enrolled</code>. Displayed in the NUR Teams Roster screen.</td></tr>
+      <tr class="row-new"><td><code>my_nur_status</code></td><td>varchar(20) NOT NULL, default 'not_enrolled'</td><td>My NUR enrolment state for athlete members: <code>active</code> · <code>invite_pending</code> · <code>not_enrolled</code>. Displayed in the NUR HUB Roster screen.</td></tr>
       <tr class="row-new"><td><code>invite_code</code></td><td>varchar(20), nullable</td><td>One-time offline join code, format <code>NUR-XXXXX</code>. Generated for athletes without email access. Expires on first use or after 30 days.</td></tr>
     </tbody>
   </table>
@@ -394,7 +394,7 @@
 <section id="ch-alerts">
   <div class="change-label">New Table · tbscan.alerts</div>
   <h2>tbscan.alerts — New Table <span class="badge badge-new" style="margin-left:10px;vertical-align:middle;">New</span></h2>
-  <p class="section-intro">System-generated alert events for NUR Teams coaching staff. One row per alert event. Acknowledged alerts are retained for audit history.</p>
+  <p class="section-intro">System-generated alert events for NUR HUB coaching staff. One row per alert event. Acknowledged alerts are retained for audit history.</p>
 
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
@@ -446,7 +446,7 @@
 <section id="ch-queries">
   <div class="change-label">New Subsection · §6.6 Named Query Patterns</div>
   <h2>§6.6 Named Query Patterns — New</h2>
-  <p class="section-intro">5 SQL query patterns used by NUR Teams API endpoints. No dedicated tables — all derived from existing schema. Added as a new subsection at the end of §6.</p>
+  <p class="section-intro">5 SQL query patterns used by NUR HUB API endpoints. No dedicated tables — all derived from existing schema. Added as a new subsection at the end of §6.</p>
 
   <h4>§6.6.1 — 30-Day COMPASS History</h4>
   <p style="font-size:13.5px;color:var(--text-dim);">Used by <code>GET /teams/athletes/{id}/compass/history</code>. Reuses <code>idx_ud_user_date (user_id, date DESC)</code>.</p>
@@ -642,7 +642,7 @@ AND ts.rtp_regions_pending > 0;</pre>
     <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
     <tbody>
       <tr><td><strong>GET</strong></td><td><code>/teams/staff</code></td><td>Returns <code>[{user_id, name, email, job_title, joined_at}]</code>.</td></tr>
-      <tr><td><strong>POST</strong></td><td><code>/teams/staff/invite</code></td><td>Body: <code>{email, first_name, last_name, job_title}</code>. All staff invited via NUR Teams are created with <code>role = admin</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/staff/invite</code></td><td>Body: <code>{email, first_name, last_name, job_title}</code>. All staff invited via NUR HUB are created with <code>role = admin</code>.</td></tr>
     </tbody>
   </table>
 
@@ -656,7 +656,7 @@ AND ts.rtp_regions_pending > 0;</pre>
       <tr><td><strong>POST</strong></td><td><code>/teams/athletes/{id}/notes</code></td><td>Body: <code>{content, note_type}</code>. Writes to <code>tbscan.clinical_notes</code>.</td></tr>
       <tr><td><strong>GET</strong></td><td><code>/teams/athletes/{id}/notes</code></td><td>Returns <code>[{note_id, author_name, note_type, content, created_at}]</code>.</td></tr>
       <tr><td><strong>PUT</strong></td><td><code>/teams/athletes/{id}/activity</code></td><td>Staff activity update. Body: <code>{activity_level:"rest"|"light"|"moderate"|"high"|"max"}</code>. Creates new <code>user_profile_history</code> version.</td></tr>
-      <tr><td><strong>POST</strong></td><td><code>/teams/athletes/{id}/pain</code></td><td>Staff pain entry. Body: <code>{region_ids:[int], pain_level:"mild"|"moderate"|"severe", pain_type, onset_range}</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/athletes/{id}/pain</code></td><td>Staff pain entry. Body: <code>{region_ids:[int], pain_level:"mild"|"moderate"|"severe", pain_type, onset_range}</code>. Creates new <code>user_profile_history</code> version. After write, spawns background thread to trigger Flow B (§7.5, <code>trigger_type: "auto_health"</code>) — COMPASS score updates to reflect new pain context.</td></tr>
     </tbody>
   </table>
 
@@ -691,14 +691,14 @@ AND ts.rtp_regions_pending > 0;</pre>
   </table>
 </section>
 
-<!-- ══ §15: NUR Teams ══ -->
+<!-- ══ §15: NUR HUB ══ -->
 <section id="ch-s15">
-  <div class="change-label">Replaced Section · §15 NUR Teams</div>
-  <h2>§15 NUR Teams — Full Replacement <span class="badge badge-beta" style="margin-left:10px;vertical-align:middle;">BETA</span></h2>
-  <p class="section-intro">The 35-line placeholder is replaced with a complete section. NUR Teams is promoted from GA-deferred to BETA release. Access is restricted to admin accounts only.</p>
+  <div class="change-label">Replaced Section · §15 NUR HUB</div>
+  <h2>§15 NUR HUB — Full Replacement <span class="badge badge-beta" style="margin-left:10px;vertical-align:middle;">BETA</span></h2>
+  <p class="section-intro">The 35-line placeholder is replaced with a complete section. NUR HUB is promoted from GA-deferred to BETA release. Access is restricted to admin accounts only.</p>
 
   <h3>15.1 Authentication — Updated</h3>
-  <p>NUR Teams enforces <code>role = admin</code> at the JWT validation layer on every request. Any valid JWT belonging to a <code>member</code>-role account receives a <strong>403 Forbidden</strong> on all <code>/teams/</code> routes — there is no partial access for member accounts.</p>
+  <p>NUR HUB enforces <code>role = admin</code> at the JWT validation layer on every request. Any valid JWT belonging to a <code>member</code>-role account receives a <strong>403 Forbidden</strong> on all <code>/teams/</code> routes — there is no partial access for member accounts.</p>
 
   <h3>15.2 Role Permission Matrix — Replaced</h3>
   <p>Previous matrix had <code>admin | member</code> columns. Replaced with admin-only single-column table. <code>job_title</code> is display-only and does not create sub-roles.</p>
@@ -768,7 +768,7 @@ AND ts.rtp_regions_pending > 0;</pre>
   <div class="change-block modified">
     <span class="change-type modified">Modified</span>
     <h4>§01 Goals — 5th Goal Added</h4>
-    <p>New <code>&lt;li&gt;</code> added after "Individual Readiness Insights": <strong>Team-Level Intelligence</strong> — Squad readiness analytics, thermal RTP monitoring, alert management, and clinical note authoring for coaching and clinical staff through the NUR Teams web portal.</p>
+    <p>New <code>&lt;li&gt;</code> added after "Individual Readiness Insights": <strong>Team-Level Intelligence</strong> — Squad readiness analytics, thermal RTP monitoring, alert management, and clinical note authoring for coaching and clinical staff through the NUR HUB web portal.</p>
   </div>
 
   <div class="change-block modified">
@@ -779,26 +779,26 @@ AND ts.rtp_regions_pending > 0;</pre>
 
   <div class="change-block modified">
     <span class="change-type modified">Modified</span>
-    <h4>§03 NUR Teams Card — BETA Promotion</h4>
+    <h4>§03 NUR HUB Card — BETA Promotion</h4>
     <p>Card description updated. "Scoped to GA — not included in BETA" removed. Badge changed from <code>badge-ga</code> to <code>badge-beta</code>. New copy: admin-only, BETA, describes squad readiness, roster management, thermal RTP, alert management, and clinical note authoring.</p>
   </div>
 
   <div class="change-block modified">
     <span class="change-type modified">Modified</span>
     <h4>§07 Flow A Storage Block — Async Thread Note</h4>
-    <p>Added to the Storage &amp; Delivery block: "After the scan row is written, the Backend spawns the async Baseline + RTP Thread (§7.4). The NURAI inference response is returned to NUR Sensor immediately — baseline and RTP enrichment of the scan row occurs in the background."</p>
+    <p>Added to the Storage &amp; Delivery block: "After the scan row is written, the Backend spawns the async Baseline + RTP Thread (§7.4). The NURAI inference response is returned to NUR Scanner immediately — baseline and RTP enrichment of the scan row occurs in the background."</p>
   </div>
 
   <div class="change-block modified">
     <span class="change-type modified">Modified</span>
     <h4>§09 Notifications — 2 New Rows + TBD Resolved</h4>
-    <p>Two new rows added to the notification events table: <em>Alert generated (NUR Teams)</em> and <em>Daily digest generated</em>. The yellow TBD alert box about dispatch mechanism is replaced with a blue "Dispatch Architecture — Resolved" note documenting the decoupled async FCM dispatch pattern and <code>alert_delivery_method</code> behaviour.</p>
+    <p>Two new rows added to the notification events table: <em>Alert generated (NUR HUB)</em> and <em>Daily digest generated</em>. The yellow TBD alert box about dispatch mechanism is replaced with a blue "Dispatch Architecture — Resolved" note documenting the decoupled async FCM dispatch pattern and <code>alert_delivery_method</code> behaviour.</p>
   </div>
 
   <div class="change-block modified">
     <span class="change-type modified">Modified</span>
     <h4>Hero Banner &amp; Navigation Sidebar</h4>
-    <p>Hero badge updated to note BETA includes NUR Teams. Date updated to April 2026. Navigation sidebar updated: §7.4 sub-link added under AI &amp; Intelligence · §15.4 sub-link added under NUR Teams · New "Backend Modules" section with §10 Alert Generation link added.</p>
+    <p>Hero badge updated to note BETA includes NUR HUB. Date updated to April 2026. Navigation sidebar updated: §7.4 sub-link added under AI &amp; Intelligence · §15.4 sub-link added under NUR HUB · New "Backend Modules" section with §10 Alert Generation link added.</p>
   </div>
 </section>
 

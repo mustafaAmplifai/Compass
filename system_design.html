@@ -743,8 +743,8 @@
   <div class="nav-section">Authentication</div>
   <a href="#s04"><span class="nav-num">04</span> Auth Architecture</a>
   <a href="#s04-1" class="sub-link">4.1 JWT &mdash; My NUR</a>
-  <a href="#s04-2" class="sub-link">4.2 API Key &mdash; NUR Sensor</a>
-  <a href="#s04-3" class="sub-link">4.3 JWT &mdash; NUR Teams</a>
+  <a href="#s04-2" class="sub-link">4.2 API Key &mdash; NUR Scanner</a>
+  <a href="#s04-3" class="sub-link">4.3 JWT &mdash; NUR HUB</a>
   <a href="#s04-4" class="sub-link">4.4 QR Code Flow</a>
 
   <div class="nav-section">Data &amp; Operations</div>
@@ -759,9 +759,10 @@
   <a href="#s07"><span class="nav-num">07</span> AI / ML &amp; NURAI</a>
   <a href="#s07-flow-a" class="sub-link">7.1 Flow A — Full Pipeline</a>
   <a href="#s07-score-examples" class="sub-link" style="padding-left:28px;">7.1.1 Score Fusion Examples</a>
-  <a href="#s07-flow-b" class="sub-link">7.2 Flow B — Daily Refresh</a>
+  <a href="#s07-flow-b" class="sub-link">7.2 Flow B — Event-Driven Refresh</a>
   <a href="#s07-baseline" class="sub-link">7.3 Baseline Update Module</a>
   <a href="#s07-async-rtp" class="sub-link">7.4 Async Baseline + RTP</a>
+  <a href="#s07-flow-b-triggers" class="sub-link">7.5 Flow B — Event Triggers</a>
 
   <div class="nav-section">Wearables</div>
   <a href="#s08"><span class="nav-num">08</span> Wearables Integration</a>
@@ -772,9 +773,9 @@
   <div class="nav-section">Components</div>
   <a href="#s-backend"><span class="nav-num">12</span> Backend Service</a>
   <a href="#s-mynur"><span class="nav-num">13</span> MY NUR</a>
-  <a href="#s-sensor"><span class="nav-num">14</span> NUR Sensor</a>
+  <a href="#s-sensor"><span class="nav-num">14</span> NUR Scanner</a>
   <a href="#s14-3" class="sub-link">14.3 Anatomical Region Map</a>
-  <a href="#s-teams"><span class="nav-num">15</span> NUR Teams</a>
+  <a href="#s-teams"><span class="nav-num">15</span> NUR HUB</a>
   <a href="#s-teams-screens" class="sub-link">15.4 Screens &amp; Flows</a>
 
   <div class="nav-section">Platform</div>
@@ -789,11 +790,11 @@
 
 <!-- Hero -->
 <div class="hero">
-  <div class="hero-badge">NUR Platform &middot; System Design &middot; BETA (incl. NUR Teams) &middot; Confidential</div>
+  <div class="hero-badge">NUR Platform &middot; System Design &middot; BETA (incl. NUR HUB) &middot; Confidential</div>
   <h1>NUR Platform / <span>System Design</span><br>Document</h1>
   <p class="hero-sub">Architecture, component interactions, data lifecycle, authentication design, and key engineering decisions for the NUR platform at the BETA release milestone.</p>
   <div class="hero-meta">
-    <div class="hero-meta-item">&#128197; <strong>April 2026 &middot; BETA — NUR Teams included</strong></div>
+    <div class="hero-meta-item">&#128197; <strong>April 2026 &middot; BETA — NUR HUB included</strong></div>
   </div>
 </div>
 
@@ -806,11 +807,11 @@
 
 <h3>1.1 Platform Goals</h3>
   <ul class="step-list">
-    <li><div class="step-num">1</div><div><h4>Guided Thermal Acquisition</h4><p>Deliver a structured, operator-led scan session via NUR Sensor — guiding image capture on dedicated hardware (smart mirror or tablet) and uploading thermal data securely to cloud storage.</p></div></li>
+    <li><div class="step-num">1</div><div><h4>Guided Thermal Acquisition</h4><p>Deliver a structured, operator-led scan session via NUR Scanner — guiding image capture on dedicated hardware (smart mirror or tablet) and uploading thermal data securely to cloud storage.</p></div></li>
     <li><div class="step-num">2</div><div><h4>COMPASS Scoring</h4><p>Compute thermal asymmetry metrics and COMPASS readiness scores via the NURAI inference service, combining thermographic signals with physiological recovery data into a single 0–100 zone classification.</p></div></li>
     <li><div class="step-num">3</div><div><h4>Wearables Integration</h4><p>Ingest recovery metrics from major wearable platforms to supply the systemic readiness axis of COMPASS, with a pull-queue architecture that degrades gracefully when wearable data is unavailable.</p></div></li>
     <li><div class="step-num">4</div><div><h4>Individual Readiness Insights</h4><p>Surface personalised readiness scores, scan history, trend visualisations, and AI coach recommendations to athletes through the My NUR mobile app.</p></div></li>
-    <li><div class="step-num">5</div><div><h4>Team-Level Intelligence</h4><p>Surface squad-level readiness analytics, thermal RTP monitoring, alert management, and clinical note authoring to coaching and clinical staff through the NUR Teams web portal.</p></div></li>
+    <li><div class="step-num">5</div><div><h4>Team-Level Intelligence</h4><p>Surface squad-level readiness analytics, thermal RTP monitoring, alert management, and clinical note authoring to coaching and clinical staff through the NUR HUB web portal.</p></div></li>
   </ul>
 
 </section>
@@ -837,7 +838,7 @@
     </div>
     <div class="arch-node arch-node-client">
       <span class="arch-node-icon">🔬</span>
-      <div class="arch-node-title">NUR Sensor</div>
+      <div class="arch-node-title">NUR Scanner</div>
       <div class="arch-node-sub">Android</div>
       <div class="arch-tags">
         <span class="arch-tag arch-tag-apikey">API Key</span>
@@ -846,7 +847,7 @@
     </div>
     <div class="arch-node arch-node-client">
       <span class="arch-node-icon">🖥️</span>
-      <div class="arch-node-title">NUR Teams</div>
+      <div class="arch-node-title">NUR HUB</div>
       <div class="arch-node-sub">Web Browser</div>
       <div class="arch-tags">
         <span class="arch-tag arch-tag-jwt">JWT</span>
@@ -954,18 +955,18 @@
     <div class="card">
       <div class="card-icon">&#128241;</div>
       <h4>My NUR</h4>
-      <p>Consumer-facing mobile app for individual users. Primary surface for readiness scores, scan history, physiological trends, and AI coach recommendations. Initiates NUR Sensor scan sessions via QR code.</p>
+      <p>Consumer-facing mobile app for individual users. Primary surface for readiness scores, scan history, physiological trends, and AI coach recommendations. Initiates NUR Scanner scan sessions via QR code.</p>
       <div class="card-tags"><span class="badge badge-beta">BETA</span> <span class="badge badge-jwt">JWT</span> <a href="#s-mynur" style="color:var(--accent);font-size:11px;font-weight:700;text-decoration:none;margin-left:4px;">See §13 →</a></div>
     </div>
     <div class="card">
       <div class="card-icon">&#128300;</div>
-      <h4>NUR Sensor</h4>
+      <h4>NUR Scanner</h4>
       <p>Operator-facing Android app managing the complete thermal imaging session on dedicated hardware (smart mirror or large-format tablet). Supports individual QR and admin member-selection entry paths.</p>
       <div class="card-tags"><span class="badge badge-beta">BETA</span> <span class="badge badge-apikey">API Key</span> <a href="#s-sensor" style="color:var(--accent);font-size:11px;font-weight:700;text-decoration:none;margin-left:4px;">See §14 →</a></div>
     </div>
     <div class="card">
       <div class="card-icon">&#128421;</div>
-      <h4>NUR Teams</h4>
+      <h4>NUR HUB</h4>
       <p>Web application for coaching and clinical staff. Provides squad readiness monitoring, roster management, thermal RTP tracking, alert management, and clinical note authoring. Admin accounts only. Promoted to BETA release.</p>
       <div class="card-tags"><span class="badge badge-beta">BETA</span> <span class="badge badge-jwt">JWT</span> <a href="#s-teams" style="color:var(--accent);font-size:11px;font-weight:700;text-decoration:none;margin-left:4px;">See §15 →</a></div>
     </div>
@@ -1000,7 +1001,7 @@
 <section id="s04">
   <div class="section-label">Section 04</div>
   <h2>Authentication Architecture</h2>
-  <p class="section-intro">NUR uses two distinct authentication strategies &mdash; OTP-driven JWT flows for user-facing clients, and a static API key for the managed NUR Sensor device.</p>
+  <p class="section-intro">NUR uses two distinct authentication strategies &mdash; OTP-driven JWT flows for user-facing clients, and a static API key for the managed NUR Scanner device.</p>
 
   <div class="auth-grid">
     <div class="auth-card">
@@ -1010,18 +1011,18 @@
     </div>
     <div class="auth-card">
       <div class="auth-icon">&#128274;</div>
-      <h4>NUR Sensor (Device)</h4>
+      <h4>NUR Scanner (Device)</h4>
       <p>Static API key provisioned at device setup via MDM. Validated server-side against hashed value in GCP Secret Manager. No token refresh cycle.</p>
     </div>
     <div class="auth-card">
       <div class="auth-icon">&#128101;</div>
-      <h4>NUR Teams (Coaches)</h4>
+      <h4>NUR HUB (Coaches)</h4>
       <p>OTP via SMS/WhatsApp &rarr; JWT. Same backend auth stack. GA-scoped.</p>
     </div>
     <div class="auth-card">
       <div class="auth-icon">&#128247;</div>
       <h4>QR Session Flow</h4>
-      <p>My NUR scans QR displayed on NUR Sensor. JWT + QR token submitted to backend. Authenticated user profile pushed to device via Firebase RTDB &mdash; no polling.</p>
+      <p>My NUR scans QR displayed on NUR Scanner. JWT + QR token submitted to backend. Authenticated user profile pushed to device via Firebase RTDB &mdash; no polling.</p>
     </div>
   </div>
 
@@ -1033,8 +1034,8 @@
     </thead>
     <tbody>
       <tr><td><strong>JWT — My NUR</strong></td><td>Android / iOS</td><td>Email/phone OTP &rarr; JWT in <code>Authorization: Bearer</code></td><td>15&ndash;60 min</td><td><code>POST /auth/token/refresh</code></td><td>GCP Secret Manager</td></tr>
-      <tr><td><strong>Static API Key — NUR Sensor</strong></td><td>Android (MDM device)</td><td>Pre-provisioned key in <code>X-Api-Key</code> header; hashed value validated server-side</td><td>No expiry</td><td>Out-of-band via MDM</td><td>GCP Secret Manager (hashed)</td></tr>
-      <tr><td><strong>JWT — NUR Teams</strong></td><td>Web browser</td><td>SMS/WhatsApp OTP &rarr; JWT in <code>Authorization: Bearer</code>; IAM role claims embedded</td><td>15&ndash;60 min</td><td><code>POST /auth/token/refresh</code></td><td>GCP Secret Manager</td></tr>
+      <tr><td><strong>Static API Key — NUR Scanner</strong></td><td>Android (MDM device)</td><td>Pre-provisioned key in <code>X-Api-Key</code> header; hashed value validated server-side</td><td>No expiry</td><td>Out-of-band via MDM</td><td>GCP Secret Manager (hashed)</td></tr>
+      <tr><td><strong>JWT — NUR HUB</strong></td><td>Web browser</td><td>SMS/WhatsApp OTP &rarr; JWT in <code>Authorization: Bearer</code>; IAM role claims embedded</td><td>15&ndash;60 min</td><td><code>POST /auth/token/refresh</code></td><td>GCP Secret Manager</td></tr>
     </tbody>
   </table>
 
@@ -1059,7 +1060,7 @@
     <rect x="440" y="0" width="220" height="500" fill="rgba(124,58,237,0.05)"/>
     <rect x="660" y="0" width="220" height="500" fill="rgba(0,0,0,0.08)"/>
     <!-- Lane headers -->
-    <text x="110" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#fdba74">NUR Sensor</text>
+    <text x="110" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#fdba74">NUR Scanner</text>
     <text x="330" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#00c8ff">My NUR</text>
     <text x="550" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#a78bfa">Backend API</text>
     <text x="770" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#8b949e">Firebase RTDB</text>
@@ -1147,7 +1148,7 @@
     <rect x="640" y="0" width="160" height="480" fill="rgba(0,0,0,0.1)" rx="0"/>
     <rect x="800" y="0" width="160" height="480" fill="rgba(34,197,94,0.05)" rx="0"/>
     <!-- Lane headers -->
-    <text x="80"  y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#fdba74">NUR Sensor</text>
+    <text x="80"  y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#fdba74">NUR Scanner</text>
     <text x="240" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#00c8ff">My NUR</text>
     <text x="400" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#a78bfa">Backend API</text>
     <text x="560" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#8b949e">Firebase RTDB</text>
@@ -1230,9 +1231,9 @@
     <rect x="267" y="0" width="266" height="440" fill="rgba(124,58,237,0.05)"/>
     <rect x="533" y="0" width="267" height="440" fill="rgba(0,200,255,0.05)"/>
     <!-- Lane headers -->
-    <text x="133" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#fdba74">NUR Sensor (Admin)</text>
+    <text x="133" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#fdba74">NUR Scanner (Admin)</text>
     <text x="400" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#a78bfa">Backend API</text>
-    <text x="666" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#00c8ff">NUR Teams (web)</text>
+    <text x="666" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#00c8ff">NUR HUB (web)</text>
     <!-- Separator -->
     <line x1="0" y1="30" x2="800" y2="30" stroke="#30363d" stroke-width="1"/>
     <!-- Lifelines -->
@@ -1274,7 +1275,7 @@
     <text x="264" y="279" text-anchor="middle" font-size="10" fill="#8b949e">POST /scans/complete { session_id, image_id }</text>
     <!-- Step 12: NURAI inference note -->
     <text x="400" y="308" text-anchor="middle" font-size="10" fill="#8b949e">[POST /infer → NURAI → write scan_results]</text>
-    <!-- Step 13: squad metrics push to NUR Teams -->
+    <!-- Step 13: squad metrics push to NUR HUB -->
     <line x1="402" y1="325" x2="662" y2="325" stroke="#00c8ff" stroke-width="1.5" marker-end="url(#arr2)"/>
     <text x="532" y="319" text-anchor="middle" font-size="10" fill="#8b949e">squad metrics updated</text>
     <!-- Step 14: FCM / result preview back to sensor -->
@@ -1288,7 +1289,7 @@
 
   <div class="alert blue">
     <span class="alert-icon">&#8505;</span>
-    <div><strong>Admin Mode &mdash; API Key + Coach Identity Verification</strong><p>All NUR Sensor communication uses the static API key — no JWT is issued. The OTP step verifies the coach's identity: the coach enters their email or username in NUR Sensor, receives an OTP by SMS, and submits it; the backend resolves and records the coach as <code>operator_id</code> on the session. The member list fetch and session creation requests continue to use the API key. Pre-scan checks and pain entries are collected for the selected member via NUR Sensor before the scan begins — identical to the individual flow from that point onward.</p></div>
+    <div><strong>Admin Mode &mdash; API Key + Coach Identity Verification</strong><p>All NUR Scanner communication uses the static API key — no JWT is issued. The OTP step verifies the coach's identity: the coach enters their email or username in NUR Scanner, receives an OTP by SMS, and submits it; the backend resolves and records the coach as <code>operator_id</code> on the session. The member list fetch and session creation requests continue to use the API key. Pre-scan checks and pain entries are collected for the selected member via NUR Scanner before the scan begins — identical to the individual flow from that point onward.</p></div>
   </div>
 </section>
 
@@ -1739,7 +1740,7 @@
       <tr><td><code>segmentation_algorithm_version</code></td><td>varchar(20), NOT NULL</td><td>Version of the skin segmentation and thermal ROI extraction algorithm used in Module 1 (e.g. <code>v1</code>, <code>v2.0</code>). Written by the NURAI Cloud Run service at inference time. Allows scans produced by a specific CV pipeline version to be identified for reprocessing if the segmentation model is updated or rolled back.</td></tr>
       <tr><td><code>metric_fusion_algorithm_version</code></td><td>varchar(20), NOT NULL</td><td>Version of the COMPASS score fusion formula applied in Module 2 (zone classification, R/T weighting, score computation) (e.g. <code>v1</code>, <code>v1.1</code>). Written by the NURAI Cloud Run service at inference time. Enables targeted re-scoring when weighting schemes or zone boundaries change — rows can be filtered by this version without re-running the thermal pipeline.</td></tr>
       <tr><td><code>reasoning_model_version</code></td><td>varchar(20), NOT NULL</td><td>Version of the GenAI reasoning model used in Module 3 to produce zone rationale, intervention plans, and coach narratives (e.g. <code>v1</code>, <code>v2.1</code>). Written by the NURAI Cloud Run service at inference time. Enables per-scan audit trails, A/B analysis across model versions, and rollback: scans are queryable by the model that generated their <code>ai_coach_response</code> without re-processing thermal data.</td></tr>
-      <tr><td><code>rtp_regions_pending</code></td><td>smallint, nullable</td><td><code>NULL</code> = async Baseline + RTP thread not yet complete. <code>0</code> = all regions thermally cleared (eligible for staff review). <code>&gt;0</code> = count of regions where rtp_clear = "NO". Enables fast RTP Hub queries without JSONB scanning. A value of <code>0</code> combined with <code>compass_zone = 'safe'</code> on the latest <code>daily_assessments</code> surfaces the "Ready to Clear" prompt in NUR Teams — staff must still explicitly approve.</td></tr>
+      <tr><td><code>rtp_regions_pending</code></td><td>smallint, nullable</td><td><code>NULL</code> = async Baseline + RTP thread not yet complete. <code>0</code> = all regions thermally cleared (eligible for staff review). <code>&gt;0</code> = count of regions where rtp_clear = "NO". Enables fast RTP Hub queries without JSONB scanning. A value of <code>0</code> combined with <code>compass_zone = 'safe'</code> on the latest <code>daily_assessments</code> surfaces the "Ready to Clear" prompt in NUR HUB — staff must still explicitly approve.</td></tr>
       <tr><td><code>baseline_computed_at</code></td><td>timestamptz, nullable</td><td>Timestamp when the async Baseline + RTP thread last updated this scan row. <code>NULL</code> = computation pending.</td></tr>
     </tbody>
   </table>
@@ -1789,10 +1790,12 @@
       <tr><td><code>ai_coach_response</code></td><td>JSONB, nullable</td><td>Full structured AI Coach output: zone rationale, intervention plan, reassessment triggers, coach narrative.</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Pipeline Context</td></tr>
       <tr><td><code>profile_id</code></td><td>FK &rarr; user_profile_history, NOT NULL</td><td>The profile version active at computation time. Captures which pain entries, activity level, and health history the AI Coach used as context — enables exact replay of any assessment.</td></tr>
-      <tr><td><code>trigger_type</code></td><td>varchar(30), NOT NULL</td><td>Enum — three valid values:<br><br>
-        <code>new_thermal_scan</code> — athlete-initiated scan via QR code (Flow A, individual mode). Set when NUR Sensor calls <code>POST /scan/sessions/complete</code> and NURAI <code>POST /infer</code> succeeds.<br><br>
-        <code>admin_scan</code> — operator-initiated scan via NUR Teams admin member-selection flow (Flow A, admin mode). Same NURAI pipeline as <code>new_thermal_scan</code>; <code>done_by</code> is always non-NULL when this value is set.<br><br>
-        <code>wearable_refresh</code> — wearable-only daily refresh triggered by My NUR or NUR Teams calling <code>POST /compass/refresh</code> (Flow B). No new thermogram — reuses the latest valid thermal scan within the 7-day window.</td></tr>
+      <tr><td><code>trigger_type</code></td><td>varchar(30), NOT NULL</td><td>Enum — five valid values:<br><br>
+        <code>new_thermal_scan</code> — athlete-initiated scan via QR code (Flow A, individual mode). Set when NUR Scanner calls <code>POST /scan/sessions/complete</code> and NURAI <code>POST /infer</code> succeeds.<br><br>
+        <code>admin_scan</code> — operator-initiated scan via NUR HUB admin member-selection flow (Flow A, admin mode). Same NURAI pipeline as <code>new_thermal_scan</code>; <code>done_by</code> is always non-NULL when this value is set.<br><br>
+        <code>wearable_refresh</code> — wearable-only refresh triggered manually by My NUR or NUR HUB calling <code>POST /compass/refresh</code> (Flow B). No new thermogram — reuses the latest valid thermal scan within the 7-day window.<br><br>
+        <code>auto_wearable</code> — Flow B triggered automatically by the daily Spike pull job after new <code>daily_metrics</code> data is written for this user. See §7.5.<br><br>
+        <code>auto_health</code> — Flow B triggered automatically after a pain entry, RTP workflow write, or health profile update. See §7.5.</td></tr>
       <tr><td><code>done_by</code></td><td>FK &rarr; auth_user, nullable</td><td>Operator/coach user_id for admin-initiated computations. NULL for self-initiated or automated.</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Audit</td></tr>
       <tr><td><code>computed_at</code></td><td>timestamptz, NOT NULL</td><td>When NURAI completed this computation.</td></tr>
@@ -1834,7 +1837,7 @@
 
   <span style="color:#a5f3fc;">"generated_at"</span>: <span style="color:#fde68a;">"2026-04-05T08:30:00Z"</span>
 }</pre>
-    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;"><code>zone_rationale</code>, <code>coach_narrative</code>, and <code>intervention_plan</code> are the primary consumer-facing fields. <code>reassessment</code> drives next-scan cadence recommendations shown in My NUR. NURAI may return <code>protocol</code> (string) or <code>items</code> (array of strings) per phase. NUR Teams renders both. Example: <code>"phase_1": {"label": "Acute (Days 1–3)", "items": ["Cold therapy 15min", "Restrict hip flexion load"]}</code></p>
+    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;"><code>zone_rationale</code>, <code>coach_narrative</code>, and <code>intervention_plan</code> are the primary consumer-facing fields. <code>reassessment</code> drives next-scan cadence recommendations shown in My NUR. NURAI may return <code>protocol</code> (string) or <code>items</code> (array of strings) per phase. NUR HUB renders both. Example: <code>"phase_1": {"label": "Acute (Days 1–3)", "items": ["Cold therapy 15min", "Restrict hip flexion load"]}</code></p>
   </div>
 
   <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.user_profile_history</code><span style="font-size:13px;color:var(--text-muted);"> — versioned history of mutable member profile state. Append-only; <code>is_current = true</code> marks the active row. Replaces standalone <code>pain_entries</code> table — pain data is a profile attribute, not a scan artifact.</span></p>
@@ -1877,7 +1880,7 @@
   }
   <span style="color:#6e7681;">/* ... all current pain entries for this athlete at profile-update time */</span>
 ]</pre>
-    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;"><code>anatomical_ids</code> contains <code>granular_region_id</code> integer values from <code>granular_anatomical_regions.granular_id</code>. <code>source</code> distinguishes staff-entered pain (via NUR Teams <code>POST /teams/athletes/{id}/pain</code>) from athlete self-reported pain (via My NUR). The baseline qualifying gate checks <code>pain_entries = []</code> (empty array) on the current profile version instead of the previously eliminated <code>COUNT(*) WHERE session_id = Y</code> query on <code>pain_entries</code>. NURAI reads the current profile snapshot at inference time via the <code>is_current = true</code> index.</p>
+    <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;"><code>anatomical_ids</code> contains <code>granular_region_id</code> integer values from <code>granular_anatomical_regions.granular_id</code>. <code>source</code> distinguishes staff-entered pain (via NUR HUB <code>POST /teams/athletes/{id}/pain</code>) from athlete self-reported pain (via My NUR). The baseline qualifying gate checks <code>pain_entries = []</code> (empty array) on the current profile version instead of the previously eliminated <code>COUNT(*) WHERE session_id = Y</code> query on <code>pain_entries</code>. NURAI reads the current profile snapshot at inference time via the <code>is_current = true</code> index.</p>
   </div>
 
   <h4 style="margin-top:28px;">Modified Existing Tables</h4>
@@ -1910,7 +1913,7 @@
       <tr><td><code>gcs_path</code></td><td>varchar(512), nullable</td><td>GCS URI of the production thermogram after upload confirmation.</td></tr>
       <tr><td><code>stg_gcs_path</code></td><td>varchar(512), nullable</td><td>Staging/intermediate GCS path. Cleared after processing.</td></tr>
       <tr><td><code>avoidance_flags</code></td><td>JSONB, nullable</td><td>AI-flagged image quality issues (clothing interference, positioning deviation). Drives baseline qualifying gate.</td></tr>
-      <tr><td><code>scanned_at</code></td><td>timestamptz, nullable</td><td>Timestamp of the actual thermal image capture. Set by NUR Sensor at completion.</td></tr>
+      <tr><td><code>scanned_at</code></td><td>timestamptz, nullable</td><td>Timestamp of the actual thermal image capture. Set by NUR Scanner at completion.</td></tr>
       <tr><td><code>created_at</code></td><td>timestamptz</td><td>Auto-set at session record creation.</td></tr>
       <tr><td><code>updated_at</code></td><td>timestamptz</td><td>Auto-updated on any status change.</td></tr>
     </tbody>
@@ -1922,7 +1925,7 @@
 
   <div class="alert blue">
     <span class="alert-icon">&#8505;</span>
-    <div><strong>Auth Migration Note</strong><p>The Alpha uses DRF's static <code>authtoken_token</code> for all API auth. For BETA: NUR Sensor migrates to a static API key; My NUR consumers migrate to JWT via email OTP; NUR Teams migrate to JWT via SMS/WhatsApp OTP. No Firebase Auth dependency exists in the BETA auth stack &mdash; Firebase is retained only for FCM push notifications and RTDB session signalling. <code>authtoken_token</code> is retained during BETA transition and deprecated post-BETA.</p></div>
+    <div><strong>Auth Migration Note</strong><p>The Alpha uses DRF's static <code>authtoken_token</code> for all API auth. For BETA: NUR Scanner migrates to a static API key; My NUR consumers migrate to JWT via email OTP; NUR HUB migrate to JWT via SMS/WhatsApp OTP. No Firebase Auth dependency exists in the BETA auth stack &mdash; Firebase is retained only for FCM push notifications and RTDB session signalling. <code>authtoken_token</code> is retained during BETA transition and deprecated post-BETA.</p></div>
   </div>
   <p style="margin-bottom:8px;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.session_qr_tokens</code><span style="font-size:13px;color:var(--text-muted);"> — single-use QR codes for individual scan initiation</span></p>
   <div class="alert blue" style="margin-bottom:12px;">
@@ -1942,7 +1945,7 @@
     </tbody>
   </table>
 
-  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.otp_codes</code><span style="font-size:13px;color:var(--text-muted);"> — hashed OTPs for My NUR and NUR Teams login (raw OTP never persisted)</span></p>
+  <p style="margin:20px 0 8px;;display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;"><code style="font-size:15px;font-weight:700;color:var(--text);background:rgba(0,200,255,0.08);padding:4px 12px;border-radius:6px;border:1px solid rgba(0,200,255,0.22);font-family:'SF Mono','Fira Code',monospace;letter-spacing:0.01em;">tbscan.otp_codes</code><span style="font-size:13px;color:var(--text-muted);"> — hashed OTPs for My NUR and NUR HUB login (raw OTP never persisted)</span></p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -2119,11 +2122,11 @@
       <tr><td><code>thermal_baseline_method</code></td><td>varchar</td><td><code>auto</code> — platform selects method based on available data; <code>population_based</code> — use platform-wide reference norms; <code>individual_sd</code> — derive baseline from the athlete's own historical distribution (preferred for longitudinal monitoring).</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Reporting &amp; Branding</td></tr>
       <tr><td><code>report_branding</code></td><td>JSONB, nullable</td><td>Report customisation: <code>{"logo_url": "gs://...", "color_scheme": "...", "org_name": "..."}</code>. NULL uses NUR platform branding.</td></tr>
-      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">NUR Teams Configuration</td></tr>
+      <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">NUR HUB Configuration</td></tr>
       <tr><td><code>scan_interval_days</code></td><td>smallint NOT NULL, default 7</td><td>Expected days between athlete scans. Drives <code>scan_overdue</code> alert threshold. Default: 7 days.</td></tr>
       <tr><td><code>timezone</code></td><td>varchar(60) NOT NULL, default 'UTC'</td><td>IANA timezone string for the organisation (e.g. <code>Asia/Riyadh</code>). Used for daily digest scheduling.</td></tr>
-      <tr><td><code>alert_delivery_method</code></td><td>varchar(20) NOT NULL, default 'in_app'</td><td>How NUR Teams alerts are delivered to staff: <code>in_app</code> / <code>email</code> / <code>both</code>.</td></tr>
-      <tr><td><code>allow_athlete_pain_entry</code></td><td>boolean NOT NULL, default true</td><td>Whether athletes can submit pain entries via My NUR for this org. Staff-side entries via NUR Teams are always permitted.</td></tr>
+      <tr><td><code>alert_delivery_method</code></td><td>varchar(20) NOT NULL, default 'in_app'</td><td>How NUR HUB alerts are delivered to staff: <code>in_app</code> / <code>email</code> / <code>both</code>.</td></tr>
+      <tr><td><code>allow_athlete_pain_entry</code></td><td>boolean NOT NULL, default true</td><td>Whether athletes can submit pain entries via My NUR for this org. Staff-side entries via NUR HUB are always permitted.</td></tr>
       <tr><td colspan="3" style="background:var(--surface);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);padding:6px 12px;">Audit</td></tr>
       <tr><td><code>updated_at</code></td><td>timestamp</td><td>Last modification time.</td></tr>
       <tr><td><code>updated_by</code></td><td>FK &rarr; auth_user</td><td>The <code>admin</code> who last modified these settings.</td></tr>
@@ -2137,7 +2140,7 @@
       <tr><td><code>id</code></td><td>UUID (PK)</td><td>Primary key.</td></tr>
       <tr><td><code>org_id</code></td><td>FK &rarr; orgs, NOT NULL</td><td>Organisation the member belongs to.</td></tr>
       <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, NOT NULL</td><td>The user (athlete or staff).</td></tr>
-      <tr><td><code>role</code></td><td>varchar(20) NOT NULL</td><td><code>admin</code> — full org access (NUR Teams); <code>member</code> — athlete/standard member (My NUR).</td></tr>
+      <tr><td><code>role</code></td><td>varchar(20) NOT NULL</td><td><code>admin</code> — full org access (NUR HUB); <code>member</code> — athlete/standard member (My NUR).</td></tr>
       <tr><td><code>joined_at</code></td><td>timestamptz NOT NULL, default NOW()</td><td>When the member joined the org.</td></tr>
       <tr><td><code>job_title</code></td><td>varchar(60), nullable</td><td>Display-only staff role label. Does not affect the <code>admin | member</code> permission system. Permitted values: Head Coach, Assistant Coach, Head Physiotherapist, Physiotherapist, S&amp;C Coach, Performance Director, Medical Officer, Sports Scientist.</td></tr>
       <tr><td><code>my_nur_status</code></td><td>varchar(20) NOT NULL, default 'not_enrolled'</td><td>My NUR enrolment state for athlete members: <code>active</code> / <code>invite_pending</code> / <code>not_enrolled</code>.</td></tr>
@@ -2146,7 +2149,7 @@
   </table>
 
   <h4 id="s06-alerts" style="margin-top:32px;"><code style="font-size:14px;">tbscan.alerts</code> <span class="badge badge-beta" style="margin-left:8px;vertical-align:middle;">BETA — New</span></h4>
-  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">System-generated alert events for NUR Teams coaching staff. One row per alert event. Acknowledged alerts are retained for audit.</p>
+  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">System-generated alert events for NUR HUB coaching staff. One row per alert event. Acknowledged alerts are retained for audit.</p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -2209,7 +2212,7 @@
   <strong style="color:var(--text-muted);">Constraint:</strong> <code>UNIQUE (athlete_id) WHERE is_active = true</code> — partial unique index prevents two simultaneous active workflows per athlete.</p>
 
   <h4 id="s06-rtp-interventions" style="margin-top:32px;"><code style="font-size:14px;">tbscan.rtp_interventions</code> <span class="badge badge-beta" style="margin-left:8px;vertical-align:middle;">BETA — New</span></h4>
-  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">Therapeutic intervention sessions logged during an RTP workflow. Used for the intervention log and timeline visualisation in NUR Teams.</p>
+  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">Therapeutic intervention sessions logged during an RTP workflow. Used for the intervention log and timeline visualisation in NUR HUB.</p>
   <table class="data-table">
     <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
@@ -2228,7 +2231,7 @@
   <p style="font-size:13px;color:var(--text-dim);">Indexes: <code>idx_rtp_int_workflow (workflow_id, session_date DESC)</code> — chronological intervention list per workflow.</p>
 
   <h3 id="s06-6">6.6 Named Query Patterns</h3>
-  <p class="section-intro" style="font-size:15px;">Derived read patterns used by NUR Teams API endpoints. No dedicated tables — all derived from existing schema.</p>
+  <p class="section-intro" style="font-size:15px;">Derived read patterns used by NUR HUB API endpoints. No dedicated tables — all derived from existing schema.</p>
 
   <h4>§6.6.1 — 30-Day COMPASS History</h4>
   <p style="font-size:13.5px;color:var(--text-muted);">Used by <code>GET /teams/athletes/{id}/compass/history</code>. Index reuse: <code>idx_ud_user_date (user_id, date DESC)</code>.</p>
@@ -2310,7 +2313,7 @@ GROUP BY w.workflow_id;</pre>
     <!-- Flow A title bar -->
     <rect x="0" y="0" width="780" height="26" rx="8" fill="rgba(249,115,22,0.10)" stroke="rgba(249,115,22,0.35)" stroke-width="1"/>
     <rect x="0" y="13" width="780" height="13" fill="rgba(249,115,22,0.06)"/>
-    <text x="390" y="17" text-anchor="middle" font-size="9" font-weight="700" fill="#fdba74" letter-spacing="0.07em">FLOW A — FULL PIPELINE · POST /infer · TRIGGERED BY NUR SENSOR</text>
+    <text x="390" y="17" text-anchor="middle" font-size="9" font-weight="700" fill="#fdba74" letter-spacing="0.07em">FLOW A — FULL PIPELINE · POST /infer · TRIGGERED BY NUR SCANNER</text>
 
     <!-- Module 1 — Computer Vision & Thermal ROI -->
     <rect x="0" y="34" width="210" height="100" rx="10" fill="#1c1812" stroke="rgba(249,115,22,0.5)" stroke-width="1.5"/>
@@ -2369,7 +2372,7 @@ GROUP BY w.workflow_id;</pre>
     <!-- Flow B title bar -->
     <rect x="0" y="0" width="780" height="26" rx="8" fill="rgba(124,58,237,0.10)" stroke="rgba(124,58,237,0.35)" stroke-width="1"/>
     <rect x="0" y="13" width="780" height="13" fill="rgba(124,58,237,0.06)"/>
-    <text x="390" y="17" text-anchor="middle" font-size="9" font-weight="700" fill="#a78bfa" letter-spacing="0.07em">FLOW B — DAILY REFRESH · POST /infer/refresh · TRIGGERED BY MY NUR OR NUR TEAMS</text>
+    <text x="390" y="17" text-anchor="middle" font-size="9" font-weight="700" fill="#a78bfa" letter-spacing="0.07em">FLOW B — EVENT-DRIVEN REFRESH · POST /infer/refresh · AUTO-TRIGGERED OR MANUAL</text>
 
     <!-- Module 1 — SKIPPED -->
     <rect x="0" y="34" width="210" height="100" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.07)" stroke-width="1" stroke-dasharray="4,3"/>
@@ -2396,14 +2399,14 @@ GROUP BY w.workflow_id;</pre>
     <line x1="500" y1="84" x2="564" y2="84" stroke="#30363d" stroke-width="1.5"/>
     <polygon points="564,79 572,84 564,89" fill="#30363d"/>
 
-    <!-- Module 3 — GenAI Reasoning (conditional) -->
+    <!-- Module 3 — GenAI Reasoning (always) -->
     <rect x="572" y="34" width="208" height="100" rx="10" fill="#0e1e2a" stroke="rgba(0,200,255,0.4)" stroke-width="1.5"/>
     <rect x="572" y="34" width="208" height="28" rx="10" fill="rgba(0,200,255,0.10)"/>
     <rect x="572" y="50" width="208" height="12" fill="rgba(0,200,255,0.10)"/>
     <text x="676" y="54" text-anchor="middle" font-size="9" font-weight="700" fill="#00c8ff" letter-spacing="0.07em">MODULE 3</text>
     <text x="676" y="77" text-anchor="middle" font-size="12.5" font-weight="700" fill="#e6edf3">GenAI Reasoning</text>
-    <rect x="604" y="84" width="144" height="14" rx="7" fill="rgba(245,158,11,0.14)" stroke="rgba(245,158,11,0.38)" stroke-width="0.8"/>
-    <text x="676" y="94" text-anchor="middle" font-size="8.5" fill="#f59e0b" font-weight="700">only if zone changed</text>
+    <rect x="604" y="84" width="144" height="14" rx="7" fill="rgba(74,222,128,0.12)" stroke="rgba(74,222,128,0.35)" stroke-width="0.8"/>
+    <text x="676" y="94" text-anchor="middle" font-size="8.5" fill="#4ade80" font-weight="700">always runs</text>
     <text x="676" y="113" text-anchor="middle" font-size="10.5" fill="#8b949e">Zone rationale · intervention</text>
     <text x="676" y="128" text-anchor="middle" font-size="10.5" fill="#8b949e">plan · coach narrative</text>
 
@@ -2413,12 +2416,12 @@ GROUP BY w.workflow_id;</pre>
 
   <div class="alert orange">
     <span class="alert-icon">&#9888;</span>
-    <div><strong>Synchronous Processing (Current)</strong><p>The pipeline is currently synchronous: the Backend waits for the NURAI inference response before returning the result preview to NUR Sensor. See Section 11, Open Question #2 for the sync vs. async decision.</p></div>
+    <div><strong>Synchronous Processing (Current)</strong><p>The pipeline is currently synchronous: the Backend waits for the NURAI inference response before returning the result preview to NUR Scanner. See Section 11, Open Question #2 for the sync vs. async decision.</p></div>
   </div>
 
   <div id="s07-flow-a"></div>
-  <h3>7.1 Flow A — Full Pipeline <span style="font-size:13px;font-weight:400;color:var(--text-muted);">triggered by NUR Sensor</span></h3>
-  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Runs when an athlete completes a physical scan at a smart mirror. Executes all three NURAI modules in sequence: <strong style="color:var(--text);">Computer Vision &amp; Thermal ROI → Metrics Pipeline → GenAI Reasoning</strong>. NUR Sensor uploads the thermogram <strong style="color:var(--text);">directly to GCS</strong> via signed URL — the binary never transits the Backend. The Backend then calls <code>POST /infer { session_id }</code> (API Key auth) to trigger NURAI. Once Module 1 completes and measurements are written to DB, the Backend immediately spawns the async <strong>Baseline + RTP Thread</strong> (§7.4) — passing only a <strong><code>zone_future</code></strong> (an unresolved Future/Promise). The thread reads all measurement data directly from DB. Module 2 resolves <code>zone_future</code> with the computed <code>compass_zone</code> as soon as Zone Classification finishes. The async thread's Steps 1–3 (baseline + RTP per-region) run freely without waiting; Step 4 (write-back + alert) awaits <code>zone_future</code> before the eligibility check, ensuring it always uses the current scan's zone — never the previous day's stale value from DB.</p>
+  <h3>7.1 Flow A — Full Pipeline <span style="font-size:13px;font-weight:400;color:var(--text-muted);">triggered by NUR Scanner</span></h3>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Runs when an athlete completes a physical scan at a smart mirror. Executes all three NURAI modules in sequence: <strong style="color:var(--text);">Computer Vision &amp; Thermal ROI → Metrics Pipeline → GenAI Reasoning</strong>. NUR Scanner uploads the thermogram <strong style="color:var(--text);">directly to GCS</strong> via signed URL — the binary never transits the Backend. The Backend then calls <code>POST /infer { session_id }</code> (API Key auth) to trigger NURAI. Once Module 1 completes and measurements are written to DB, the Backend immediately spawns the async <strong>Baseline + RTP Thread</strong> (§7.4) — passing only a <strong><code>zone_future</code></strong> (an unresolved Future/Promise). The thread reads all measurement data directly from DB. Module 2 resolves <code>zone_future</code> with the computed <code>compass_zone</code> as soon as Zone Classification finishes. The async thread's Steps 1–3 (baseline + RTP per-region) run freely without waiting; Step 4 (write-back + alert) awaits <code>zone_future</code> before the eligibility check, ensuring it always uses the current scan's zone — never the previous day's stale value from DB.</p>
 
   <div class="sc-pipeline">
     <div class="sc-stage">
@@ -2630,16 +2633,16 @@ GROUP BY w.workflow_id;</pre>
   </div>
 
   <div id="s07-flow-b"></div>
-  <h3 style="margin-top:40px;">7.2 Flow B — Daily Refresh <span style="font-size:13px;font-weight:400;color:var(--text-muted);">triggered by My NUR or NUR Teams</span></h3>
-  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Runs on days without a new thermal scan. Always executes <strong style="color:var(--text);">Module 2 (Metrics Pipeline)</strong> to recompute zone and score from fresh wearable data. <strong style="color:var(--text);">Module 3 (GenAI Reasoning)</strong> is executed only if the resulting <code>compass_zone</code> differs from the most recent <code>daily_assessments</code> record — if the zone is unchanged, Module 3 is skipped and the existing <code>ai_coach_response</code> is reused, reducing LLM API calls for wearable fluctuations that do not shift clinical zone. Module 1 (Computer Vision &amp; Thermal ROI) is always skipped: no thermogram fetch, no ROI extraction, no writes to <code>thermal_scans</code>. Triggered by <code>POST /compass/refresh</code> (JWT auth). The Backend always returns the latest <code>daily_assessments</code> record — the gates below only determine whether NURAI is invoked, never whether data is returned.</p>
+  <h3 style="margin-top:40px;">7.2 Flow B — Event-Driven Refresh <span style="font-size:13px;font-weight:400;color:var(--text-muted);">auto-triggered or manual — see §7.5 for trigger sources</span></h3>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Runs on days without a new thermal scan. The three gates below control whether <strong style="color:var(--text);">Module 2 (Metrics Pipeline)</strong> executes — if any gate fails, Module 2 is skipped and the COMPASS score and zone are not recomputed. <strong style="color:var(--text);">Module 3 (GenAI Reasoning) always runs</strong> regardless of gate outcome: after Module 2 when gates pass, or directly (using the last computed score) when gates fail. This ensures <code>ai_coach_response</code> always reflects the latest clinical context — pain entries, profile changes, RTP state — regardless of wearable or scan availability. Module 1 (Computer Vision &amp; Thermal ROI) is always skipped: no thermogram fetch, no ROI extraction, no writes to <code>thermal_scans</code>. Triggered by <code>POST /compass/refresh</code> (JWT auth) and automatically via §7.5 triggers. The Backend always returns the latest <code>daily_assessments</code> record — gate outcomes determine what NURAI computes, never whether data is returned.</p>
 
   <h4>Backend Gate Checks</h4>
 
-  <svg viewBox="0 0 720 470" width="100%" style="max-width:720px;display:block;margin:16px 0 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
+  <svg viewBox="0 0 780 570" width="100%" style="max-width:780px;display:block;margin:16px 0 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
 
     <!-- Entry -->
     <rect x="210" y="8" width="300" height="38" rx="8" fill="#1e2630" stroke="#30363d" stroke-width="1.5"/>
-    <text x="360" y="32" text-anchor="middle" font-size="12" font-weight="700" fill="#e6edf3">POST /compass/refresh</text>
+    <text x="360" y="32" text-anchor="middle" font-size="12" font-weight="700" fill="#e6edf3">POST /compass/refresh · POST /infer/refresh</text>
 
     <!-- Entry → Gate 1 -->
     <line x1="360" y1="46" x2="360" y2="74" stroke="#30363d" stroke-width="1.5"/>
@@ -2656,8 +2659,11 @@ GROUP BY w.workflow_id;</pre>
     <line x1="430" y1="118" x2="490" y2="118" stroke="rgba(239,68,68,0.6)" stroke-width="1.5"/>
     <polygon points="490,113 498,118 490,123" fill="rgba(239,68,68,0.6)"/>
     <text x="462" y="112" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="700">FAIL</text>
-    <rect x="500" y="104" width="194" height="30" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
-    <text x="597" y="123" text-anchor="middle" font-size="10.5" fill="#fca5a5">refresh_status = "no_scan"</text>
+    <rect x="500" y="100" width="196" height="44" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+    <text x="598" y="117" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fca5a5">no_scan</text>
+    <text x="598" y="134" text-anchor="middle" font-size="9.5" fill="#6e7681">Module 2 skipped · GenAI runs</text>
+    <!-- Connector to fail rail -->
+    <line x1="696" y1="122" x2="726" y2="122" stroke="rgba(239,68,68,0.4)" stroke-width="1.5"/>
 
     <!-- Gate 1 → Gate 2 -->
     <line x1="360" y1="154" x2="360" y2="180" stroke="#30363d" stroke-width="1.5"/>
@@ -2675,8 +2681,11 @@ GROUP BY w.workflow_id;</pre>
     <line x1="430" y1="224" x2="490" y2="224" stroke="rgba(239,68,68,0.6)" stroke-width="1.5"/>
     <polygon points="490,219 498,224 490,229" fill="rgba(239,68,68,0.6)"/>
     <text x="462" y="218" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="700">FAIL</text>
-    <rect x="500" y="210" width="194" height="30" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
-    <text x="597" y="229" text-anchor="middle" font-size="10.5" fill="#fca5a5">refresh_status = "stale_scan"</text>
+    <rect x="500" y="206" width="196" height="44" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+    <text x="598" y="223" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fca5a5">stale_scan</text>
+    <text x="598" y="240" text-anchor="middle" font-size="9.5" fill="#6e7681">Module 2 skipped · GenAI runs</text>
+    <!-- Connector to fail rail -->
+    <line x1="696" y1="228" x2="726" y2="228" stroke="rgba(239,68,68,0.4)" stroke-width="1.5"/>
 
     <!-- Gate 2 → Gate 3 -->
     <line x1="360" y1="260" x2="360" y2="286" stroke="#30363d" stroke-width="1.5"/>
@@ -2692,43 +2701,61 @@ GROUP BY w.workflow_id;</pre>
     <text x="280" y="344" text-anchor="middle" font-size="11" fill="#8b949e">AND newer than last computation</text>
     <text x="280" y="360" text-anchor="middle" font-size="10.5" fill="#6e7681">daily_metrics vs daily_assessments.metric_record_id</text>
     <!-- Fail branch right -->
-    <line x1="430" y1="335" x2="490" y2="335" stroke="rgba(239,68,68,0.6)" stroke-width="1.5"/>
-    <polygon points="490,330 498,335 490,340" fill="rgba(239,68,68,0.6)"/>
-    <text x="462" y="329" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="700">FAIL</text>
-    <rect x="500" y="316" width="194" height="40" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
-    <text x="597" y="332" text-anchor="middle" font-size="10.5" fill="#fca5a5">stale_wearable (age &gt; 2 days)</text>
-    <text x="597" y="348" text-anchor="middle" font-size="10.5" fill="#fca5a5">cached (not newer)</text>
+    <line x1="430" y1="330" x2="490" y2="330" stroke="rgba(239,68,68,0.6)" stroke-width="1.5"/>
+    <polygon points="490,325 498,330 490,335" fill="rgba(239,68,68,0.6)"/>
+    <text x="462" y="324" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="700">FAIL</text>
+    <rect x="500" y="312" width="196" height="54" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+    <text x="598" y="328" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fca5a5">stale_wearable / cached</text>
+    <text x="598" y="344" text-anchor="middle" font-size="9.5" fill="#6e7681">Module 2 skipped · GenAI runs</text>
+    <!-- Connector to fail rail -->
+    <line x1="696" y1="339" x2="726" y2="339" stroke="rgba(239,68,68,0.4)" stroke-width="1.5"/>
 
-    <!-- Gate 3 → NURAI -->
-    <line x1="360" y1="366" x2="360" y2="394" stroke="#30363d" stroke-width="1.5"/>
-    <polygon points="355,394 365,394 360,402" fill="#30363d"/>
-    <text x="372" y="383" font-size="9" fill="#22c55e" font-weight="700">PASS</text>
+    <!-- Fail rail: vertical dashed line collecting all gate-fail paths -->
+    <line x1="726" y1="122" x2="726" y2="488" stroke="rgba(239,68,68,0.35)" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <!-- Arrow from fail rail into Module 3 top-right -->
+    <polygon points="721,488 731,488 726,496" fill="rgba(239,68,68,0.6)"/>
 
-    <!-- NURAI invocation -->
-    <rect x="110" y="402" width="340" height="56" rx="8" fill="#0e1e2a" stroke="rgba(0,200,255,0.45)" stroke-width="1.5"/>
-    <rect x="110" y="402" width="340" height="22" rx="8" fill="rgba(0,200,255,0.10)"/>
-    <rect x="110" y="414" width="340" height="10" fill="rgba(0,200,255,0.10)"/>
-    <text x="280" y="418" text-anchor="middle" font-size="9.5" font-weight="700" fill="#00c8ff" letter-spacing="0.06em">POST /infer/refresh → NURAI</text>
-    <text x="280" y="436" text-anchor="middle" font-size="11" fill="#8b949e">Module 2 always · Module 3 only if zone changed</text>
-    <text x="280" y="452" text-anchor="middle" font-size="10.5" fill="#6e7681">computed | zone_stable | inference_failed</text>
+    <!-- Gate 3 → Module 2 (PASS) -->
+    <line x1="360" y1="366" x2="360" y2="400" stroke="#30363d" stroke-width="1.5"/>
+    <polygon points="355,400 365,400 360,408" fill="#30363d"/>
+    <text x="372" y="386" font-size="9" fill="#22c55e" font-weight="700">PASS</text>
+
+    <!-- Module 2 — Metrics Pipeline -->
+    <rect x="130" y="408" width="300" height="54" rx="8" fill="#0a1a2e" stroke="rgba(0,200,255,0.35)" stroke-width="1.5"/>
+    <rect x="130" y="408" width="300" height="20" rx="8" fill="rgba(0,200,255,0.08)"/>
+    <rect x="130" y="418" width="300" height="10" fill="rgba(0,200,255,0.08)"/>
+    <text x="280" y="423" text-anchor="middle" font-size="9.5" font-weight="700" fill="#00c8ff" letter-spacing="0.06em">MODULE 2 — METRICS PIPELINE</text>
+    <text x="280" y="442" text-anchor="middle" font-size="11" fill="#8b949e">Score + zone recomputed from wearable data</text>
+    <text x="280" y="456" text-anchor="middle" font-size="10.5" fill="#6e7681">Only runs when all gates pass</text>
+
+    <!-- Module 2 → Module 3 (unconditional) -->
+    <line x1="280" y1="462" x2="280" y2="480" stroke="#30363d" stroke-width="1.5"/>
+    <polygon points="275,480 285,480 280,488" fill="#30363d"/>
+
+    <!-- Module 3 — GenAI Reasoning (always runs) -->
+    <rect x="90" y="488" width="636" height="62" rx="8" fill="#0a1f0a" stroke="rgba(74,222,128,0.35)" stroke-width="1.5"/>
+    <rect x="90" y="488" width="636" height="22" rx="8" fill="rgba(74,222,128,0.08)"/>
+    <rect x="90" y="500" width="636" height="10" fill="rgba(74,222,128,0.08)"/>
+    <text x="408" y="504" text-anchor="middle" font-size="9.5" font-weight="700" fill="#4ade80" letter-spacing="0.06em">MODULE 3 — GENAI REASONING (ALWAYS RUNS)</text>
+    <text x="408" y="525" text-anchor="middle" font-size="11" fill="#8b949e">Runs after Module 2 on gate-pass · Runs directly on gate-fail using last computed score</text>
+    <text x="408" y="541" text-anchor="middle" font-size="10.5" fill="#6e7681">Always updates ai_coach_response — score and zone also updated when Module 2 ran</text>
   </svg>
 
   <h4>Response — always HTTP 200, always includes latest daily_assessments</h4>
   <table class="data-table">
     <thead><tr><th><code>refresh_status</code></th><th>NURAI invoked</th><th>daily_assessments returned</th></tr></thead>
     <tbody>
-      <tr><td><code>no_scan</code></td><td>No</td><td>Latest on record (may be null for new users)</td></tr>
-      <tr><td><code>stale_scan</code></td><td>No</td><td>Latest on record</td></tr>
-      <tr><td><code>stale_wearable</code></td><td>No</td><td>Latest on record — wearable data exists but is older than 2 days; COMPASS scoring blocked until wearable is refreshed</td></tr>
-      <tr><td><code>cached</code></td><td>No</td><td>Latest on record — wearable data is fresh but unchanged since last computation</td></tr>
-      <tr><td><code>computed</code></td><td>Yes — Modules 2 + 3</td><td>Newly written record; zone changed → full GenAI re-generation</td></tr>
-      <tr><td><code>zone_stable</code></td><td>Yes — Module 2 only</td><td>Zone unchanged vs. previous record; Module 3 skipped; updated score written with existing <code>ai_coach_response</code> reused</td></tr>
+      <tr><td><code>no_scan</code></td><td>Yes — Module 3 only</td><td>Score and zone unchanged; <code>ai_coach_response</code> updated by Module 3 using last computed score</td></tr>
+      <tr><td><code>stale_scan</code></td><td>Yes — Module 3 only</td><td>Score and zone unchanged; <code>ai_coach_response</code> updated by Module 3 using last computed score</td></tr>
+      <tr><td><code>stale_wearable</code></td><td>Yes — Module 3 only</td><td>Score and zone unchanged; <code>ai_coach_response</code> updated by Module 3 — wearable data exists but is older than 2 days</td></tr>
+      <tr><td><code>cached</code></td><td>Yes — Module 3 only</td><td>Score and zone unchanged; <code>ai_coach_response</code> updated by Module 3 — wearable data is fresh but unchanged since last computation</td></tr>
+      <tr><td><code>computed</code></td><td>Yes — Modules 2 + 3</td><td>Score, zone, and <code>ai_coach_response</code> all updated; all gates passed</td></tr>
       <tr><td><code>inference_failed</code></td><td>Yes (failed)</td><td>Latest on record before failure</td></tr>
     </tbody>
   </table>
 
   <div class="insight" style="margin-top:16px;">
-    <p><strong>Asymmetric Sampling — Module 3 skip logic:</strong> After Module 2 computes the new zone, the Backend compares it against <code>daily_assessments.compass_zone</code> from the most recent record. If the zone is <strong>unchanged</strong>, the GenAI call is skipped — the existing <code>ai_coach_response</code> is copied forward and <code>refresh_status = 'zone_stable'</code>. The updated <code>compass_score</code> and <code>metric_record_id</code> are always written regardless. Zone is the correct gate because the GenAI narrative (rationale, intervention plan, coach text) is determined primarily by zone, not by point-level score fluctuations within a zone. A score change from 78 → 82 within Safe produces no clinically meaningful change in the narrative; a zone change from Safe → Recovery always requires fresh GenAI output.</p>
+    <p><strong>Module 3 always runs.</strong> GenAI Reasoning executes on every Flow B invocation regardless of gate outcome. When gates pass, Module 3 runs after Module 2 with the freshly computed score and zone. When any gate fails, Module 3 runs using the last valid score and zone from <code>daily_assessments</code>. In both cases, <code>ai_coach_response</code> is regenerated to reflect the current clinical context — ensuring recommendations incorporate the latest pain entries, profile state, and RTP conditions even when wearable data is stale or a scan has not yet been performed.</p>
   </div>
 
   <div id="s07-baseline"></div>
@@ -2820,6 +2847,58 @@ GROUP BY w.workflow_id;</pre>
 
   <div class="alert blue" style="margin-top:16px;"><div class="alert-icon">ℹ️</div><div><strong>Concurrency Model</strong><p>The async Baseline + RTP Thread runs concurrently with Modules 2 and 3. Steps 1–3 (baseline computation + per-region RTP) have no dependency on Module 2 and run freely — the DB read in Step 1 only needs the committed scan row, which is already present. Step 4 (write-back + alert) awaits <code>zone_future</code>, which Module 2 resolves immediately after Zone Classification — typically within milliseconds, well before the async thread's Steps 1–3 complete. This eliminates the race condition where Step 4 might otherwise read the <em>previous</em> day's <code>compass_zone</code> from <code>daily_assessments</code> before Module 2 has written the new one. Module 2 reads the baseline from the <em>previous</em> scan's <code>measurements</code> JSONB (written by the previous async thread, already settled) — the baseline write and the scoring read operate on different scan rows, so they never race.</p></div></div>
 
+</section>
+
+<!-- ══ 07.5: Flow B Event Triggers ══ -->
+<section id="s07-flow-b-triggers" style="margin-top:48px;">
+  <div id="s07-flow-b-triggers-anchor"></div>
+  <h3 style="margin-top:0;">7.5 Flow B — Event-Driven Triggers</h3>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Flow B (§7.2) fires automatically from two data-write paths. The triggering endpoint or job spawns a background thread and calls NURAI <code>POST /infer/refresh</code> directly — no gate checks run at the trigger site. All gate logic (thermal scan validity, wearable freshness, cached status) lives inside the Flow B pipeline in NURAI (§7.2), identical to how <code>POST /compass/refresh</code> behaves today. <code>POST /compass/refresh</code> is preserved for manual refresh and remains the natural recovery path if a background trigger fails.</p>
+
+  <h4>Trigger Sources</h4>
+
+  <table class="data-table" style="margin-bottom:24px;">
+    <thead>
+      <tr><th>Trigger</th><th>Source</th><th>Fires when</th><th>trigger_type written</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>wearable_updated</strong></td>
+        <td>Daily Spike pull job (§8.5) and on-demand pull (§8.6)</td>
+        <td>After <code>daily_metrics</code> is written with new data for a user. Users with no new Spike data are skipped — no trigger fires.</td>
+        <td><code>auto_wearable</code></td>
+      </tr>
+      <tr>
+        <td><strong>health_updated</strong></td>
+        <td>
+          <code>POST /health/pain</code> (athlete)<br>
+          <code>POST /teams/athletes/{id}/pain</code> (staff)<br>
+          <code>PUT /health/history</code> (athlete)<br>
+          <code>POST /teams/rtp/{id}/initiate</code><br>
+          <code>PUT /teams/rtp/{id}/injuries</code><br>
+          <code>POST /teams/rtp/{id}/interventions</code><br>
+          <code>POST /teams/rtp/{id}/clear</code>
+        </td>
+        <td>After the endpoint's primary DB write completes successfully.</td>
+        <td><code>auto_health</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Background Execution Pattern</h4>
+  <ul class="step-list">
+    <li><div class="step-num">1</div><p>The triggering endpoint or job completes its own DB write (e.g. upserts <code>daily_metrics</code>, inserts <code>user_profile_history</code> version, writes to <code>rtp_workflows</code>).</p></li>
+    <li><div class="step-num">2</div><p>A background thread is spawned. The endpoint returns its normal response to the caller immediately — the caller is not blocked by NURAI execution.</p></li>
+    <li><div class="step-num">3</div><p>The background thread calls NURAI <code>POST /infer/refresh</code> with <code>{ user_id, trigger_type: "auto_wearable" | "auto_health" }</code>. NURAI runs the full §7.2 gate sequence and, if gates pass, executes Modules 2 + 3.</p></li>
+    <li><div class="step-num">4</div><p>On success, NURAI upserts <code>daily_assessments</code> with the new score, zone, AI coach response, and <code>trigger_type</code>. If the zone changed, the existing Alert Generator (§10) fires a <code>zone_change</code> alert to staff.</p></li>
+    <li><div class="step-num">5</div><p>On failure, the <code>daily_assessments</code> row is unchanged. The client's next <code>POST /compass/refresh</code> or <code>GET /results/latest</code> call serves as the natural recovery path — no retry or dead-letter mechanism is needed.</p></li>
+  </ul>
+
+  <div class="alert blue" style="margin-top:16px;">
+    <div class="alert-icon">ℹ️</div>
+    <div><strong>Gate 3 behaviour for health_updated</strong>
+    <p>Gate 3 in §7.2 checks whether <code>daily_metrics</code> is newer than the last computation. A pain entry or RTP write does not update wearable data, so Gate 3 would ordinarily return <code>cached</code> for <code>auto_health</code> triggers. NURAI bypasses Gate 3 when <code>trigger_type = "auto_health"</code> — it proceeds directly to Module 2 if Gates 1 and 2 pass. This ensures new clinical context (pain level, RTP state) is always reflected in the COMPASS score regardless of wearable freshness.</p></div>
+  </div>
 </section>
 
 <!-- ══ 08: Wearables ══ -->
@@ -3154,6 +3233,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <li><div class="step-num">3</div><p>For each queued user, Backend calls the Spike Daily Statistics API using the stored JWT (<code>wearable_connections.encrypted_access_token</code>), scoping the request to the <code>data_start</code> / <code>data_end</code> window from the webhook payload where available.</p></li>
     <li><div class="step-num">4</div><p>Returned metrics are upserted into <code>tbscan.daily_metrics</code> (<code>metric_type = 'raw'</code>, <code>source_platform = 'spike'</code>). <code>activity_load</code> (ACWR) is computed from the 7-day / 28-day history and written alongside the raw fields.</p></li>
     <li><div class="step-num">5</div><p><code>wearable_connections.last_synced_at</code> is updated to <code>NOW()</code> on success. The processed row in <code>spike_pull_queue</code> is marked <code>status = 'done'</code> (or deleted). On API error the row is marked <code>status = 'error'</code> and <code>wearable_connections.status</code> is set to <code>error</code> if auth-related.</p></li>
+    <li><div class="step-num">6</div><p><strong>Flow B trigger (§7.5):</strong> If Step 4 wrote new data for this user, a background thread is spawned to call NURAI <code>POST /infer/refresh { user_id, trigger_type: "auto_wearable" }</code>. Users where no new <code>daily_metrics</code> row was written are skipped. The cron job continues to the next queued user without waiting for NURAI to complete. Each user's background thread runs independently.</p></li>
   </ul>
 
   <div id="s08-6"></div>
@@ -3167,7 +3247,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
   <table class="data-table" style="max-width:720px;margin-bottom:20px;">
     <thead><tr><th>Field</th><th>Direction</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
-      <tr><td><code>user_id</code></td><td>Request body (optional)</td><td>UUID</td><td>Target athlete. Required when called by a coach via NUR Teams; omitted when called by the athlete themselves (resolved from JWT).</td></tr>
+      <tr><td><code>user_id</code></td><td>Request body (optional)</td><td>UUID</td><td>Target athlete. Required when called by a coach via NUR HUB; omitted when called by the athlete themselves (resolved from JWT).</td></tr>
       <tr><td><code>last_synced_at</code></td><td>Response</td><td>timestamptz</td><td>Timestamp of the pull just completed.</td></tr>
       <tr><td><code>new_data_available</code></td><td>Response</td><td>boolean</td><td><code>true</code> if Spike returned at least one metric row newer than the previous <code>daily_metrics</code> record for this athlete.</td></tr>
       <tr><td><code>ready_for_compass_refresh</code></td><td>Response</td><td>boolean</td><td><code>true</code> if the freshly written <code>daily_metrics</code> row would now pass Gate 3 of Flow B (data ≤ 2 days old and newer than the last computation). Lets the client decide whether to immediately call <code>POST /compass/refresh</code>.</td></tr>
@@ -3179,13 +3259,13 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <li><div class="step-num">1</div><p>Client calls <code>POST /wearables/sync-now</code> with JWT. Backend resolves athlete from JWT (or from <code>user_id</code> body field for admin callers). Verifies <code>wearable_connections.status = 'active'</code> and <code>sync_enabled = true</code> — returns <code>409</code> if the connection is not active.</p></li>
     <li><div class="step-num">2</div><p>Rate-limit check: if <code>NOW() - last_synced_at &lt; 1 hour</code>, return <code>429</code> with <code>Retry-After: &lt;seconds&gt;</code>.</p></li>
     <li><div class="step-num">3</div><p>Backend calls the Spike Daily Statistics API using <code>wearable_connections.encrypted_access_token</code>, requesting today's date window. Same pull logic and upsert semantics as the daily cron job (§8.5 Steps 3–4) — idempotent on <code>(user_id, source_platform, metric_date, metric_type)</code>.</p></li>
-    <li><div class="step-num">4</div><p>On success: update <code>wearable_connections.last_synced_at = NOW()</code>. Write a row to <code>wearable_sync_logs</code> with <code>sync_type = 'on_demand'</code>. Return <code>200</code> with <code>{ last_synced_at, new_data_available, ready_for_compass_refresh }</code>.</p></li>
+    <li><div class="step-num">4</div><p>On success: update <code>wearable_connections.last_synced_at = NOW()</code>. Write a row to <code>wearable_sync_logs</code> with <code>sync_type = 'on_demand'</code>. If <code>new_data_available = true</code>, spawn a background thread to call NURAI <code>POST /infer/refresh { user_id, trigger_type: "auto_wearable" }</code> (see §7.5). Return <code>200</code> with <code>{ last_synced_at, new_data_available, ready_for_compass_refresh }</code>.</p></li>
     <li><div class="step-num">5</div><p>On Spike API error: return <code>502 Bad Gateway</code> with <code>{ error: "spike_pull_failed", detail: "&lt;spike_error&gt;" }</code>. <code>last_synced_at</code> is not updated — the rate-limit window is not consumed on failure, so the athlete can retry immediately.</p></li>
   </ul>
 
   <div class="alert blue">
     <span class="alert-icon">ℹ️</span>
-    <div><strong>No automatic Flow B trigger</strong><p>The on-demand pull deliberately does not call <code>POST /infer/refresh</code> automatically. The client receives <code>ready_for_compass_refresh: true</code> and decides whether to follow up with <code>POST /compass/refresh</code>. This keeps the two operations independently retryable and avoids coupling a pull failure to a COMPASS score update failure.</p></div>
+    <div><strong>Automatic Flow B trigger on new data</strong><p>When <code>new_data_available = true</code>, the on-demand pull spawns a background thread that calls NURAI <code>POST /infer/refresh</code> automatically (§7.5). The client still receives <code>ready_for_compass_refresh</code> in the response and may also call <code>POST /compass/refresh</code> manually — NURAI's gate logic will return <code>cached</code> if the background trigger already completed, preventing duplicate computation.</p></div>
   </div>
 
   <h4>Data Flow Diagram</h4>
@@ -3315,7 +3395,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <div class="auth-card">
       <div class="auth-icon">&#127760;</div>
       <h4>API Gateway</h4>
-      <p>All client requests (My NUR, NUR Sensor, NUR Teams) enter through the Django REST API over HTTPS. No client communicates directly with downstream services.</p>
+      <p>All client requests (My NUR, NUR Scanner, NUR HUB) enter through the Django REST API over HTTPS. No client communicates directly with downstream services.</p>
     </div>
     <div class="auth-card">
       <div class="auth-icon">&#9881;</div>
@@ -3335,19 +3415,19 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><th>Endpoint Group</th><th>Auth Method</th><th>Primary Consumer</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>/auth/</code></td><td><span class="badge badge-jwt">JWT / OTP</span></td><td>My NUR, NUR Teams</td><td>OTP request, OTP verify, token refresh, logout.</td></tr>
-      <tr><td><code>/scan/</code></td><td><span class="badge badge-apikey">API Key</span> / <span class="badge badge-jwt">JWT</span></td><td>NUR Sensor, My NUR</td><td>Session creation, GCS upload URL issuance, session completion.</td></tr>
-      <tr><td><code>/compass/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Flow B daily refresh (<code>/compass/refresh</code>) and eligibility check (<code>/compass/status</code>). Triggered by My NUR or NUR Teams — never by NUR Sensor.</td></tr>
-      <tr><td><code>/results/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>COMPASS score retrieval (reads from <code>daily_assessments</code> + <code>thermal_scans</code>), per-region measurements, readiness history.</td></tr>
+      <tr><td><code>/auth/</code></td><td><span class="badge badge-jwt">JWT / OTP</span></td><td>My NUR, NUR HUB</td><td>OTP request, OTP verify, token refresh, logout.</td></tr>
+      <tr><td><code>/scan/</code></td><td><span class="badge badge-apikey">API Key</span> / <span class="badge badge-jwt">JWT</span></td><td>NUR Scanner, My NUR</td><td>Session creation, GCS upload URL issuance, session completion.</td></tr>
+      <tr><td><code>/compass/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>Flow B event-driven refresh (<code>/compass/refresh</code>) and eligibility check (<code>/compass/status</code>). Triggered automatically by data-write events or manually by My NUR / NUR HUB — never by NUR Scanner.</td></tr>
+      <tr><td><code>/results/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>COMPASS score retrieval (reads from <code>daily_assessments</code> + <code>thermal_scans</code>), per-region measurements, readiness history.</td></tr>
       <tr><td><code>/wearables/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>OAuth connection management and metric sync for supported wearable platforms.</td></tr>
       <tr><td><code>/health/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Pain entry submission, health history updates, pre-scan questionnaire.</td></tr>
-      <tr><td><code>/teams/</code></td><td><span class="badge badge-jwt">JWT</span> + <span class="badge badge-iam">IAM Roles</span></td><td>NUR Teams</td><td>Roster management (athletes + staff), bulk readiness queries, athlete detail (COMPASS history, thermal contralateral, RTP, clinical notes), staff-side activity and pain entry, alert management, org settings and logo upload, CSV/PDF export. Admin accounts only.</td></tr>
-      <tr><td><code>/notifications/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>FCM device token registration, notification preference management.</td></tr>
+      <tr><td><code>/teams/</code></td><td><span class="badge badge-jwt">JWT</span> + <span class="badge badge-iam">IAM Roles</span></td><td>NUR HUB</td><td>Roster management (athletes + staff), bulk readiness queries, athlete detail (COMPASS history, thermal contralateral, RTP, clinical notes), staff-side activity and pain entry, alert management, org settings and logo upload, CSV/PDF export. Admin accounts only.</td></tr>
+      <tr><td><code>/notifications/</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>FCM device token registration, notification preference management.</td></tr>
     </tbody>
   </table>
 
   <h3>12.2 API Endpoint Reference</h3>
-  <p>Full list of REST endpoints exposed by the Backend Service. All requests use HTTPS. JWT tokens are passed as <code>Authorization: Bearer &lt;token&gt;</code>; the NUR Sensor API key is passed as <code>X-Api-Key: &lt;key&gt;</code>.</p>
+  <p>Full list of REST endpoints exposed by the Backend Service. All requests use HTTPS. JWT tokens are passed as <code>Authorization: Bearer &lt;token&gt;</code>; the NUR Scanner API key is passed as <code>X-Api-Key: &lt;key&gt;</code>.</p>
 
   <h4 class="endpoint-group">Authentication</h4>
   <table class="data-table">
@@ -3355,10 +3435,10 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><th>Method</th><th>Path</th><th>Auth</th><th>Consumer</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>POST</code></td><td><code>/auth/otp/request</code></td><td>None</td><td>My NUR, NUR Teams</td><td>Request OTP delivery to registered email or phone number. Body: <code>{ "contact": "&lt;email|phone&gt;" }</code>.</td></tr>
-      <tr><td><code>POST</code></td><td><code>/auth/otp/verify</code></td><td>None</td><td>My NUR, NUR Teams</td><td>Verify OTP. Returns short-lived access token and long-lived refresh token. Body: <code>{ "contact", "otp" }</code>.</td></tr>
-      <tr><td><code>POST</code></td><td><code>/auth/token/refresh</code></td><td><span class="badge badge-jwt">JWT (refresh)</span></td><td>My NUR, NUR Teams</td><td>Exchange a valid refresh token for a new access token.</td></tr>
-      <tr><td><code>POST</code></td><td><code>/auth/logout</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Invalidate the current refresh token server-side.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/auth/otp/request</code></td><td>None</td><td>My NUR, NUR HUB</td><td>Request OTP delivery to registered email or phone number. Body: <code>{ "contact": "&lt;email|phone&gt;" }</code>.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/auth/otp/verify</code></td><td>None</td><td>My NUR, NUR HUB</td><td>Verify OTP. Returns short-lived access token and long-lived refresh token. Body: <code>{ "contact", "otp" }</code>.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/auth/token/refresh</code></td><td><span class="badge badge-jwt">JWT (refresh)</span></td><td>My NUR, NUR HUB</td><td>Exchange a valid refresh token for a new access token.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/auth/logout</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>Invalidate the current refresh token server-side.</td></tr>
     </tbody>
   </table>
 
@@ -3368,12 +3448,12 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><th>Method</th><th>Path</th><th>Auth</th><th>Consumer</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>POST</code></td><td><code>/scan/sessions/generate</code></td><td><span class="badge badge-apikey">API Key</span></td><td>NUR Sensor</td><td>Create a new scan session. Backend writes an empty RTDB node and returns <code>{ session_id, qr_payload, expires_at }</code>. See &sect;5.1.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/scan/sessions/generate</code></td><td><span class="badge badge-apikey">API Key</span></td><td>NUR Scanner</td><td>Create a new scan session. Backend writes an empty RTDB node and returns <code>{ session_id, qr_payload, expires_at }</code>. See &sect;5.1.</td></tr>
       <tr><td><code>POST</code></td><td><code>/scan/sessions/claim</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Athlete claims a session via QR token. Body: <code>{ "token", "session_id" }</code>. Backend verifies JWT, SHA-256 token lookup, writes authenticated user profile to Firebase RTDB.</td></tr>
-      <tr><td><code>POST</code></td><td><code>/scan/sessions/{session_id}/prescan</code></td><td><span class="badge badge-apikey">API Key</span></td><td>NUR Sensor</td><td>Submit pre-scan health data collected on-device (pain regions, intensity, health check responses).</td></tr>
-      <tr><td><code>GET</code></td><td><code>/scan/sessions/{session_id}</code></td><td><span class="badge badge-apikey">API Key</span> / <span class="badge badge-jwt">JWT</span></td><td>NUR Sensor, My NUR</td><td>Poll session status. Returns <code>{ status: "pending" | "authenticated" | "scanning" | "processing" | "complete" | "error" }</code>.</td></tr>
-      <tr><td><code>POST</code></td><td><code>/scan/upload-url</code></td><td><span class="badge badge-apikey">API Key</span></td><td>NUR Sensor</td><td>Request a GCS signed upload URL for the thermogram. Returns <code>{ signed_url, image_id, expires_at }</code>. NUR Sensor then PUTs the image binary directly to GCS — the binary never transits the API tier.</td></tr>
-      <tr><td><code>POST</code></td><td><code>/scan/sessions/complete</code></td><td><span class="badge badge-apikey">API Key</span></td><td>NUR Sensor</td><td>Mark scan complete and trigger NURAI inference. Body: <code>{ "session_id", "image_id", "capture_timestamp", "device_id", "scan_mode" }</code>. Backend calls NURAI with <code>session_id</code> only.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/scan/sessions/{session_id}/prescan</code></td><td><span class="badge badge-apikey">API Key</span></td><td>NUR Scanner</td><td>Submit pre-scan health data collected on-device (pain regions, intensity, health check responses).</td></tr>
+      <tr><td><code>GET</code></td><td><code>/scan/sessions/{session_id}</code></td><td><span class="badge badge-apikey">API Key</span> / <span class="badge badge-jwt">JWT</span></td><td>NUR Scanner, My NUR</td><td>Poll session status. Returns <code>{ status: "pending" | "authenticated" | "scanning" | "processing" | "complete" | "error" }</code>.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/scan/upload-url</code></td><td><span class="badge badge-apikey">API Key</span></td><td>NUR Scanner</td><td>Request a GCS signed upload URL for the thermogram. Returns <code>{ signed_url, image_id, expires_at }</code>. NUR Scanner then PUTs the image binary directly to GCS — the binary never transits the API tier.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/scan/sessions/complete</code></td><td><span class="badge badge-apikey">API Key</span></td><td>NUR Scanner</td><td>Mark scan complete and trigger NURAI inference. Body: <code>{ "session_id", "image_id", "capture_timestamp", "device_id", "scan_mode" }</code>. Backend calls NURAI with <code>session_id</code> only.</td></tr>
     </tbody>
   </table>
 
@@ -3383,8 +3463,8 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><th>Method</th><th>Path</th><th>Auth</th><th>Consumer</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>POST</code></td><td><code>/compass/refresh</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Flow B daily refresh. Backend runs three gates (thermal scan age &le; 7 days, new wearable data available, not already computed today). If all pass, invokes NURAI <code>/infer/refresh</code>. <strong>Always returns latest <code>daily_assessments</code></strong> with a <code>refresh_status</code> field: <code>no_scan</code> / <code>stale_scan</code> / <code>cached</code> / <code>computed</code> / <code>inference_failed</code>. Body: <code>{ "user_id": "&lt;uuid&gt;", "force": false }</code>.</td></tr>
-      <tr><td><code>GET</code></td><td><code>/compass/status</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Lightweight eligibility check before calling <code>/compass/refresh</code>. Returns: <code>{ "latest_scan_age_days", "scan_eligible", "new_wearable_data", "today_computed", "last_daily_assessments" }</code>. No NURAI call made.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/compass/refresh</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>Flow B event-driven refresh (manual path). Backend invokes NURAI <code>/infer/refresh</code>. Gates control whether Module 2 (score recomputation) runs; Module 3 (GenAI) always runs. <strong>Always returns latest <code>daily_assessments</code></strong> with a <code>refresh_status</code> field: <code>no_scan</code> / <code>stale_scan</code> / <code>cached</code> / <code>computed</code> / <code>inference_failed</code>. Body: <code>{ "user_id": "&lt;uuid&gt;", "force": false }</code>.</td></tr>
+      <tr><td><code>GET</code></td><td><code>/compass/status</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>Lightweight eligibility check before calling <code>/compass/refresh</code>. Returns: <code>{ "latest_scan_age_days", "scan_eligible", "new_wearable_data", "today_computed", "last_daily_assessments" }</code>. No NURAI call made.</td></tr>
     </tbody>
   </table>
 
@@ -3394,9 +3474,9 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><th>Method</th><th>Path</th><th>Auth</th><th>Consumer</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>GET</code></td><td><code>/results/latest</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Return the athlete's most recent <code>daily_assessments</code> record: COMPASS zone, score, AI coach response, trigger_type, and thermal scan date (so the app can display "based on scan from N days ago" when reusing).</td></tr>
-      <tr><td><code>GET</code></td><td><code>/results/{session_id}</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Full result for a specific session: reads <code>thermal_scans WHERE session_id = X</code> (per-region measurements, t_score, max_asymmetry, has_asymmetry, rtp_cleared) joined to the corresponding <code>daily_assessments</code> row (COMPASS score, zone, AI coach output).</td></tr>
-      <tr><td><code>GET</code></td><td><code>/results/history</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Paginated list from <code>daily_assessments ORDER BY date DESC</code>. Each item includes <code>trigger_type</code>, <code>compass_zone</code>, <code>compass_score</code>, and <code>thermal_scan_generated_at</code> (so history clearly shows which days had a new scan vs. a wearable refresh). Query params: <code>limit</code>, <code>offset</code>, <code>from_date</code>, <code>to_date</code>.</td></tr>
+      <tr><td><code>GET</code></td><td><code>/results/latest</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Return the athlete's most recent <code>daily_assessments</code> record: COMPASS zone, score, AI coach response, trigger_type, and thermal scan date. <code>trigger_type</code> indicates how the score was last computed: <code>new_thermal_scan</code> / <code>admin_scan</code> (Flow A), <code>wearable_refresh</code> (manual Flow B), <code>auto_wearable</code> (automatic wearable trigger), <code>auto_health</code> (automatic health/RTP trigger). Clients display context accordingly — e.g. "Updated after wearable sync" or "Updated after health entry".</td></tr>
+      <tr><td><code>GET</code></td><td><code>/results/{session_id}</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>Full result for a specific session: reads <code>thermal_scans WHERE session_id = X</code> (per-region measurements, t_score, max_asymmetry, has_asymmetry, rtp_cleared) joined to the corresponding <code>daily_assessments</code> row (COMPASS score, zone, AI coach output).</td></tr>
+      <tr><td><code>GET</code></td><td><code>/results/history</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>Paginated list from <code>daily_assessments ORDER BY date DESC</code>. Each item includes <code>trigger_type</code>, <code>compass_zone</code>, <code>compass_score</code>, and <code>thermal_scan_generated_at</code> (so history clearly shows which days had a new scan vs. a wearable refresh). Query params: <code>limit</code>, <code>offset</code>, <code>from_date</code>, <code>to_date</code>.</td></tr>
     </tbody>
   </table>
 
@@ -3408,7 +3488,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <tbody>
       <tr><td><code>POST</code></td><td><code>/wearables/connect</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Initiate Spike SDK wearable connection. Backend generates HMAC-SHA256 signature (<code>user_id</code> + shared secret) and returns <code>{ spike_token, application_id }</code> for SDK initialisation.</td></tr>
       <tr><td><code>GET</code></td><td><code>/wearables/status</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Return current wearable connection status (<code>active</code> / <code>revoked</code> / <code>error</code>) and <code>last_synced_at</code> timestamp.</td></tr>
-      <tr><td><code>POST</code></td><td><code>/wearables/sync-now</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>On-demand Spike pull outside the daily cron schedule. Rate-limited to 1 successful pull per athlete per hour — returns <code>429 Too Many Requests</code> with <code>Retry-After</code> header if within the window. Body (admin only): <code>{ "user_id": "&lt;uuid&gt;" }</code>. Response: <code>{ last_synced_at, new_data_available, ready_for_compass_refresh }</code>. Returns <code>502</code> on Spike API failure without consuming the rate-limit window. See §8.6.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/wearables/sync-now</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>On-demand Spike pull outside the daily cron schedule. Rate-limited to 1 successful pull per athlete per hour — returns <code>429 Too Many Requests</code> with <code>Retry-After</code> header if within the window. Body (admin only): <code>{ "user_id": "&lt;uuid&gt;" }</code>. Response: <code>{ last_synced_at, new_data_available, ready_for_compass_refresh }</code>. Returns <code>502</code> on Spike API failure without consuming the rate-limit window. See §8.6.</td></tr>
       <tr><td><code>DELETE</code></td><td><code>/wearables/disconnect</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Revoke the wearable connection. Sets <code>wearable_connections.status</code> to <code>revoked</code> and stops daily Spike pull for this athlete.</td></tr>
     </tbody>
   </table>
@@ -3419,9 +3499,9 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><th>Method</th><th>Path</th><th>Auth</th><th>Consumer</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>POST</code></td><td><code>/health/pain</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Submit a pain entry. Body: <code>{ "region", "intensity" (0&ndash;10), "recorded_at" (optional) }</code>. Written to <code>user_profile_history.pain_entries</code> (triggers new profile version insert). Feeds AI Coach output only &mdash; does not affect R or T score.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/health/pain</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Submit a pain entry. Body: <code>{ "region", "intensity" (0&ndash;10), "recorded_at" (optional) }</code>. Written to <code>user_profile_history.pain_entries</code> (triggers new profile version insert). After write, spawns background thread to trigger Flow B (§7.5) — COMPASS score updates to reflect new pain context. Feeds AI Coach output only &mdash; does not affect R or T score directly.</td></tr>
       <tr><td><code>GET</code></td><td><code>/health/history</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Return athlete health history: chronic conditions, past pain entries, pre-scan questionnaire responses.</td></tr>
-      <tr><td><code>PUT</code></td><td><code>/health/history</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Update member health profile: chronic conditions, injury history, activity level. Inserts a new versioned row into <code>tbscan.user_profile_history</code> (sets prior row <code>is_current = false</code>). Preserves full update history for AI Coach context.</td></tr>
+      <tr><td><code>PUT</code></td><td><code>/health/history</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR</td><td>Update member health profile: chronic conditions, injury history, activity level. Inserts a new versioned row into <code>tbscan.user_profile_history</code> (sets prior row <code>is_current = false</code>). Preserves full update history for AI Coach context. After write, spawns background thread to trigger Flow B (§7.5).</td></tr>
     </tbody>
   </table>
 
@@ -3443,7 +3523,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
     <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr></thead>
     <tbody>
       <tr><td><strong>GET</strong></td><td><code>/teams/staff</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>List all staff members in the org. Returns <code>[{user_id, name, email, job_title, joined_at}]</code>.</td></tr>
-      <tr><td><strong>POST</strong></td><td><code>/teams/staff/invite</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Invite a new staff member. Body: <code>{email, first_name, last_name, job_title}</code>. All staff invited via NUR Teams are created with <code>role = admin</code> — the only role that can access NUR Teams.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/staff/invite</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Invite a new staff member. Body: <code>{email, first_name, last_name, job_title}</code>. All staff invited via NUR HUB are created with <code>role = admin</code> — the only role that can access NUR HUB.</td></tr>
     </tbody>
   </table>
 
@@ -3485,12 +3565,12 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
   <table class="data-table">
     <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr></thead>
     <tbody>
-      <tr><td><strong>POST</strong></td><td><code>/teams/rtp/{athleteId}/initiate</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Open a new RTP workflow for the athlete. Fails with <code>409 Conflict</code> if an active workflow already exists (partial unique index on <code>rtp_workflows</code>). Writes a <code>tbscan.rtp_workflows</code> row with <code>initiated_by = requesting_user_id</code>. Returns <code>{workflow_id, initiated_at}</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/rtp/{athleteId}/initiate</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Open a new RTP workflow for the athlete. Fails with <code>409 Conflict</code> if an active workflow already exists (partial unique index on <code>rtp_workflows</code>). Writes a <code>tbscan.rtp_workflows</code> row with <code>initiated_by = requesting_user_id</code>. After write, spawns background thread to trigger Flow B (§7.5, <code>trigger_type: "auto_health"</code>). Returns <code>{workflow_id, initiated_at}</code>.</td></tr>
       <tr><td><strong>GET</strong></td><td><code>/teams/rtp/{athleteId}/workflow</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Full RTP workflow for the athlete. Returns <code>{workflow_id, initiated_at, initiated_by_name, cleared_at, cleared_by_name, manual_clear, injuries: […], interventions: […]}</code>. Query: §6.6.6. Returns <code>404</code> if no active workflow.</td></tr>
-      <tr><td><strong>PUT</strong></td><td><code>/teams/rtp/{athleteId}/injuries</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Set or replace the injury documentation for the active workflow. Body: <code>{region_id, region_label, injury_type, severity, injury_date, notes?}</code>. Writes to <code>rtp_workflows.injuries</code> JSONB. Returns <code>200 OK</code>.</td></tr>
-      <tr><td><strong>POST</strong></td><td><code>/teams/rtp/{athleteId}/interventions</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Log a therapeutic intervention. Body: <code>{intervention_type, session_date, provider?, duration_mins?, notes?}</code>. Writes to <code>tbscan.rtp_interventions</code>. Returns <code>{intervention_id}</code>.</td></tr>
+      <tr><td><strong>PUT</strong></td><td><code>/teams/rtp/{athleteId}/injuries</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Set or replace the injury documentation for the active workflow. Body: <code>{region_id, region_label, injury_type, severity, injury_date, notes?}</code>. Writes to <code>rtp_workflows.injuries</code> JSONB. After write, spawns background thread to trigger Flow B (§7.5, <code>trigger_type: "auto_health"</code>). Returns <code>200 OK</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/rtp/{athleteId}/interventions</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Log a therapeutic intervention. Body: <code>{intervention_type, session_date, provider?, duration_mins?, notes?}</code>. Writes to <code>tbscan.rtp_interventions</code>. After write, spawns background thread to trigger Flow B (§7.5, <code>trigger_type: "auto_health"</code>). Returns <code>{intervention_id}</code>.</td></tr>
       <tr><td><strong>DELETE</strong></td><td><code>/teams/rtp/{athleteId}/interventions/{interventionId}</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Remove an intervention record. Hard delete. Returns <code>204 No Content</code>.</td></tr>
-      <tr><td><strong>POST</strong></td><td><code>/teams/rtp/{athleteId}/clear</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Staff clearance approval — the only path to closing an RTP workflow. Body: <code>{notes?}</code>. Backend checks current conditions at call time: if <code>rtp_regions_pending = 0</code> AND <code>compass_zone = 'safe'</code> on the latest <code>daily_assessments</code>, sets <code>manual_clear = false</code> (conditions-based approval); otherwise sets <code>manual_clear = true</code> (override). In both cases: sets <code>cleared_at = NOW()</code>, <code>cleared_by = requesting_user_id</code>, <code>is_active = false</code>. Fires an <code>rtp_milestone</code> alert with <code>event: "cleared"</code>. Returns <code>{cleared_at, workflow_id, manual_clear}</code>.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/teams/rtp/{athleteId}/clear</code></td><td><span class="badge badge-jwt">JWT admin</span></td><td>Staff clearance approval — the only path to closing an RTP workflow. Body: <code>{notes?}</code>. Backend checks current conditions at call time: if <code>rtp_regions_pending = 0</code> AND <code>compass_zone = 'safe'</code> on the latest <code>daily_assessments</code>, sets <code>manual_clear = false</code> (conditions-based approval); otherwise sets <code>manual_clear = true</code> (override). In both cases: sets <code>cleared_at = NOW()</code>, <code>cleared_by = requesting_user_id</code>, <code>is_active = false</code>. Fires an <code>rtp_milestone</code> alert with <code>event: "cleared"</code>. After write, spawns background thread to trigger Flow B (§7.5, <code>trigger_type: "auto_health"</code>). Returns <code>{cleared_at, workflow_id, manual_clear}</code>.</td></tr>
     </tbody>
   </table>
 
@@ -3510,16 +3590,16 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><th>Method</th><th>Path</th><th>Auth</th><th>Consumer</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>POST</code></td><td><code>/notifications/device</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Register an FCM device token. Body: <code>{ "fcm_token", "platform": "ios" | "android" | "web" }</code>.</td></tr>
-      <tr><td><code>DELETE</code></td><td><code>/notifications/device</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Deregister FCM device token on logout or app uninstall. Body: <code>{ "fcm_token" }</code>.</td></tr>
-      <tr><td><code>GET</code></td><td><code>/notifications/preferences</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Return current notification preferences for the authenticated user.</td></tr>
-      <tr><td><code>PUT</code></td><td><code>/notifications/preferences</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR Teams</td><td>Update notification preferences (e.g. enable/disable Deceptive Readiness alerts, scan-complete push). See &sect;09 Notification System.</td></tr>
+      <tr><td><code>POST</code></td><td><code>/notifications/device</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>Register an FCM device token. Body: <code>{ "fcm_token", "platform": "ios" | "android" | "web" }</code>.</td></tr>
+      <tr><td><code>DELETE</code></td><td><code>/notifications/device</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>Deregister FCM device token on logout or app uninstall. Body: <code>{ "fcm_token" }</code>.</td></tr>
+      <tr><td><code>GET</code></td><td><code>/notifications/preferences</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>Return current notification preferences for the authenticated user.</td></tr>
+      <tr><td><code>PUT</code></td><td><code>/notifications/preferences</code></td><td><span class="badge badge-jwt">JWT</span></td><td>My NUR, NUR HUB</td><td>Update notification preferences (e.g. enable/disable Deceptive Readiness alerts, scan-complete push). See &sect;09 Notification System.</td></tr>
     </tbody>
   </table>
 
   <div class="alert blue">
     <span class="alert-icon">&#8505;</span>
-    <div><strong>Infrastructure Note</strong><p>The Backend Service runs as a stateless Cloud Run service with auto-scaling. JWT secrets and the NUR Sensor API key hash are stored in GCP Secret Manager. The NURAI is invoked asynchronously via GCP IAM service account credentials &mdash; see &sect;04 Auth Architecture and &sect;07 AI/ML Pipeline.</p></div>
+    <div><strong>Infrastructure Note</strong><p>The Backend Service runs as a stateless Cloud Run service with auto-scaling. JWT secrets and the NUR Scanner API key hash are stored in GCP Secret Manager. The NURAI is invoked asynchronously via GCP IAM service account credentials &mdash; see &sect;04 Auth Architecture and &sect;07 AI/ML Pipeline.</p></div>
   </div>
 </section>
 
@@ -3527,7 +3607,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
 <section id="s-mynur">
   <div class="section-label">Section 13</div>
   <h2>MY NUR</h2>
-  <p class="section-intro">MY NUR is the consumer-facing mobile application (Android and iOS) through which individual athletes view their COMPASS readiness scores, scan history, physiological trends, and personalised AI coach recommendations. It also initiates NUR Sensor thermal scan sessions via QR code.</p>
+  <p class="section-intro">MY NUR is the consumer-facing mobile application (Android and iOS) through which individual athletes view their COMPASS readiness scores, scan history, physiological trends, and personalised AI coach recommendations. It also initiates NUR Scanner thermal scan sessions via QR code.</p>
 
   <h3>13.1 Authentication</h3>
   <p>MY NUR authenticates using OTP-driven JWT. On login, an OTP is delivered to the athlete's registered email or phone number. A successful OTP submission yields a short-lived access token and a long-lived refresh token. See <a href="#s04-1" style="color:var(--accent);">&sect;4.1 JWT Auth &mdash; My NUR</a> for the full flow.</p>
@@ -3543,7 +3623,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><td><strong>Wearables Connection</strong></td><td>Spike SDK connection flow. My NUR requests health permissions via the Spike SDK, which triggers native OS permission dialogs (HealthKit on iOS, Health Connect on Android). No OAuth redirect. Backend generates HMAC signature for Spike initialisation.</td><td><code>POST /wearables/connect</code> &rarr; Spike SDK init; see &sect;08</td></tr>
       <tr><td><strong>Health Data Entry</strong></td><td>Pre-scan questionnaire: pain region/intensity, chronic conditions. Feeds the AI Coach output only &mdash; not the R or T score.</td><td><code>pain_entries</code>, <code>users.health_history</code></td></tr>
       <tr><td><strong>AI Coach Recommendations</strong></td><td>Personalised corrective guidance generated by NURAI based on the athlete's COMPASS zone and health context.</td><td>NURAI inference output; see &sect;07</td></tr>
-      <tr><td><strong>QR Scan Initiation</strong></td><td>Athlete scans QR code displayed on NUR Sensor to authenticate the thermal imaging session without manual credential entry.</td><td>Firebase RTDB QR flow; see &sect;4.4</td></tr>
+      <tr><td><strong>QR Scan Initiation</strong></td><td>Athlete scans QR code displayed on NUR Scanner to authenticate the thermal imaging session without manual credential entry.</td><td>Firebase RTDB QR flow; see &sect;4.4</td></tr>
     </tbody>
   </table>
 
@@ -3554,14 +3634,14 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
   <p>For the complete individual scan flow from QR initiation through score delivery, see <a href="#s05-1" style="color:var(--accent);">&sect;5.1 Individual Scan Flow</a>.</p>
 </section>
 
-<!-- ══ 14: NUR Sensor ══ -->
+<!-- ══ 14: NUR Scanner ══ -->
 <section id="s-sensor">
   <div class="section-label">Section 14</div>
-  <h2>NUR Sensor</h2>
-  <p class="section-intro">NUR Sensor is the operator-facing Android application that runs on the dedicated thermal camera hardware (smart mirror or large-format tablet). It manages the full bilateral thermal imaging session and uploads thermograms to GCS for AI processing.</p>
+  <h2>NUR Scanner</h2>
+  <p class="section-intro">NUR Scanner is the operator-facing Android application that runs on the dedicated thermal camera hardware (smart mirror or large-format tablet). It manages the full bilateral thermal imaging session and uploads thermograms to GCS for AI processing.</p>
 
   <h3>14.1 Authentication</h3>
-  <p>NUR Sensor uses a static API key provisioned at device setup via MDM. The key is included in an <code>X-Api-Key</code> header on every request and validated server-side against a hashed value in GCP Secret Manager. There is no token refresh cycle. See <a href="#s04-2" style="color:var(--accent);">&sect;4.2 Static API Key &mdash; NUR Sensor</a>.</p>
+  <p>NUR Scanner uses a static API key provisioned at device setup via MDM. The key is included in an <code>X-Api-Key</code> header on every request and validated server-side against a hashed value in GCP Secret Manager. There is no token refresh cycle. See <a href="#s04-2" style="color:var(--accent);">&sect;4.2 Static API Key &mdash; NUR Scanner</a>.</p>
 
   <h3>14.2 Sensor Data Payload</h3>
   <table class="data-table">
@@ -3580,13 +3660,13 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
 
   <div class="alert blue">
     <span class="alert-icon">&#127760;</span>
-    <div><strong>Online-Only Operation</strong><p>NUR Sensor requires a persistent network connection throughout the entire session. If connectivity is lost at any point — before or after thermogram capture — the session is immediately terminated with <code>status = 'error'</code> and the athlete must re-initiate a new session. There is no local image queuing, no retry on reconnection, and no offline fallback. NUR Sensor is deployed in controlled clinical environments under MDM; network reliability is a venue prerequisite, not an application concern.</p></div>
+    <div><strong>Online-Only Operation</strong><p>NUR Scanner requires a persistent network connection throughout the entire session. If connectivity is lost at any point — before or after thermogram capture — the session is immediately terminated with <code>status = 'error'</code> and the athlete must re-initiate a new session. There is no local image queuing, no retry on reconnection, and no offline fallback. NUR Scanner is deployed in controlled clinical environments under MDM; network reliability is a venue prerequisite, not an application concern.</p></div>
   </div>
 
   <p>For both scan entry paths (individual QR and admin member-selection), see <a href="#s05-2" style="color:var(--accent);">&sect;5.2 Admin / Team Scan Flow</a>.</p>
 
   <h3 id="s14-3">14.3 Anatomical Region Map</h3>
-  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">The NUR Sensor maps its thermogram ROI extraction to 34 fixed anatomical regions. Each region has a stable integer ID used in <code>thermal_scans.measurements</code> JSONB, RTP workflow region tracking, and the body map UI in My NUR and NUR Teams. Bilateral regions are paired by name convention (Right / Left prefix); unpaired regions (Head, Neck) are singular.</p>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">The NUR Scanner maps its thermogram ROI extraction to 34 fixed anatomical regions. Each region has a stable integer ID used in <code>thermal_scans.measurements</code> JSONB, RTP workflow region tracking, and the body map UI in My NUR and NUR HUB. Bilateral regions are paired by name convention (Right / Left prefix); unpaired regions (Head, Neck) are singular.</p>
   <table class="data-table">
     <thead>
       <tr><th>ID</th><th>Region Name</th><th>Pair</th><th>Body Segment</th></tr>
@@ -3631,17 +3711,17 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
   <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">32 bilateral regions (16 pairs) + 2 singular regions = 34 total. The ID values match the <code>region_id</code> keys in <code>thermal_scans.measurements.regions[]</code> and the <code>region_id</code> column in <code>rtp_workflows.injuries[]</code> JSONB.</p>
 </section>
 
-<!-- ══ 15: NUR Teams ══ -->
+<!-- ══ 15: NUR HUB ══ -->
 <section id="s-teams">
   <div class="section-label">Section 15</div>
-  <h2>NUR Teams <span class="badge badge-beta" style="margin-left:10px;vertical-align:middle;font-size:16px;">BETA</span></h2>
-  <p class="section-intro">NUR Teams is the web portal for coaching and clinical staff. It provides squad-level readiness monitoring, roster management, thermal RTP tracking, alert management, and clinical note authoring. <strong>Access is restricted to admin accounts only</strong> — <code>org_members</code> with <code>role = member</code> cannot log in to NUR Teams.</p>
+  <h2>NUR HUB <span class="badge badge-beta" style="margin-left:10px;vertical-align:middle;font-size:16px;">BETA</span></h2>
+  <p class="section-intro">NUR HUB is the web portal for coaching and clinical staff. It provides squad-level readiness monitoring, roster management, thermal RTP tracking, alert management, and clinical note authoring. <strong>Access is restricted to admin accounts only</strong> — <code>org_members</code> with <code>role = member</code> cannot log in to NUR HUB.</p>
 
   <h3 id="s15-1">15.1 Authentication</h3>
-  <p>NUR Teams uses the same JWT authentication flow as My NUR (OTP → access token + refresh token). NUR Teams enforces <code>role = admin</code> at the JWT validation layer on every request. Any valid JWT belonging to a <code>member</code>-role account receives a <strong>403 Forbidden</strong> on all <code>/teams/</code> routes — there is no partial access for member accounts.</p>
+  <p>NUR HUB uses the same JWT authentication flow as My NUR (OTP → access token + refresh token). NUR HUB enforces <code>role = admin</code> at the JWT validation layer on every request. Any valid JWT belonging to a <code>member</code>-role account receives a <strong>403 Forbidden</strong> on all <code>/teams/</code> routes — there is no partial access for member accounts.</p>
 
   <h3 id="s15-2">15.2 Role Permission Matrix</h3>
-  <p>NUR Teams is admin-only. The <code>job_title</code> field on <code>org_members</code> is display-only and does not create permission sub-roles.</p>
+  <p>NUR HUB is admin-only. The <code>job_title</code> field on <code>org_members</code> is display-only and does not create permission sub-roles.</p>
   <table class="data-table" style="max-width:520px;">
     <thead><tr><th>Permission</th><th style="text-align:center;">Admin</th></tr></thead>
     <tbody>
@@ -3655,7 +3735,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
   </table>
 
   <h3 id="s15-3">15.3 Admin Scan Flow</h3>
-  <p>Coaching staff can initiate a scan session for a specific athlete directly from NUR Teams without requiring the athlete to be present with their phone. The admin selects the athlete from the roster and the NUR Sensor app receives the athlete's profile via Firebase RTDB, bypassing the QR code step. See <code>POST /teams/scan/initiate</code> in §12.2 for the endpoint detail.</p>
+  <p>Coaching staff can initiate a scan session for a specific athlete directly from NUR HUB without requiring the athlete to be present with their phone. The admin selects the athlete from the roster and the NUR Scanner app receives the athlete's profile via Firebase RTDB, bypassing the QR code step. See <code>POST /teams/scan/initiate</code> in §12.2 for the endpoint detail.</p>
 
   <h3 id="s-teams-screens">15.4 Key Screens and Data Flows</h3>
   <table class="data-table">
@@ -3722,7 +3802,7 @@ if not verify_spike_webhook(request.body, request.headers["X-Body-Signature"], S
       <tr><td>Scan report generated</td><td><strong>Report ready</strong></td><td>Deep link to the specific report in My NUR</td></tr>
       <tr><td>Scheduled scan reminder</td><td><strong>Scan reminder</strong></td><td>Based on user's configured scan cadence or coach-defined schedule</td></tr>
       <tr><td>AI coach recommendation updated</td><td><strong>New recommendation available</strong></td><td>Personalised text based on the latest scan findings</td></tr>
-      <tr><td>Alert generated (NUR Teams)</td><td><strong>Alert notification</strong></td><td>Dispatched per org_settings.alert_delivery_method: in_app = FCM to staff devices · email = transactional email · both = FCM + email</td></tr>
+      <tr><td>Alert generated (NUR HUB)</td><td><strong>Alert notification</strong></td><td>Dispatched per org_settings.alert_delivery_method: in_app = FCM to staff devices · email = transactional email · both = FCM + email</td></tr>
       <tr><td>Daily digest generated (06:00 org TZ)</td><td><strong>Morning squad summary</strong></td><td>Sent to all admin org members</td></tr>
     </tbody>
   </table>
