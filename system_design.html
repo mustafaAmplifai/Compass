@@ -1895,6 +1895,8 @@
       <tr><td><code>privacy_policy_version</code></td><td>varchar</td><td>Version identifier of the Privacy Statement accepted by this user (e.g. <code>pp-2026-03</code>). Set at signup; updated on re-acceptance.</td></tr>
       <tr><td><code>terms_version</code></td><td>varchar</td><td>Version identifier of the Terms of Use accepted by this user (e.g. <code>tou-2026-03</code>). Set at signup; updated on re-acceptance.</td></tr>
       <tr><td><code>consent_accepted_at</code></td><td>timestamp</td><td>Timestamp of the most recent consent acceptance event (either document). Denormalised from <code>consent_records</code> for fast profile reads.</td></tr>
+      <tr><td><code>required_password_reset</code></td><td>boolean, default false</td><td>When <code>true</code>, the user is forced to reset their password on next login before accessing any other endpoint. Used for admin-created accounts where a temporary password was set by an operator.</td></tr>
+      <tr><td><code>is_default_password_reset</code></td><td>boolean, default false</td><td>Indicates the current password is a system-generated default. Distinct from <code>required_password_reset</code> — this flag records the password origin (default-generated vs. user-chosen) and may be used for UI messaging. Cleared once the user sets their own password.</td></tr>
     </tbody>
   </table>
 
@@ -2141,12 +2143,46 @@
       <tr><td><code>org_id</code></td><td>FK &rarr; orgs, NOT NULL</td><td>Organisation the member belongs to.</td></tr>
       <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, NOT NULL</td><td>The user (athlete or staff).</td></tr>
       <tr><td><code>role</code></td><td>varchar(20) NOT NULL</td><td><code>admin</code> — full org access (NUR HUB); <code>member</code> — athlete/standard member (My NUR).</td></tr>
+      <tr><td><code>member_type</code></td><td>text, nullable</td><td>Free-text descriptor for the member's type within the org (e.g. <code>athlete</code>, <code>staff</code>). Does not affect permission logic — use <code>role</code> for access control. NULL for members where type classification is not applicable.</td></tr>
       <tr><td><code>joined_at</code></td><td>timestamptz NOT NULL, default NOW()</td><td>When the member joined the org.</td></tr>
       <tr><td><code>job_title</code></td><td>varchar(60), nullable</td><td>Display-only staff role label. Does not affect the <code>admin | member</code> permission system. Permitted values: Head Coach, Assistant Coach, Head Physiotherapist, Physiotherapist, S&amp;C Coach, Performance Director, Medical Officer, Sports Scientist.</td></tr>
       <tr><td><code>my_nur_status</code></td><td>varchar(20) NOT NULL, default 'not_enrolled'</td><td>My NUR enrolment state for athlete members: <code>active</code> / <code>invite_pending</code> / <code>not_enrolled</code>.</td></tr>
       <tr><td><code>invite_code</code></td><td>varchar(20), nullable</td><td>One-time offline join code, format <code>NUR-XXXXX</code>. Generated for athletes without email. Expires on use or after 30 days.</td></tr>
     </tbody>
   </table>
+
+  <h4 id="s06-org-invites" style="margin-top:32px;"><code style="font-size:14px;">tbscan.org_invites</code> <span class="badge badge-beta" style="margin-left:8px;vertical-align:middle;">BETA — New</span></h4>
+  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">Admin-generated invitations sent to prospective org members. One row per invite. Invites expire or are revoked; accepted invites result in an <code>org_members</code> row via the join flow.</p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>UUID (PK)</td><td>Primary key. Generated via <code>gen_random_uuid()</code>.</td></tr>
+      <tr><td><code>invite_code</code></td><td>varchar(50), UNIQUE NOT NULL</td><td>Unique invite code sent to the invitee. Used in the join URL or shared directly.</td></tr>
+      <tr><td><code>org_id</code></td><td>FK &rarr; orgs, NOT NULL</td><td>Organisation issuing the invite.</td></tr>
+      <tr><td><code>user_id</code></td><td>varchar(150) NOT NULL</td><td>Identifier for the invitee — typically an email address or phone number. Not a FK to <code>auth_user</code> because the invitee may not have an account yet at invite time.</td></tr>
+      <tr><td><code>role</code></td><td>varchar(20) NOT NULL</td><td>Role the invitee will receive on acceptance: <code>admin</code> or <code>member</code>.</td></tr>
+      <tr><td><code>created_on</code></td><td>timestamptz NOT NULL, default NOW()</td><td>When the invite was issued.</td></tr>
+      <tr><td><code>valid_until</code></td><td>timestamptz NOT NULL</td><td>Invite expiry time. Backend rejects redemption attempts after this timestamp and transitions <code>invite_status</code> to <code>expired</code>.</td></tr>
+      <tr><td><code>invite_status</code></td><td>varchar(10) NOT NULL, default <code>pending</code></td><td>Invite lifecycle state:<br><code>pending</code> — issued and awaiting acceptance;<br><code>accepted</code> — invitee completed the join flow (triggers <code>org_members</code> row creation);<br><code>expired</code> — <code>valid_until</code> passed without acceptance;<br><code>revoked</code> — manually cancelled by an org admin before expiry.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--text-dim);">Indexes: <code>idx_oi_org_status (org_id, invite_status)</code> — list pending/active invites per org &middot; <code>idx_oi_invite_code (invite_code)</code> — redemption lookup.</p>
+
+  <h4 id="s06-join-requests" style="margin-top:32px;"><code style="font-size:14px;">tbscan.join_requests</code> <span class="badge badge-beta" style="margin-left:8px;vertical-align:middle;">BETA — New</span></h4>
+  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">Athlete-initiated requests to join an org using an offline invite code. One row per request. Approved requests result in an <code>org_members</code> row; rejected requests are retained for audit.</p>
+  <table class="data-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>UUID (PK)</td><td>Primary key. Generated via <code>gen_random_uuid()</code>.</td></tr>
+      <tr><td><code>user_id</code></td><td>FK &rarr; auth_user, NOT NULL</td><td>The athlete submitting the join request.</td></tr>
+      <tr><td><code>org_id</code></td><td>FK &rarr; orgs, NOT NULL</td><td>The organisation being requested to join.</td></tr>
+      <tr><td><code>invite_code</code></td><td>varchar(50) NOT NULL</td><td>Offline join code entered by the athlete (format <code>NUR-XXXXX</code>). Matched against <code>org_members.invite_code</code> or <code>org_invites.invite_code</code> at request time.</td></tr>
+      <tr><td><code>status</code></td><td>varchar(10) NOT NULL, default <code>pending</code></td><td>Request state:<br><code>pending</code> — submitted and awaiting staff review;<br><code>accepted</code> — approved by staff (org member row created);<br><code>rejected</code> — declined by staff.</td></tr>
+      <tr><td><code>request_date</code></td><td>timestamptz NOT NULL, default NOW()</td><td>When the join request was submitted.</td></tr>
+      <tr><td><code>updated_at</code></td><td>timestamptz NOT NULL, default NOW()</td><td>Last status change timestamp. Auto-updated on any status transition.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--text-dim);">Indexes: <code>idx_jr_org_status (org_id, status, request_date DESC)</code> — pending request list per org &middot; <code>idx_jr_user (user_id, request_date DESC)</code> — user's request history.</p>
 
   <h4 id="s06-alerts" style="margin-top:32px;"><code style="font-size:14px;">tbscan.alerts</code> <span class="badge badge-beta" style="margin-left:8px;vertical-align:middle;">BETA — New</span></h4>
   <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:8px;">System-generated alert events for NUR HUB coaching staff. One row per alert event. Acknowledged alerts are retained for audit.</p>
